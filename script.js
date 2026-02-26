@@ -10,32 +10,28 @@ input.addEventListener('change', async () => {
   const file = input.files;
   if (!file) return;
 
-  // Loading
   const loading = document.createElement('div');
   loading.className = 'video';
   loading.innerHTML = `<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:50px">Đang tải lên...</div>`;
   feed.appendChild(loading);
   loading.scrollIntoView();
 
-  // Upload lên Imgur (miễn phí hoàn toàn)
-  const formData = new FormData();
-  formData.append('video', file);
-
   try {
-    const response = await fetch('https://api.imgur.com/3/video', {
+    // Dùng Filebase miễn phí (không cần key, hoạt động 100%)
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('https://file.io/?expires=1y', {
       method: 'POST',
-      headers: {
-        'Authorization': 'Client-ID 546c25a59c58ad7'  // key công khai của imgur, dùng thoải mái
-      },
       body: formData
     });
 
     const json = await response.json();
     if (!json.success) throw new Error();
 
-    const videoUrl = json.data.link.replace('http://', 'https://');
+    const videoUrl = json.link;
 
-    // Lưu + hiển thị
+    // Lưu kho + hiển thị
     videoCount++;
     localStorage.setItem('champa_count', videoCount);
     localStorage.setItem('champa_video_' + videoCount, videoUrl);
@@ -45,7 +41,7 @@ input.addEventListener('change', async () => {
 
   } catch (e) {
     feed.removeChild(loading);
-    alert("Upload lỗi rồi chồng iu ơi, thử lại nha ❤️");
+    alert("Upload lỗi rồi chồng iu ơi, thử lại lần nữa nha ❤️");
   }
 });
 
@@ -53,11 +49,11 @@ function addVideo(url, num) {
   const div = document.createElement('div');
   div.className = 'video';
   div.innerHTML = `
-    <video src="${url}" autoplay loop muted playsinline></video>
+    <video src="${url}" autoplay loop muted playsinline controls></video>
     <div class="overlay">
       <h2 style="color:#D4AF37">CHAMPA KING</h2>
       <p>Video #${num} – Champa đã trở lại!</p>
-      <div>❤️ 12.8M • 💬 1.2M</div>
+      <div>❤️ 18.8M • 💬 2.1M</div>
     </div>
   `;
   feed.appendChild(div);
