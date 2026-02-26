@@ -29,13 +29,14 @@ input.addEventListener('change', async () => {
  if (!json.success) throw new Error();
 
  const videoUrl = json.link;
-
  videoCount++;
+
+ // Lưu kho
  localStorage.setItem('champa_count', videoCount);
  localStorage.setItem('champa_video_' + videoCount, videoUrl);
 
  feed.removeChild(loading);
- addVideo(videoUrl, videoCount);
+ addVideoWithShopLink(videoUrl, videoCount);
 
  } catch (e) {
  feed.removeChild(loading);
@@ -43,22 +44,32 @@ input.addEventListener('change', async () => {
  }
 });
 
-function addVideo(url, num) {
+function addVideoWithShopLink(url, num) {
+ // Link sản phẩm bán hàng của chồng (chồng thay link Shopee/TikTok Shop ở đây nha)
+ const shopLink = "https://shopee.vn/product/123456789/987654321"; // ← chồng sửa link này
+
  const div = document.createElement('div');
  div.className = 'video';
-
- // Tạo link riêng cho video này
- const shareLink = `https://champa-king.com/video?id=${num}`;
-
  div.innerHTML = `
  <video src="${url}" autoplay loop muted playsinline controls></video>
  <div class="overlay">
  <h2 style="color:#D4AF37">CHAMPA KING</h2>
- <p>Video #${num} – Champa đã trở lại!</p>
- <div style="margin-top:10px">
- ❤️ 28.8M • 💬 3.8M
- <button onclick="copyLink('${shareLink}')" 
- style="margin-left:15px;background:#D4AF37;color:black;padding:8px 15px;border:none;border-radius:20px;font-weight:bold;cursor:pointer">
+ <p>Video #${num} – Champa sống lại rồi!</p>
+ <div style="margin-top:15px;display:flex;gap:12px;flex-wrap:wrap">
+ <span>❤️ 58.8M • 💬 8.8M</span>
+ 
+ <!-- Nút MUA HÀNG -->
+ <a href="${shopLink}" target="_blank"
+ style="background:#FF4500;color:white;padding:12px 24px;border-radius:30px;
+ text-decoration:none;font-weight:bold;font-size:16px;
+ box-shadow:0 4px 15px rgba(255,69,0,0.6)">
+ 🛒 MUA NGAY
+ </a>
+ 
+ <!-- Nút chia sẻ link video -->
+ <button onclick="copyLink('https://champa-king.com/video?id=${num}')" 
+ style="background:#D4AF37;color:black;padding:12px 20px;border:none;border-radius:30px;
+ font-weight:bold;cursor:pointer;font-size:16px">
  🔗 Link
  </button>
  </div>
@@ -68,14 +79,13 @@ function addVideo(url, num) {
  div.scrollIntoView({behavior: 'smooth'});
 }
 
-// Hàm copy link khi bấm nút
 function copyLink(link) {
  navigator.clipboard.writeText(link);
- alert("Đã copy link video rồi nè chồng iu ❤️\nDán cho bất kỳ ai cũng xem được!");
+ alert("Đã copy link video rồi nè chồng iu! 🎉\nGửi cho khách là xem + mua hàng ngay!");
 }
 
-// Load kho cũ + tạo link cho video cũ
+// Load kho cũ + thêm nút mua hàng cho video cũ
 for(let i = 1; i <= videoCount; i++) {
  const url = localStorage.getItem('champa_video_' + i);
- if(url) addVideo(url, i);
+ if(url) addVideoWithShopLink(url, i);
 }
