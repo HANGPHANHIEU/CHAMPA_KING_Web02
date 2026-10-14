@@ -1,26 +1,197 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CHAMPA KING</title>
-  
-  <!-- Uploadcare để upload video thật -->
-  <script src="https://cdn.jsdelivr.net/npm/@uploadcare/upload-client@latest"></script>
-  
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Việc Gấp - Ứng dụng tìm việc nhanh</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome cho Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- File CSS riêng -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="bg-[#0f172a] text-slate-100 h-screen flex overflow-hidden">
 
-<div class="tab">
-  <a href="kho.html">Kho video của CHAMPA KING</a>
-</div>
+    <!-- 1. THANH CÔNG CỤ LẬP TRÌNH (BÊN TRÁI) -->
+    <aside class="w-20 bg-[#1e293b] border-r border-slate-800 flex flex-col items-center py-4 justify-between select-none sidebar-scroll overflow-y-auto z-20">
+        <div class="flex flex-col items-center space-y-5 w-full">
+            <div class="text-xs font-semibold text-slate-400 mb-1 tracking-wider uppercase">Preview</div>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group py-1">
+                <i class="fa-solid fa-code text-lg mb-1 group-hover:scale-110"></i>
+                <span class="text-[10px]">Code</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group py-1">
+                <i class="fa-solid fa-wand-magic-sparkles text-lg mb-1 group-hover:scale-110"></i>
+                <span class="text-[10px]">Design</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group py-1">
+                <i class="fa-regular fa-folder text-lg mb-1 group-hover:scale-110"></i>
+                <span class="text-[10px]">File</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group py-1">
+                <i class="fa-regular fa-image text-lg mb-1 group-hover:scale-110"></i>
+                <span class="text-[10px]">Media</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group py-1">
+                <i class="fa-solid fa-volume-high text-lg mb-1 group-hover:scale-110"></i>
+                <span class="text-[10px]">Audio</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group py-1">
+                <i class="fa-solid fa-bolt text-lg mb-1 group-hover:scale-110"></i>
+                <span class="text-[10px]">API</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group py-1">
+                <i class="fa-solid fa-code-branch text-lg mb-1 group-hover:scale-110"></i>
+                <span class="text-[10px]">Env Var</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group py-1">
+                <i class="fa-solid fa-database text-lg mb-1 group-hover:scale-110"></i>
+                <span class="text-[10px]">Database</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group py-1">
+                <i class="fa-solid fa-key text-lg mb-1 group-hover:scale-110"></i>
+                <span class="text-[10px]">Auth</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group py-1">
+                <i class="fa-regular fa-credit-card text-lg mb-1 group-hover:scale-110"></i>
+                <span class="text-[10px]">Payment</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group py-1">
+                <i class="fa-regular fa-comment-dots text-lg mb-1 group-hover:scale-110"></i>
+                <span class="text-[10px]">Prompts</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group py-1">
+                <i class="fa-solid fa-list-ul text-lg mb-1 group-hover:scale-110"></i>
+                <span class="text-[10px]">Logs</span>
+            </a>
+        </div>
+        <div class="flex flex-col items-center pt-3 border-t border-slate-700 w-full">
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-white transition group">
+                <i class="fa-solid fa-paper-plane text-lg mb-1"></i>
+                <span class="text-[10px]">Request</span>
+            </a>
+        </div>
+    </aside>
 
-<div id="feed"></div>
+    <!-- 2. KHUNG HIỂN THỊ CHÍNH (BÊN PHẢI) - GIAO DIỆN "VIỆC GẤP" -->
+    <main class="flex-1 bg-white text-slate-800 flex flex-col h-full overflow-hidden relative">
+        
+        <!-- Header Ứng dụng -->
+        <header class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-white">
+            <div class="flex items-center space-x-2">
+                <div class="text-[#0d9488] text-xl font-bold flex items-center">
+                    <i class="fa-solid fa-bolt-lightning text-xl mr-1"></i>
+                    <span class="text-slate-900 font-extrabold tracking-tight">việcgấp</span>
+                    <span class="text-amber-500 text-lg ml-0.5">.</span>
+                </div>
+            </div>
+            <div>
+                <button id="btnPostJob" class="bg-[#0d9488] hover:bg-teal-700 text-white font-medium px-4 py-2 rounded-xl text-sm flex items-center shadow-sm transition">
+                    <i class="fa-solid fa-plus mr-2"></i> Đăng việc gấp
+                </button>
+            </div>
+        </header>
 
-<div class="upload-btn" id="uploadBtn">Plus</div>
-<input type="file" accept="video/*" id="upload" style="display:none">
+        <!-- Nội dung cuộn bên trong ứng dụng -->
+        <div class="flex-1 overflow-y-auto px-6 py-5 pb-24">
+            <!-- Tiêu đề trang -->
+            <div class="mb-5">
+                <h1 class="text-2xl font-bold text-slate-900 flex items-center">
+                    Việc gần bạn 
+                    <a href="#" class="ml-2 inline-flex items-center justify-center w-6 h-6 rounded-md bg-slate-100 text-slate-500 text-xs">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </h1>
+                <p class="text-sm text-slate-500 mt-0.5">Chọn việc phù hợp. Bắt đầu ngay hôm nay.</p>
+                <div class="flex items-center text-xs text-slate-500 mt-2">
+                    <span class="w-2 h-2 rounded-full bg-teal-600 inline-block mr-1.5"></span>
+                    Các việc bên dưới là dữ liệu mẫu
+                </div>
+            </div>
 
-<script src="script.js"></script>
+            <!-- Banner nổi bật -->
+            <div class="bg-gradient-to-r from-teal-800 via-teal-700 to-teal-900 rounded-2xl p-6 text-white relative overflow-hidden mb-6 shadow-md">
+                <div class="absolute right-[-20px] bottom-[-20px] opacity-15 text-white text-9xl pointer-events-none">
+                    <i class="fa-solid fa-bicycle"></i>
+                </div>
+                <div class="relative z-10 max-w-lg">
+                    <span class="bg-amber-500 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md inline-flex items-center mb-3 shadow-sm">
+                        <i class="fa-solid fa-bolt mr-1"></i> Cần người ngay
+                    </span>
+                    <h2 class="text-xl md:text-2xl font-bold leading-snug mb-2">
+                        Một chuyến giao hàng.<br>Một khoản thu nhập ngay.
+                    </h2>
+                    <p class="text-xs md:text-sm text-teal-100 mb-4 font-medium">
+                        Quận 3 &bull; Trong 30 phút &bull; 180.000đ / chuyến
+                    </p>
+                    <button class="bg-white text-teal-900 hover:bg-teal-50 font-semibold px-4 py-2 rounded-xl text-xs flex items-center transition shadow">
+                        Xem việc này <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Thanh tìm kiếm và bộ lọc khu vực -->
+            <div class="space-y-3 mb-5">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                    <input type="text" id="searchInput" placeholder="Bạn muốn làm việc gì?" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-teal-600 focus:bg-white transition">
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-location-dot absolute left-4 top-3.5 text-slate-500 text-sm"></i>
+                    <select id="locationSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-8 text-sm text-slate-800 appearance-none focus:outline-none focus:border-teal-600 focus:bg-white transition cursor-pointer">
+                        <option>Tất cả khu vực</option>
+                        <option>Quận 1</option>
+                        <option>Quận 3</option>
+                        <option>Quận 7</option>
+                        <option>Bình Thạnh</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-xs text-slate-400 pointer-events-none"></i>
+                </div>
+            </div>
+
+            <!-- Danh mục dạng pills -->
+            <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none mb-5" id="categoryContainer">
+                <button data-category="all" class="category-btn bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap shadow-sm transition">Tất cả</button>
+                <button data-category="delivery" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Giao hàng</button>
+                <button data-category="cleaning" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Dọn dẹp</button>
+                <button data-category="repair" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Sửa chữa</button>
+                <button data-category="service" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Phục vụ</button>
+            </div>
+
+            <!-- Bộ lọc kết quả -->
+            <div class="flex items-center justify-between mb-4">
+                <span id="jobCount" class="text-sm font-bold text-slate-800">6 việc phù hợp</span>
+                <div class="flex items-center space-x-4 text-xs text-slate-600">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="urgentCheck" class="rounded border-slate-300 text-teal-600 focus:ring-teal-500 mr-1.5 w-4 h-4">
+                        Chỉ việc gấp
+                    </label>
+                    <button class="flex items-center text-slate-700 font-medium hover:text-teal-600">
+                        <i class="fa-solid fa-arrow-down-wide-short mr-1"></i> Gần nhất <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thanh điều hướng dưới cùng (Bottom Navigation cho Mobile View) -->
+        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-2.5 flex justify-around items-center z-10 shadow-lg">
+            <a href="#" class="flex flex-col items-center text-[#0d9488]">
+                <i class="fa-solid fa-magnifying-glass text-base mb-1"></i>
+                <span class="text-[11px] font-medium">Tìm việc</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
+                <i class="fa-solid fa-briefcase text-base mb-1"></i>
+                <span class="text-[11px]">Đã nhận</span>
+            </a>
+            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
+                <i class="fa-solid fa-plus text-base mb-1"></i>
+                <span class="text-[11px]">Đăng việc</span>
+            </a>
+        </nav>
+    </main>
+
+    <!-- File JavaScript riêng -->
+    <script src="script.js"></script>
 </body>
 </html>
