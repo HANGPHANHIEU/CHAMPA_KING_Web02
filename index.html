@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -45,7 +46,7 @@
                 <p class="text-sm text-slate-500 mt-0.5">Chọn việc phù hợp. Bắt đầu ngay hôm nay.</p>
                 <div class="flex items-center text-xs text-slate-500 mt-2">
                     <span class="w-2 h-2 rounded-full bg-teal-600 inline-block mr-1.5"></span>
-                    Các việc bên dưới là dữ liệu mẫu
+                    Các việc bên dưới là dữ liệu mẫu và việc tự đăng
                 </div>
             </div>
 
@@ -79,11 +80,11 @@
                 <div class="relative">
                     <i class="fa-solid fa-location-dot absolute left-4 top-3.5 text-slate-500 text-sm"></i>
                     <select id="locationSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-8 text-sm text-slate-800 appearance-none focus:outline-none focus:border-teal-600 focus:bg-white transition cursor-pointer">
-                        <option>Tất cả khu vực</option>
-                        <option>Quận 1</option>
-                        <option>Quận 3</option>
-                        <option>Quận 7</option>
-                        <option>Bình Thạnh</option>
+                        <option value="">Tất cả khu vực</option>
+                        <option value="Quận 1">Quận 1</option>
+                        <option value="Quận 3">Quận 3</option>
+                        <option value="Quận 7">Quận 7</option>
+                        <option value="Bình Thạnh">Bình Thạnh</option>
                     </select>
                     <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-xs text-slate-400 pointer-events-none"></i>
                 </div>
@@ -100,20 +101,22 @@
 
             <!-- Bộ lọc kết quả -->
             <div class="flex items-center justify-between mb-4">
-                <span id="jobCount" class="text-sm font-bold text-slate-800">6 việc phù hợp</span>
+                <span id="jobCount" class="text-sm font-bold text-slate-800">0 việc phù hợp</span>
                 <div class="flex items-center space-x-4 text-xs text-slate-600">
                     <label class="flex items-center cursor-pointer">
                         <input type="checkbox" id="urgentCheck" class="rounded border-slate-300 text-teal-600 focus:ring-teal-500 mr-1.5 w-4 h-4">
                         Chỉ việc gấp
                     </label>
-                    <button class="flex items-center text-slate-700 font-medium hover:text-teal-600">
-                        <i class="fa-solid fa-arrow-down-wide-short mr-1"></i> Gần nhất <i class="fa-solid fa-chevron-down ml-1 text-[10px]"></i>
-                    </button>
                 </div>
+            </div>
+
+            <!-- KHU VỰC HIỂN THỊ DANH SÁCH VIỆC LÀM -->
+            <div id="jobList" class="space-y-3">
+                <!-- Các công việc sẽ được render tự động ở đây -->
             </div>
         </div>
 
-        <!-- Thanh điều hướng dưới cùng (Bottom Navigation cho Mobile View) -->
+        <!-- Thanh điều hướng dưới cùng -->
         <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-2.5 flex justify-around items-center z-10 shadow-lg">
             <a href="#" class="flex flex-col items-center text-[#0d9488]">
                 <i class="fa-solid fa-magnifying-glass text-base mb-1"></i>
@@ -129,6 +132,59 @@
             </a>
         </nav>
     </main>
+
+    <!-- MODAL ĐĂNG VIỆC (Form nhập thông tin) -->
+    <div id="postJobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-800 text-lg">Đăng công việc mới</h3>
+                <button id="btnCloseModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+            </div>
+            
+            <form id="postJobForm" class="p-5 space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Tên công việc <span class="text-red-500">*</span></label>
+                    <input type="text" id="jobTitleInput" required placeholder="Ví dụ: Giao hàng nhanh Quận 3..." class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Khu vực</label>
+                        <select id="jobLocationInput" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                            <option value="Quận 1">Quận 1</option>
+                            <option value="Quận 3">Quận 3</option>
+                            <option value="Quận 7">Quận 7</option>
+                            <option value="Bình Thạnh">Bình Thạnh</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Danh mục</label>
+                        <select id="jobCategoryInput" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                            <option value="delivery">Giao hàng</option>
+                            <option value="cleaning">Dọn dẹp</option>
+                            <option value="repair">Sửa chữa</option>
+                            <option value="service">Phục vụ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Mức lương</label>
+                    <input type="text" id="jobSalaryInput" placeholder="Ví dụ: 180.000đ / chuyến" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+
+                <div class="flex items-center gap-2 pt-1">
+                    <input type="checkbox" id="jobUrgentInput" class="w-4 h-4 text-teal-600 rounded border-slate-300 focus:ring-teal-500">
+                    <label for="jobUrgentInput" class="text-sm font-medium text-slate-700 cursor-pointer">Cần tuyển gấp (Gắn nhãn GẤP)</label>
+                </div>
+
+                <div class="pt-3 flex gap-2">
+                    <button type="button" id="btnCancelModal" class="w-1/2 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition text-sm">Hủy</button>
+                    <button type="submit" class="w-1/2 py-2.5 bg-[#0d9488] hover:bg-teal-700 text-white font-medium rounded-xl transition shadow-sm text-sm">Đăng ngay</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- File JavaScript riêng -->
     <script src="script.js"></script>
