@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Trị Phê Duyệt - Việc Gấp Admin</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header Admin -->
+    <header class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center shadow-md">
+        <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-shield-halved text-teal-400 text-xl"></i>
+            <span class="font-bold text-lg tracking-tight">Hệ Thống Phê Duyệt - Việc Gấp Admin</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="btnLogout" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition hidden">
+                <i class="fa-solid fa-right-from-bracket mr-1"></i> Đăng xuất
+            </button>
+            <a href="index.html" class="bg-teal-600 hover:bg-teal-700 text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center shadow-sm">
+                <i class="fa-solid fa-arrow-left mr-1.5"></i> Về trang người dùng
+            </a>
+        </div>
+    </header>
+
+    <!-- 1. KHUNG ĐĂNG NHẬP ADMIN -->
+    <div id="adminLoginSection" class="flex-1 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-100 p-6 space-y-5">
+            <div class="text-center space-y-1">
+                <div class="w-12 h-12 bg-slate-900 text-teal-400 rounded-2xl flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h2 class="text-xl font-bold text-slate-900">Xác thực Quản trị viên</h2>
+                <p class="text-xs text-slate-500">Nhập mật khẩu admin để kiểm duyệt hồ sơ</p>
+            </div>
+
+            <form id="adminLoginForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu Admin</label>
+                    <input type="password" id="adminPasswordInput" required placeholder="Nhập mật khẩu..." class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+                <p id="loginErrorMsg" class="text-xs text-red-500 font-semibold hidden text-center">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> Mật khẩu không chính xác!
+                </p>
+                <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition text-sm shadow-sm">
+                    Đăng nhập hệ thống
+                </button>
+            </form>
+            <p class="text-[11px] text-center text-slate-400">Mật khẩu mặc định: <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700 font-bold">admin123</code></p>
+        </div>
+    </div>
+
+    <!-- 2. KHU VỰC PHÊ DUYỆT ĐƠN (Chỉ hiển thị khi nhập đúng mật khẩu) -->
+    <main id="adminMainContent" class="flex-1 max-w-5xl w-full mx-auto p-6 space-y-6 hidden">
+        
+        <!-- Thống kê nhanh số đơn chờ duyệt -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 font-semibold uppercase">Cá nhân chờ duyệt</p>
+                    <h3 id="statPendingWorkers" class="text-2xl font-bold text-amber-600 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-user-clock"></i>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-slate-500 font-semibold uppercase">Tổ chức chờ duyệt</p>
+                    <h3 id="statPendingOrgs" class="text-2xl font-bold text-blue-600 mt-1">0</h3>
+                </div>
+                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-building-circle-exclamation"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng Phê duyệt Hồ sơ Cá nhân -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-4 border-b border-slate-100 bg-slate-50">
+                <h3 class="font-bold text-slate-900 text-sm"><i class="fa-solid fa-user-check mr-2 text-amber-500"></i> Phê duyệt Hồ sơ Cá nhân</h3>
+            </div>
+            <div id="adminPendingWorkerList" class="p-4 space-y-3"></div>
+        </div>
+
+        <!-- Bảng Phê duyệt Hồ sơ Tổ chức -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-4 border-b border-slate-100 bg-slate-50">
+                <h3 class="font-bold text-slate-900 text-sm"><i class="fa-solid fa-building-shield mr-2 text-blue-600"></i> Phê duyệt Tổ chức / Đối tác</h3>
+            </div>
+            <div id="adminPendingOrgList" class="p-4 space-y-3"></div>
+        </div>
+
+    </main>
+
+    <!-- Logic xử lý kiểm duyệt cho admin.html -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ADMIN_PASS = 'admin123';
+            
+            const loginSection = document.getElementById('adminLoginSection');
+            const mainContent = document.getElementById('adminMainContent');
+            const loginForm = document.getElementById('adminLoginForm');
+            const passwordInput = document.getElementById('adminPasswordInput');
+            const loginErrorMsg = document.getElementById('loginErrorMsg');
+            const btnLogout = document.getElementById('btnLogout');
+
+            // Tự động vào thẳng nếu đã xác thực trước đó
+            if (localStorage.getItem('is_admin_logged') === 'true') {
+                openDashboard();
+            }
+
+            // Xử lý xác thực mật khẩu
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (passwordInput.value.trim() === ADMIN_PASS) {
+                    localStorage.setItem('is_admin_logged', 'true');
+                    openDashboard();
+                } else {
+                    loginErrorMsg.classList.remove('hidden');
+                }
+            });
+
+            // Xử lý đăng xuất
+            btnLogout.addEventListener('click', () => {
+                localStorage.removeItem('is_admin_logged');
+                mainContent.classList.add('hidden');
+                loginSection.classList.remove('hidden');
+                btnLogout.classList.add('hidden');
+                passwordInput.value = '';
+                loginErrorMsg.classList.add('hidden');
+            });
+
+            function openDashboard() {
+                loginSection.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+                btnLogout.classList.remove('hidden');
+                loadPendingData();
+            }
+
+            function loadPendingData() {
+                const workers = JSON.parse(localStorage.getItem('workers_list') || '[]');
+                const orgs = JSON.parse(localStorage.getItem('organizations_list') || '[]');
+
+                const pendingWorkers = workers.filter(w => !w.status || w.status === 'pending');
+                const pendingOrgs = orgs.filter(o => !o.status || o.status === 'pending');
+
+                document.getElementById('statPendingWorkers').textContent = pendingWorkers.length;
+                document.getElementById('statPendingOrgs').textContent = pendingOrgs.length;
+
+                // 1. Render danh sách Cá nhân
+                const workerContainer = document.getElementById('adminPendingWorkerList');
+                workerContainer.innerHTML = '';
+                if (pendingWorkers.length === 0) {
+                    workerContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">Không có hồ sơ cá nhân nào đang chờ duyệt.</p>`;
+                } else {
+                    pendingWorkers.forEach(w => {
+                        const item = document.createElement('div');
+                        item.className = 'p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs';
+                        item.innerHTML = `
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">${w.name} - <span class="text-amber-600">${w.skill}</span></h4>
+                                <p class="text-slate-600 mt-0.5">📞 ${w.phone} &bull; 📍 ${w.location}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="approveWorker(${w.id})" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition shadow-sm cursor-pointer">Đồng ý</button>
+                                <button onclick="rejectWorker(${w.id})" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition shadow-sm cursor-pointer">Từ chối</button>
+                            </div>
+                        `;
+                        workerContainer.appendChild(item);
+                    });
+                }
+
+                // 2. Render danh sách Tổ chức
+                const orgContainer = document.getElementById('adminPendingOrgList');
+                orgContainer.innerHTML = '';
+                if (pendingOrgs.length === 0) {
+                    orgContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">Không có tổ chức nào đang chờ duyệt.</p>`;
+                } else {
+                    pendingOrgs.forEach(o => {
+                        const item = document.createElement('div');
+                        item.className = 'p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs';
+                        item.innerHTML = `
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">${o.name}</h4>
+                                <p class="text-slate-600 mt-0.5">📞 ${o.phone} &bull; 📍 ${o.location}</p>
+                                <p class="text-blue-700 font-medium mt-0.5">Thế mạnh: ${o.strength}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="approveOrg(${o.id})" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition shadow-sm cursor-pointer">Đồng ý</button>
+                                <button onclick="rejectOrg(${o.id})" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition shadow-sm cursor-pointer">Từ chối</button>
+                            </div>
+                        `;
+                        orgContainer.appendChild(item);
+                    });
+                }
+            }
+
+            // --- XỬ LÝ HÀNH ĐỘNG ĐỒNG Ý / TỪ CHỐI ---
+            window.approveWorker = function(id) {
+                let workers = JSON.parse(localStorage.getItem('workers_list') || '[]');
+                workers = workers.map(w => w.id === id ? { ...w, status: 'approved' } : w);
+                localStorage.setItem('workers_list', JSON.stringify(workers));
+                loadPendingData();
+                alert('Đã phê duyệt hồ sơ cá nhân thành công!');
+            };
+
+            window.rejectWorker = function(id) {
+                if (confirm('Bạn có chắc chắn muốn từ chối và xóa hồ sơ này?')) {
+                    let workers = JSON.parse(localStorage.getItem('workers_list') || '[]');
+                    workers = workers.filter(w => w.id !== id);
+                    localStorage.setItem('workers_list', JSON.stringify(workers));
+                    loadPendingData();
+                }
+            };
+
+            window.approveOrg = function(id) {
+                let orgs = JSON.parse(localStorage.getItem('organizations_list') || '[]');
+                orgs = orgs.map(o => o.id === id ? { ...o, status: 'approved' } : o);
+                localStorage.setItem('organizations_list', JSON.stringify(orgs));
+                loadPendingData();
+                alert('Đã phê duyệt tổ chức thành công!');
+            };
+
+            window.rejectOrg = function(id) {
+                if (confirm('Bạn có chắc chắn muốn từ chối và xóa tổ chức này?')) {
+                    let orgs = JSON.parse(localStorage.getItem('organizations_list') || '[]');
+                    orgs = orgs.filter(o => o.id !== id);
+                    localStorage.setItem('organizations_list', JSON.stringify(orgs));
+                    loadPendingData();
+                }
+            };
+        });
+    </script>
+</body>
+</html>
