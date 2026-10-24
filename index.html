@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -27,6 +26,11 @@
                 </div>
             </div>
             <div class="flex items-center gap-1.5">
+                <!-- NÚT CHUYỂN SANG TRANG ADMIN -->
+                <a href="admin.html" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-2.5 py-2 rounded-xl text-xs flex items-center transition shadow-sm mr-1">
+                    <i class="fa-solid fa-user-gear mr-1 text-teal-400"></i> Admin
+                </a>
+                
                 <button id="btnRegisterWorker" class="bg-amber-500 hover:bg-amber-600 text-white font-medium px-2.5 py-2 rounded-xl text-xs flex items-center transition shadow-sm">
                     <i class="fa-solid fa-user-plus mr-1"></i> Đăng ký cá nhân
                 </button>
@@ -143,6 +147,57 @@
                 </div>
             </div>
 
+            <!-- TAB 5: QUẢN TRỊ ADMIN -->
+            <div id="tabAdmin" class="tab-content hidden space-y-5">
+                <div class="flex justify-between items-center mb-2">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900">Trang Quản Trị Hệ Thống</h1>
+                        <p class="text-sm text-slate-500 mt-0.5">Kiểm duyệt hồ sơ cá nhân và tổ chức đối tác đăng ký mới.</p>
+                    </div>
+                    <button id="btnCloseAdmin" class="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-xl transition">
+                        <i class="fa-solid fa-xmark mr-1"></i> Thoát Admin
+                    </button>
+                </div>
+
+                <!-- Thống kê đơn chờ duyệt -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold uppercase">Hồ sơ cá nhân chờ duyệt</p>
+                            <h3 id="statPendingWorkers" class="text-2xl font-bold text-amber-600 mt-1">0</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-user-clock"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold uppercase">Tổ chức chờ duyệt</p>
+                            <h3 id="statPendingOrgs" class="text-2xl font-bold text-blue-600 mt-1">0</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-building-circle-exclamation"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danh sách Cá nhân chờ duyệt -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50">
+                        <h3 class="font-bold text-slate-900 text-sm"><i class="fa-solid fa-user-check mr-2 text-amber-500"></i> Phê duyệt Hồ sơ Cá nhân</h3>
+                    </div>
+                    <div id="adminPendingWorkerList" class="p-4 space-y-3"></div>
+                </div>
+
+                <!-- Danh sách Tổ chức chờ duyệt -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50">
+                        <h3 class="font-bold text-slate-900 text-sm"><i class="fa-solid fa-building-shield mr-2 text-blue-600"></i> Phê duyệt Tổ chức / Đối tác</h3>
+                    </div>
+                    <div id="adminPendingOrgList" class="p-4 space-y-3"></div>
+                </div>
+            </div>
+
         </div>
 
         <!-- THANH ĐIỀU HƯỚNG DƯỚI CÙNG -->
@@ -166,20 +221,43 @@
         </nav>
     </main>
 
-    <!-- MODAL ĐĂNG VIỆC (Có thêm trường Số điện thoại liên hệ) -->
+    <!-- MODAL ĐĂNG NHẬP ADMIN -->
+    <div id="adminLoginModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 p-6 space-y-5">
+            <div class="text-center space-y-1">
+                <div class="w-12 h-12 bg-slate-900 text-teal-400 rounded-2xl flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h2 class="text-xl font-bold text-slate-900">Xác thực Quản trị viên</h2>
+                <p class="text-xs text-slate-500">Nhập mật khẩu Admin để mở giao diện phê duyệt</p>
+            </div>
+            <form id="adminLoginForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu Admin</label>
+                    <input type="password" id="adminPasswordInput" required placeholder="Nhập mật khẩu..." class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+                <p id="loginErrorMsg" class="text-xs text-red-500 font-semibold hidden text-center"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Mật khẩu không chính xác!</p>
+                <div class="flex gap-2">
+                    <button type="button" id="btnCloseAdminModal" class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl transition text-sm">Hủy</button>
+                    <button type="submit" class="w-1/2 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition text-sm shadow-sm">Đăng nhập</button>
+                </div>
+            </form>
+            <p class="text-[11px] text-center text-slate-400">Mật khẩu mặc định: <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700 font-bold">admin123</code></p>
+        </div>
+    </div>
+
+    <!-- MODAL ĐĂNG VIỆC -->
     <div id="postJobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
             <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                 <h3 class="font-bold text-slate-800 text-lg">Đăng công việc mới</h3>
                 <button id="btnCloseModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
             </div>
-            
             <form id="postJobForm" class="p-5 space-y-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Tên công việc <span class="text-red-500">*</span></label>
                     <input type="text" id="jobTitleInput" required placeholder="Ví dụ: Giao hàng nhanh Quận 3..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                 </div>
-
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại liên hệ <span class="text-red-500">*</span></label>
@@ -195,7 +273,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Danh mục</label>
@@ -211,12 +288,10 @@
                         <input type="text" id="jobSalaryInput" placeholder="180.000đ / chuyến" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                     </div>
                 </div>
-
                 <div class="flex items-center gap-2 pt-1">
                     <input type="checkbox" id="jobUrgentInput" class="w-4 h-4 text-teal-600 rounded border-slate-300 focus:ring-teal-500">
                     <label for="jobUrgentInput" class="text-sm font-medium text-slate-700 cursor-pointer">Cần tuyển gấp</label>
                 </div>
-
                 <div class="pt-2 flex gap-2">
                     <button type="button" id="btnCancelModal" class="w-1/2 py-2 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition text-sm">Hủy</button>
                     <button type="submit" class="w-1/2 py-2 bg-[#0d9488] hover:bg-teal-700 text-white font-medium rounded-xl transition shadow-sm text-sm">Đăng ngay</button>
@@ -232,13 +307,11 @@
                 <h3 class="font-bold text-slate-800 text-lg">Ghi danh Tổ chức / Đối tác</h3>
                 <button id="btnCloseOrgModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
             </div>
-            
             <form id="orgForm" class="p-5 space-y-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Tên Tổ chức / Doanh nghiệp <span class="text-red-500">*</span></label>
                     <input type="text" id="orgNameInput" required placeholder="Công ty Giao Nhanh 247" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                 </div>
-
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
@@ -254,17 +327,14 @@
                         </select>
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Địa chỉ chi tiết <span class="text-red-500">*</span></label>
                     <input type="text" id="orgAddressInput" required placeholder="Số 123, Đường ABC..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                 </div>
-
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Thế mạnh dịch vụ <span class="text-red-500">*</span></label>
                     <input type="text" id="orgStrengthInput" required placeholder="Giao hỏa tốc, Vệ sinh cao cấp..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                 </div>
-
                 <div class="pt-2 flex gap-2">
                     <button type="button" id="btnCancelOrgModal" class="w-1/2 py-2 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition text-sm">Hủy</button>
                     <button type="submit" class="w-1/2 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition shadow-sm text-sm">Ghi danh ngay</button>
@@ -273,20 +343,18 @@
         </div>
     </div>
 
-    <!-- MODAL ĐĂNG KÝ CÁ NHÂN (Mới) -->
+    <!-- MODAL ĐĂNG KÝ CÁ NHÂN -->
     <div id="workerModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
             <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                 <h3 class="font-bold text-slate-800 text-lg">Đăng ký Hồ sơ Cá nhân</h3>
                 <button id="btnCloseWorkerModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
             </div>
-            
             <form id="workerForm" class="p-5 space-y-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
                     <input type="text" id="workerNameInput" required placeholder="Nguyễn Văn A" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                 </div>
-
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
@@ -302,12 +370,10 @@
                         </select>
                     </div>
                 </div>
-
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Nghề nghiệp / Kỹ năng sở trường <span class="text-red-500">*</span></label>
                     <input type="text" id="workerSkillInput" required placeholder="Giao hàng, Dọn dẹp, Sửa điện nước..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                 </div>
-
                 <div class="pt-2 flex gap-2">
                     <button type="button" id="btnCancelWorkerModal" class="w-1/2 py-2 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition text-sm">Hủy</button>
                     <button type="submit" class="w-1/2 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-xl transition shadow-sm text-sm">Lưu hồ sơ</button>
