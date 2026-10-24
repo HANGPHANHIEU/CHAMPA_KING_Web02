@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -14,11 +13,11 @@
 </head>
 <body class="bg-white text-slate-800 h-screen flex overflow-hidden">
 
-    <!-- KHUNG HIỂN THỊ CHÍNH - GIAO DIỆN "VIỆC GẤP" -->
+    <!-- KHUNG HIỂN THỊ CHÍNH -->
     <main class="flex-1 bg-white text-slate-800 flex flex-col h-full overflow-hidden relative">
         
         <!-- Header Ứng dụng -->
-        <header class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-white">
+        <header class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-white z-20">
             <div class="flex items-center space-x-2">
                 <div class="text-[#0d9488] text-xl font-bold flex items-center">
                     <i class="fa-solid fa-bolt-lightning text-xl mr-1"></i>
@@ -26,114 +25,147 @@
                     <span class="text-amber-500 text-lg ml-0.5">.</span>
                 </div>
             </div>
-            <div>
-                <button id="btnPostJob" class="bg-[#0d9488] hover:bg-teal-700 text-white font-medium px-4 py-2 rounded-xl text-sm flex items-center shadow-sm transition">
-                    <i class="fa-solid fa-plus mr-2"></i> Đăng việc gấp
+            <div class="flex items-center gap-1.5">
+                <button id="btnRegisterWorker" class="bg-amber-500 hover:bg-amber-600 text-white font-medium px-2.5 py-2 rounded-xl text-xs flex items-center transition shadow-sm">
+                    <i class="fa-solid fa-user-plus mr-1"></i> Đăng ký cá nhân
+                </button>
+                <button id="btnJoinOrg" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-2.5 py-2 rounded-xl text-xs flex items-center transition">
+                    <i class="fa-solid fa-building-shield mr-1 text-teal-600"></i> Tổ chức
+                </button>
+                <button id="btnPostJob" class="bg-[#0d9488] hover:bg-teal-700 text-white font-medium px-3 py-2 rounded-xl text-xs flex items-center shadow-sm transition">
+                    <i class="fa-solid fa-plus mr-1"></i> Đăng việc
                 </button>
             </div>
         </header>
 
-        <!-- Nội dung cuộn bên trong ứng dụng -->
+        <!-- CONTAINER CHỨA CÁC TAB NỘI DUNG -->
         <div class="flex-1 overflow-y-auto px-6 py-5 pb-24">
-            <!-- Tiêu đề trang -->
-            <div class="mb-5">
-                <h1 class="text-2xl font-bold text-slate-900 flex items-center">
-                    Việc gần bạn 
-                    <a href="#" class="ml-2 inline-flex items-center justify-center w-6 h-6 rounded-md bg-slate-100 text-slate-500 text-xs">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    </a>
-                </h1>
-                <p class="text-sm text-slate-500 mt-0.5">Chọn việc phù hợp. Bắt đầu ngay hôm nay.</p>
-                <div class="flex items-center text-xs text-slate-500 mt-2">
-                    <span class="w-2 h-2 rounded-full bg-teal-600 inline-block mr-1.5"></span>
-                    Các việc bên dưới là dữ liệu mẫu và việc tự đăng
+
+            <!-- TAB 1: TÌM VIỆC -->
+            <div id="tabFindJob" class="tab-content space-y-5">
+                <div class="mb-5">
+                    <h1 class="text-2xl font-bold text-slate-900">Việc gần bạn</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Chọn việc phù hợp. Bắt đầu ngay hôm nay.</p>
+                </div>
+
+                <!-- Banner nổi bật -->
+                <div class="bg-gradient-to-r from-teal-800 via-teal-700 to-teal-900 rounded-2xl p-6 text-white relative overflow-hidden mb-6 shadow-md">
+                    <div class="absolute right-[-20px] bottom-[-20px] opacity-15 text-white text-9xl pointer-events-none">
+                        <i class="fa-solid fa-bicycle"></i>
+                    </div>
+                    <div class="relative z-10 max-w-lg">
+                        <span class="bg-amber-500 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md inline-flex items-center mb-3 shadow-sm">
+                            <i class="fa-solid fa-bolt mr-1"></i> Cần người ngay
+                        </span>
+                        <h2 class="text-xl md:text-2xl font-bold leading-snug mb-2">Một chuyến giao hàng.<br>Một khoản thu nhập ngay.</h2>
+                        <p class="text-xs md:text-sm text-teal-100 mb-4 font-medium">Quận 3 &bull; Trong 30 phút &bull; 180.000đ / chuyến</p>
+                    </div>
+                </div>
+
+                <!-- Thanh tìm kiếm và bộ lọc khu vực -->
+                <div class="space-y-3 mb-5">
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                        <input type="text" id="searchInput" placeholder="Bạn muốn làm việc gì?" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-teal-600 transition">
+                    </div>
+                    <div class="relative">
+                        <i class="fa-solid fa-location-dot absolute left-4 top-3.5 text-slate-500 text-sm"></i>
+                        <select id="locationSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-8 text-sm text-slate-800 appearance-none focus:outline-none focus:border-teal-600 transition cursor-pointer">
+                            <option value="">Tất cả khu vực</option>
+                            <option value="Quận 1">Quận 1</option>
+                            <option value="Quận 3">Quận 3</option>
+                            <option value="Quận 7">Quận 7</option>
+                            <option value="Bình Thạnh">Bình Thạnh</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-xs text-slate-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <!-- Danh mục dạng pills -->
+                <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none mb-5" id="categoryContainer">
+                    <button data-category="all" class="category-btn bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap shadow-sm transition">Tất cả</button>
+                    <button data-category="delivery" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Giao hàng</button>
+                    <button data-category="cleaning" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Dọn dẹp</button>
+                    <button data-category="repair" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Sửa chữa</button>
+                    <button data-category="service" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Phục vụ</button>
+                </div>
+
+                <!-- Bộ lọc kết quả -->
+                <div class="flex items-center justify-between mb-4">
+                    <span id="jobCount" class="text-sm font-bold text-slate-800">0 việc phù hợp</span>
+                    <div class="flex items-center space-x-4 text-xs text-slate-600">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" id="urgentCheck" class="rounded border-slate-300 text-teal-600 focus:ring-teal-500 mr-1.5 w-4 h-4">
+                            Chỉ việc gấp
+                        </label>
+                    </div>
+                </div>
+
+                <!-- DANH SÁCH VIỆC LÀM -->
+                <div id="jobList" class="space-y-3"></div>
+            </div>
+
+            <!-- TAB 2: ĐÃ NHẬN VIỆC -->
+            <div id="tabAcceptedJob" class="tab-content hidden space-y-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Công việc đã nhận</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Thực hiện chấm công và đánh giá chất lượng hoàn thành.</p>
+                </div>
+                <div id="acceptedJobList" class="space-y-3"></div>
+            </div>
+
+            <!-- TAB 3: TỔ CHỨC / ĐỐI TÁC -->
+            <div id="tabOrganization" class="tab-content hidden space-y-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Tổ chức & Đối tác</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Danh sách các doanh nghiệp và đơn vị cung cấp việc làm.</p>
+                </div>
+                <div id="orgList" class="space-y-3"></div>
+            </div>
+
+            <!-- TAB 4: BẢN ĐỒ RADAR -->
+            <div id="tabMap" class="tab-content hidden space-y-4 h-[calc(100vh-140px)] flex flex-col">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Bản đồ trực quan</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Định vị điểm việc làm lân cận.</p>
+                </div>
+                <div class="flex-1 bg-slate-900 rounded-2xl border border-slate-800 relative overflow-hidden flex items-center justify-center shadow-inner">
+                    <div class="absolute w-72 h-72 rounded-full border border-teal-500/30 animate-ping pointer-events-none"></div>
+                    <div id="mapPinsContainer" class="absolute inset-0 p-6 flex flex-wrap items-center justify-around gap-6"></div>
+                    <div class="absolute bottom-4 left-4 right-4 bg-slate-800/90 backdrop-blur-md p-4 rounded-xl border border-slate-700 flex justify-between items-center text-white z-10">
+                        <div>
+                            <p class="text-xs text-teal-400 font-semibold uppercase tracking-wider">Trạm radar</p>
+                            <p id="mapSummaryText" class="text-sm font-bold">Đang quét khu vực...</p>
+                        </div>
+                        <span class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Banner nổi bật -->
-            <div class="bg-gradient-to-r from-teal-800 via-teal-700 to-teal-900 rounded-2xl p-6 text-white relative overflow-hidden mb-6 shadow-md">
-                <div class="absolute right-[-20px] bottom-[-20px] opacity-15 text-white text-9xl pointer-events-none">
-                    <i class="fa-solid fa-bicycle"></i>
-                </div>
-                <div class="relative z-10 max-w-lg">
-                    <span class="bg-amber-500 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md inline-flex items-center mb-3 shadow-sm">
-                        <i class="fa-solid fa-bolt mr-1"></i> Cần người ngay
-                    </span>
-                    <h2 class="text-xl md:text-2xl font-bold leading-snug mb-2">
-                        Một chuyến giao hàng.<br>Một khoản thu nhập ngay.
-                    </h2>
-                    <p class="text-xs md:text-sm text-teal-100 mb-4 font-medium">
-                        Quận 3 &bull; Trong 30 phút &bull; 180.000đ / chuyến
-                    </p>
-                    <button class="bg-white text-teal-900 hover:bg-teal-50 font-semibold px-4 py-2 rounded-xl text-xs flex items-center transition shadow">
-                        Xem việc này <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Thanh tìm kiếm và bộ lọc khu vực -->
-            <div class="space-y-3 mb-5">
-                <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-sm"></i>
-                    <input type="text" id="searchInput" placeholder="Bạn muốn làm việc gì?" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-teal-600 focus:bg-white transition">
-                </div>
-                <div class="relative">
-                    <i class="fa-solid fa-location-dot absolute left-4 top-3.5 text-slate-500 text-sm"></i>
-                    <select id="locationSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-11 pr-8 text-sm text-slate-800 appearance-none focus:outline-none focus:border-teal-600 focus:bg-white transition cursor-pointer">
-                        <option value="">Tất cả khu vực</option>
-                        <option value="Quận 1">Quận 1</option>
-                        <option value="Quận 3">Quận 3</option>
-                        <option value="Quận 7">Quận 7</option>
-                        <option value="Bình Thạnh">Bình Thạnh</option>
-                    </select>
-                    <i class="fa-solid fa-chevron-down absolute right-4 top-4 text-xs text-slate-400 pointer-events-none"></i>
-                </div>
-            </div>
-
-            <!-- Danh mục dạng pills -->
-            <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none mb-5" id="categoryContainer">
-                <button data-category="all" class="category-btn bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap shadow-sm transition">Tất cả</button>
-                <button data-category="delivery" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Giao hàng</button>
-                <button data-category="cleaning" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Dọn dẹp</button>
-                <button data-category="repair" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Sửa chữa</button>
-                <button data-category="service" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Phục vụ</button>
-            </div>
-
-            <!-- Bộ lọc kết quả -->
-            <div class="flex items-center justify-between mb-4">
-                <span id="jobCount" class="text-sm font-bold text-slate-800">0 việc phù hợp</span>
-                <div class="flex items-center space-x-4 text-xs text-slate-600">
-                    <label class="flex items-center cursor-pointer">
-                        <input type="checkbox" id="urgentCheck" class="rounded border-slate-300 text-teal-600 focus:ring-teal-500 mr-1.5 w-4 h-4">
-                        Chỉ việc gấp
-                    </label>
-                </div>
-            </div>
-
-            <!-- KHU VỰC HIỂN THỊ DANH SÁCH VIỆC LÀM -->
-            <div id="jobList" class="space-y-3">
-                <!-- Các công việc sẽ được render tự động ở đây -->
-            </div>
         </div>
 
-        <!-- Thanh điều hướng dưới cùng -->
-        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-4 py-2.5 flex justify-around items-center z-10 shadow-lg">
-            <a href="#" class="flex flex-col items-center text-[#0d9488]">
+        <!-- THANH ĐIỀU HƯỚNG DƯỚI CÙNG -->
+        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-2.5 flex justify-around items-center z-30 shadow-lg">
+            <button data-tab="tabFindJob" class="nav-btn flex flex-col items-center text-[#0d9488] transition">
                 <i class="fa-solid fa-magnifying-glass text-base mb-1"></i>
-                <span class="text-[11px] font-medium">Tìm việc</span>
-            </a>
-            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
+                <span class="text-[10px] font-medium">Tìm việc</span>
+            </button>
+            <button data-tab="tabAcceptedJob" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
                 <i class="fa-solid fa-briefcase text-base mb-1"></i>
-                <span class="text-[11px]">Đã nhận</span>
-            </a>
-            <a href="#" class="flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
-                <i class="fa-solid fa-plus text-base mb-1"></i>
-                <span class="text-[11px]">Đăng việc</span>
-            </a>
+                <span class="text-[10px]">Đã nhận</span>
+            </button>
+            <button data-tab="tabOrganization" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
+                <i class="fa-solid fa-building-shield text-base mb-1"></i>
+                <span class="text-[10px]">Tổ chức</span>
+            </button>
+            <button data-tab="tabMap" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
+                <i class="fa-solid fa-map-location-dot text-base mb-1"></i>
+                <span class="text-[10px]">Bản đồ</span>
+            </button>
         </nav>
     </main>
 
-    <!-- MODAL ĐĂNG VIỆC (Form nhập thông tin) -->
+    <!-- MODAL ĐĂNG VIỆC (Có thêm trường Số điện thoại liên hệ) -->
     <div id="postJobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
             <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -141,52 +173,149 @@
                 <button id="btnCloseModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
             </div>
             
-            <form id="postJobForm" class="p-5 space-y-4">
+            <form id="postJobForm" class="p-5 space-y-3">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Tên công việc <span class="text-red-500">*</span></label>
-                    <input type="text" id="jobTitleInput" required placeholder="Ví dụ: Giao hàng nhanh Quận 3..." class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tên công việc <span class="text-red-500">*</span></label>
+                    <input type="text" id="jobTitleInput" required placeholder="Ví dụ: Giao hàng nhanh Quận 3..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">Khu vực</label>
-                        <select id="jobLocationInput" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại liên hệ <span class="text-red-500">*</span></label>
+                        <input type="tel" id="jobPhoneInput" required placeholder="0901234567" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Khu vực</label>
+                        <select id="jobLocationInput" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                             <option value="Quận 1">Quận 1</option>
                             <option value="Quận 3">Quận 3</option>
                             <option value="Quận 7">Quận 7</option>
                             <option value="Bình Thạnh">Bình Thạnh</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">Danh mục</label>
-                        <select id="jobCategoryInput" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Danh mục</label>
+                        <select id="jobCategoryInput" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                             <option value="delivery">Giao hàng</option>
                             <option value="cleaning">Dọn dẹp</option>
                             <option value="repair">Sửa chữa</option>
                             <option value="service">Phục vụ</option>
                         </select>
                     </div>
-                </div>
-
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Mức lương</label>
-                    <input type="text" id="jobSalaryInput" placeholder="Ví dụ: 180.000đ / chuyến" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Mức lương</label>
+                        <input type="text" id="jobSalaryInput" placeholder="180.000đ / chuyến" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-2 pt-1">
                     <input type="checkbox" id="jobUrgentInput" class="w-4 h-4 text-teal-600 rounded border-slate-300 focus:ring-teal-500">
-                    <label for="jobUrgentInput" class="text-sm font-medium text-slate-700 cursor-pointer">Cần tuyển gấp (Gắn nhãn GẤP)</label>
+                    <label for="jobUrgentInput" class="text-sm font-medium text-slate-700 cursor-pointer">Cần tuyển gấp</label>
                 </div>
 
-                <div class="pt-3 flex gap-2">
-                    <button type="button" id="btnCancelModal" class="w-1/2 py-2.5 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition text-sm">Hủy</button>
-                    <button type="submit" class="w-1/2 py-2.5 bg-[#0d9488] hover:bg-teal-700 text-white font-medium rounded-xl transition shadow-sm text-sm">Đăng ngay</button>
+                <div class="pt-2 flex gap-2">
+                    <button type="button" id="btnCancelModal" class="w-1/2 py-2 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition text-sm">Hủy</button>
+                    <button type="submit" class="w-1/2 py-2 bg-[#0d9488] hover:bg-teal-700 text-white font-medium rounded-xl transition shadow-sm text-sm">Đăng ngay</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- File JavaScript riêng -->
+    <!-- MODAL ĐĂNG KÝ TỔ CHỨC -->
+    <div id="orgModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-800 text-lg">Ghi danh Tổ chức / Đối tác</h3>
+                <button id="btnCloseOrgModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+            </div>
+            
+            <form id="orgForm" class="p-5 space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Tên Tổ chức / Doanh nghiệp <span class="text-red-500">*</span></label>
+                    <input type="text" id="orgNameInput" required placeholder="Công ty Giao Nhanh 247" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
+                        <input type="tel" id="orgPhoneInput" required placeholder="0901234567" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Khu vực trụ sở</label>
+                        <select id="orgLocationInput" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                            <option value="Quận 1">Quận 1</option>
+                            <option value="Quận 3">Quận 3</option>
+                            <option value="Quận 7">Quận 7</option>
+                            <option value="Bình Thạnh">Bình Thạnh</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Địa chỉ chi tiết <span class="text-red-500">*</span></label>
+                    <input type="text" id="orgAddressInput" required placeholder="Số 123, Đường ABC..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Thế mạnh dịch vụ <span class="text-red-500">*</span></label>
+                    <input type="text" id="orgStrengthInput" required placeholder="Giao hỏa tốc, Vệ sinh cao cấp..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+
+                <div class="pt-2 flex gap-2">
+                    <button type="button" id="btnCancelOrgModal" class="w-1/2 py-2 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition text-sm">Hủy</button>
+                    <button type="submit" class="w-1/2 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition shadow-sm text-sm">Ghi danh ngay</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL ĐĂNG KÝ CÁ NHÂN (Mới) -->
+    <div id="workerModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-800 text-lg">Đăng ký Hồ sơ Cá nhân</h3>
+                <button id="btnCloseWorkerModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+            </div>
+            
+            <form id="workerForm" class="p-5 space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
+                    <input type="text" id="workerNameInput" required placeholder="Nguyễn Văn A" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
+                        <input type="tel" id="workerPhoneInput" required placeholder="0901234567" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Khu vực sinh sống</label>
+                        <select id="workerLocationInput" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                            <option value="Quận 1">Quận 1</option>
+                            <option value="Quận 3">Quận 3</option>
+                            <option value="Quận 7">Quận 7</option>
+                            <option value="Bình Thạnh">Bình Thạnh</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Nghề nghiệp / Kỹ năng sở trường <span class="text-red-500">*</span></label>
+                    <input type="text" id="workerSkillInput" required placeholder="Giao hàng, Dọn dẹp, Sửa điện nước..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+
+                <div class="pt-2 flex gap-2">
+                    <button type="button" id="btnCancelWorkerModal" class="w-1/2 py-2 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition text-sm">Hủy</button>
+                    <button type="submit" class="w-1/2 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-xl transition shadow-sm text-sm">Lưu hồ sơ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script điều khiển -->
     <script src="script.js"></script>
 </body>
 </html>
