@@ -3,21 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Trị Phê Duyệt - Việc Gấp Admin</title>
+    <title>Xác Thực Quản Trị Viên - Việc Gấp Admin</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Identity Services SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col">
 
-    <!-- Header Admin -->
+    <!-- Header Quản Trị -->
     <header class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center shadow-md">
         <div class="flex items-center space-x-2">
             <i class="fa-solid fa-shield-halved text-teal-400 text-xl"></i>
-            <span class="font-bold text-lg tracking-tight">Hệ Thống Phê Duyệt - Việc Gấp Admin</span>
+            <span class="font-bold text-lg tracking-tight">Hệ Thống Kiểm Duyệt An Toàn</span>
         </div>
         <div class="flex items-center gap-3">
+            <span id="adminSessionInfo" class="text-xs text-teal-300 font-medium hidden"></span>
+            <button id="btnOpenChangePassModal" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition hidden">
+                <i class="fa-solid fa-key mr-1"></i> Đổi mật khẩu
+            </button>
             <button id="btnLogout" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition hidden">
                 <i class="fa-solid fa-right-from-bracket mr-1"></i> Đăng xuất
             </button>
@@ -27,37 +33,73 @@
         </div>
     </header>
 
-    <!-- 1. KHUNG ĐĂNG NHẬP ADMIN -->
+    <!-- MÀN HÌNH XÁC THỰC QUẢN TRỊ VIÊN -->
     <div id="adminLoginSection" class="flex-1 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-100 p-6 space-y-5">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-100 p-8 space-y-6">
             <div class="text-center space-y-1">
-                <div class="w-12 h-12 bg-slate-900 text-teal-400 rounded-2xl flex items-center justify-center text-xl mx-auto mb-2">
-                    <i class="fa-solid fa-lock"></i>
+                <div class="w-14 h-14 bg-slate-900 text-teal-400 rounded-2xl flex items-center justify-center text-2xl mx-auto mb-3 shadow-inner">
+                    <i class="fa-solid fa-fingerprint"></i>
                 </div>
-                <h2 class="text-xl font-bold text-slate-900">Xác thực Quản trị viên</h2>
-                <p class="text-xs text-slate-500">Nhập mật khẩu admin để kiểm duyệt hồ sơ</p>
+                <h2 class="text-xl font-extrabold text-slate-900">Xác thực Quản trị viên cấp cao</h2>
+                <p class="text-xs text-slate-500">Lựa chọn hình thức đăng nhập bảo mật để tiếp tục</p>
             </div>
 
-            <form id="adminLoginForm" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu Admin</label>
-                    <input type="password" id="adminPasswordInput" required placeholder="Nhập mật khẩu..." class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+            <!-- Tab lựa chọn phương thức xác thực -->
+            <div class="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+                <button type="button" id="tabGoogleBtn" class="py-2 rounded-lg bg-white text-slate-900 shadow-sm transition">Tài khoản Google</button>
+                <button type="button" id="tabPassBtn" class="py-2 rounded-lg text-slate-500 hover:text-slate-900 transition">Mật khẩu nội bộ</button>
+            </div>
+
+            <!-- Form đăng nhập bằng Google -->
+            <div id="googleAuthBox" class="space-y-4 pt-2">
+                <div class="bg-teal-50 border border-teal-100 rounded-xl p-3 text-center text-xs text-teal-800">
+                    <i class="fa-solid fa-circle-info mr-1"></i> Hệ thống chỉ cấp quyền cho tài khoản được ủy quyền: <br><b>hiêu199771@gmail.com</b>
                 </div>
-                <p id="loginErrorMsg" class="text-xs text-red-500 font-semibold hidden text-center">
+                <div class="flex justify-center py-2">
+                    <div id="g_id_onload"
+                         data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                         data-callback="handleGoogleLogin"
+                         data-auto_prompt="false">
+                    </div>
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-shape="rectangular"
+                         data-theme="outline"
+                         data-text="sign_in_with"
+                         data-size="large"
+                         data-logo_alignment="center">
+                    </div>
+                </div>
+                <p id="googleErrorMsg" class="text-xs text-red-500 font-semibold hidden text-center bg-red-50 p-2 rounded-lg">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> Tài khoản không có quyền truy cập!
+                </p>
+            </div>
+
+            <!-- Form đăng nhập bằng Mật khẩu (Ẩn mặc định) -->
+            <form id="adminLoginForm" class="space-y-4 hidden pt-2">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu bảo mật</label>
+                    <input type="password" id="adminPasswordInput" placeholder="Nhập mật khẩu quản trị..." class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600 transition">
+                </div>
+                <p id="loginErrorMsg" class="text-xs text-red-500 font-semibold hidden text-center bg-red-50 p-2 rounded-lg">
                     <i class="fa-solid fa-triangle-exclamation mr-1"></i> Mật khẩu không chính xác!
                 </p>
-                <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition text-sm shadow-sm">
-                    Đăng nhập hệ thống
+                <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition text-sm shadow-sm cursor-pointer">
+                    Xác thực Mật khẩu
                 </button>
             </form>
-            <p class="text-[11px] text-center text-slate-400">Mật khẩu mặc định: <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700 font-bold">admin123</code></p>
+
+            <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-[11px] text-slate-400">
+                <span>Mật khẩu mặc định: <code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-700 font-bold">admin123</code></span>
+                <span class="text-teal-600 font-medium"><i class="fa-solid fa-shield-check mr-1"></i> SSL Secured</span>
+            </div>
         </div>
     </div>
 
-    <!-- 2. KHU VỰC PHÊ DUYỆT ĐƠN (Chỉ hiển thị khi nhập đúng mật khẩu) -->
+    <!-- KHU VỰC PHÊ DUYỆT ĐƠN (Sau khi xác thực thành công) -->
     <main id="adminMainContent" class="flex-1 max-w-5xl w-full mx-auto p-6 space-y-6 hidden">
         
-        <!-- Thống kê nhanh số đơn chờ duyệt -->
+        <!-- Thống kê nhanh -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
                 <div>
@@ -80,7 +122,7 @@
             </div>
         </div>
 
-        <!-- Bảng Phê duyệt Hồ sơ Cá nhân -->
+        <!-- Bảng Phê duyệt Cá nhân -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="p-4 border-b border-slate-100 bg-slate-50">
                 <h3 class="font-bold text-slate-900 text-sm"><i class="fa-solid fa-user-check mr-2 text-amber-500"></i> Phê duyệt Hồ sơ Cá nhân</h3>
@@ -88,72 +130,182 @@
             <div id="adminPendingWorkerList" class="p-4 space-y-3"></div>
         </div>
 
-        <!-- Bảng Phê duyệt Hồ sơ Tổ chức -->
+        <!-- Bảng Phê duyệt Tổ chức -->
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
             <div class="p-4 border-b border-slate-100 bg-slate-50">
                 <h3 class="font-bold text-slate-900 text-sm"><i class="fa-solid fa-building-shield mr-2 text-blue-600"></i> Phê duyệt Tổ chức / Đối tác</h3>
             </div>
             <div id="adminPendingOrgList" class="p-4 space-y-3"></div>
         </div>
-
     </main>
 
-    <!-- Logic xử lý kiểm duyệt cho admin.html -->
+    <!-- Modal Đổi Mật Khẩu -->
+    <div id="changePassModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-sm rounded-2xl shadow-xl border border-slate-100 p-6 space-y-4">
+            <h3 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-key text-teal-600 mr-2"></i> Đổi Mật Khẩu Quản Trị</h3>
+            <form id="changePassForm" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu mới</label>
+                    <input type="password" id="newPasswordInput" required placeholder="Nhập mật khẩu mới..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button type="button" id="btnCloseChangePass" class="flex-1 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl text-xs transition cursor-pointer">Hủy</button>
+                    <button type="submit" class="flex-1 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-xl text-xs transition cursor-pointer">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Logic Xử lý Nâng cấp -->
     <script>
+        // Danh sách email Google được cấp quyền quản trị tối cao
+        const ALLOWED_ADMIN_EMAILS = ['hiêu199771@gmail.com'];
+
+        function getAdminPassword() {
+            return localStorage.getItem('admin_custom_password') || 'admin123';
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            const ADMIN_PASS = 'admin123';
-            
             const loginSection = document.getElementById('adminLoginSection');
             const mainContent = document.getElementById('adminMainContent');
             const loginForm = document.getElementById('adminLoginForm');
             const passwordInput = document.getElementById('adminPasswordInput');
             const loginErrorMsg = document.getElementById('loginErrorMsg');
+            const googleErrorMsg = document.getElementById('googleErrorMsg');
             const btnLogout = document.getElementById('btnLogout');
+            const adminSessionInfo = document.getElementById('adminSessionInfo');
+            
+            const tabGoogleBtn = document.getElementById('tabGoogleBtn');
+            const tabPassBtn = document.getElementById('tabPassBtn');
+            const googleAuthBox = document.getElementById('googleAuthBox');
 
-            // Tự động vào thẳng nếu đã xác thực trước đó
-            if (localStorage.getItem('is_admin_logged') === 'true') {
-                openDashboard();
+            const btnOpenChangePassModal = document.getElementById('btnOpenChangePassModal');
+            const changePassModal = document.getElementById('changePassModal');
+            const btnCloseChangePass = document.getElementById('btnCloseChangePass');
+            const changePassForm = document.getElementById('changePassForm');
+            const newPasswordInput = document.getElementById('newPasswordInput');
+
+            // Chuyển tab đăng nhập
+            tabGoogleBtn.addEventListener('click', () => {
+                tabGoogleBtn.className = 'py-2 rounded-lg bg-white text-slate-900 shadow-sm transition';
+                tabPassBtn.className = 'py-2 rounded-lg text-slate-500 hover:text-slate-900 transition';
+                googleAuthBox.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            });
+
+            tabPassBtn.addEventListener('click', () => {
+                tabPassBtn.className = 'py-2 rounded-lg bg-white text-slate-900 shadow-sm transition';
+                tabGoogleBtn.className = 'py-2 rounded-lg text-slate-500 hover:text-slate-900 transition';
+                loginForm.classList.remove('hidden');
+                googleAuthBox.classList.add('hidden');
+            });
+
+            // Kiểm tra trạng thái phiên làm việc (Session Storage - An toàn hơn LocalStorage)
+            if (sessionStorage.getItem('is_admin_active') === 'true') {
+                openDashboard(sessionStorage.getItem('admin_auth_method') || 'Mật khẩu nội bộ');
             }
 
-            // Xử lý xác thực mật khẩu
+            // Đăng nhập mật khẩu
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                if (passwordInput.value.trim() === ADMIN_PASS) {
-                    localStorage.setItem('is_admin_logged', 'true');
-                    openDashboard();
+                if (passwordInput.value.trim() === getAdminPassword()) {
+                    sessionStorage.setItem('is_admin_active', 'true');
+                    sessionStorage.setItem('admin_auth_method', 'Mật khẩu');
+                    openDashboard('Mật khẩu');
                 } else {
                     loginErrorMsg.classList.remove('hidden');
                 }
             });
 
-            // Xử lý đăng xuất
+            // Đăng xuất
             btnLogout.addEventListener('click', () => {
-                localStorage.removeItem('is_admin_logged');
+                sessionStorage.clear();
                 mainContent.classList.add('hidden');
                 loginSection.classList.remove('hidden');
                 btnLogout.classList.add('hidden');
+                btnOpenChangePassModal.classList.add('hidden');
+                adminSessionInfo.classList.add('hidden');
                 passwordInput.value = '';
                 loginErrorMsg.classList.add('hidden');
+                googleErrorMsg.classList.add('hidden');
             });
 
-            function openDashboard() {
+            // Đổi mật khẩu
+            btnOpenChangePassModal.addEventListener('click', () => {
+                changePassModal.classList.remove('hidden');
+                changePassModal.classList.add('flex');
+            });
+
+            btnCloseChangePass.addEventListener('click', () => {
+                changePassModal.classList.add('hidden');
+                changePassModal.classList.remove('flex');
+                newPasswordInput.value = '';
+            });
+
+            changePassForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newPass = newPasswordInput.value.trim();
+                if (newPass.length < 4) {
+                    alert('Mật khẩu tối thiểu phải có 4 ký tự!');
+                    return;
+                }
+                localStorage.setItem('admin_custom_password', newPass);
+                changePassModal.classList.add('hidden');
+                changePassModal.classList.remove('flex');
+                newPasswordInput.value = '';
+                alert('Đổi mật khẩu thành công!');
+            });
+
+            function openDashboard(method) {
                 loginSection.classList.add('hidden');
                 mainContent.classList.remove('hidden');
                 btnLogout.classList.remove('hidden');
+                btnOpenChangePassModal.classList.remove('hidden');
+                
+                adminSessionInfo.textContent = `Phiên Admin (${method})`;
+                adminSessionInfo.classList.remove('hidden');
                 loadPendingData();
             }
+
+            // Xử lý Google OAuth Callback
+            window.handleGoogleLogin = function(response) {
+                try {
+                    const base64Url = response.credential.split('.')[1];
+                    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+
+                    const userInfo = JSON.parse(jsonPayload);
+                    const userEmail = userInfo.email.toLowerCase().trim();
+
+                    if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
+                        sessionStorage.setItem('is_admin_active', 'true');
+                        sessionStorage.setItem('admin_auth_method', 'Google (' + userEmail + ')');
+                        googleErrorMsg.classList.add('hidden');
+                        openDashboard('Google');
+                    } else {
+                        googleErrorMsg.textContent = `Email (${userEmail}) không có quyền Quản trị viên!`;
+                        googleErrorMsg.classList.remove('hidden');
+                    }
+                } catch (err) {
+                    console.error('Lỗi phân tích thông tin Google:', err);
+                    googleErrorMsg.textContent = 'Xác thực Google thất bại!';
+                    googleErrorMsg.classList.remove('hidden');
+                }
+            };
 
             function loadPendingData() {
                 const workers = JSON.parse(localStorage.getItem('workers_list') || '[]');
                 const orgs = JSON.parse(localStorage.getItem('organizations_list') || '[]');
 
-                const pendingWorkers = workers.filter(w => !w.status || w.status === 'pending');
-                const pendingOrgs = orgs.filter(o => !o.status || o.status === 'pending');
+                const pendingWorkers = workers.filter(w => w.status === 'pending' || !w.status);
+                const pendingOrgs = orgs.filter(o => o.status === 'pending' || !o.status);
 
                 document.getElementById('statPendingWorkers').textContent = pendingWorkers.length;
                 document.getElementById('statPendingOrgs').textContent = pendingOrgs.length;
 
-                // 1. Render danh sách Cá nhân
+                // Render Cá nhân
                 const workerContainer = document.getElementById('adminPendingWorkerList');
                 workerContainer.innerHTML = '';
                 if (pendingWorkers.length === 0) {
@@ -176,7 +328,7 @@
                     });
                 }
 
-                // 2. Render danh sách Tổ chức
+                // Render Tổ chức
                 const orgContainer = document.getElementById('adminPendingOrgList');
                 orgContainer.innerHTML = '';
                 if (pendingOrgs.length === 0) {
@@ -201,7 +353,7 @@
                 }
             }
 
-            // --- XỬ LÝ HÀNH ĐỘNG ĐỒNG Ý / TỪ CHỐI ---
+            // Các hàm điều khiển Phê duyệt toàn cục
             window.approveWorker = function(id) {
                 let workers = JSON.parse(localStorage.getItem('workers_list') || '[]');
                 workers = workers.map(w => w.id === id ? { ...w, status: 'approved' } : w);
