@@ -21,10 +21,13 @@
         </div>
         <div class="flex items-center gap-3">
             <span id="adminSessionInfo" class="text-xs text-teal-300 font-medium hidden"></span>
-            <button id="btnOpenChangePassModal" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition hidden">
+            <button id="btnOpenAdminManager" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition hidden cursor-pointer">
+                <i class="fa-solid fa-users-gear mr-1"></i> Quản lý Admin
+            </button>
+            <button id="btnOpenChangePassModal" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition hidden cursor-pointer">
                 <i class="fa-solid fa-key mr-1"></i> Đổi mật khẩu
             </button>
-            <button id="btnLogout" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition hidden">
+            <button id="btnLogout" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition hidden cursor-pointer">
                 <i class="fa-solid fa-right-from-bracket mr-1"></i> Đăng xuất
             </button>
             <a href="index.html" class="bg-teal-600 hover:bg-teal-700 text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center shadow-sm">
@@ -46,14 +49,14 @@
 
             <!-- Tab lựa chọn phương thức xác thực -->
             <div class="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
-                <button type="button" id="tabGoogleBtn" class="py-2 rounded-lg bg-white text-slate-900 shadow-sm transition">Tài khoản Google</button>
-                <button type="button" id="tabPassBtn" class="py-2 rounded-lg text-slate-500 hover:text-slate-900 transition">Mật khẩu nội bộ</button>
+                <button type="button" id="tabGoogleBtn" class="py-2 rounded-lg bg-white text-slate-900 shadow-sm transition cursor-pointer">Tài khoản Google</button>
+                <button type="button" id="tabPassBtn" class="py-2 rounded-lg text-slate-500 hover:text-slate-900 transition cursor-pointer">Mật khẩu nội bộ</button>
             </div>
 
             <!-- Form đăng nhập bằng Google -->
             <div id="googleAuthBox" class="space-y-4 pt-2">
                 <div class="bg-teal-50 border border-teal-100 rounded-xl p-3 text-center text-xs text-teal-800">
-                    <i class="fa-solid fa-circle-info mr-1"></i> Hệ thống chỉ cấp quyền cho tài khoản được ủy quyền: <br><b>hiêu199771@gmail.com</b>
+                    <i class="fa-solid fa-circle-info mr-1"></i> Hệ thống chỉ cấp quyền cho tài khoản Google đã được ủy quyền trong danh sách quản trị.
                 </div>
                 <div class="flex justify-center py-2">
                     <div id="g_id_onload"
@@ -156,10 +159,42 @@
         </div>
     </div>
 
+    <!-- Modal Quản Lý Danh Sách Admin (Thêm/Xóa tài khoản quản trị) -->
+    <div id="adminManagerModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4 z-50">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-100 p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-users-gear text-teal-600 mr-2"></i> Quản Lý Danh Sách Admin Google</h3>
+                <button type="button" id="btnCloseAdminManager" class="text-slate-400 hover:text-slate-700 cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <form id="addAdminForm" class="flex gap-2">
+                <input type="email" id="newAdminEmailInput" required placeholder="Nhập email Google cấp quyền..." class="flex-1 px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-teal-600">
+                <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">Thêm Admin</button>
+            </form>
+
+            <div class="space-y-2">
+                <p class="text-xs font-semibold text-slate-500 uppercase">Danh sách email được ủy quyền:</p>
+                <div id="adminEmailsListContainer" class="max-h-48 overflow-y-auto space-y-2 border border-slate-100 p-2 rounded-xl bg-slate-50">
+                    <!-- Dynamic List -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Logic Xử lý Nâng cấp -->
     <script>
-        // Danh sách email Google được cấp quyền quản trị tối cao
-        const ALLOWED_ADMIN_EMAILS = ['hiêu199771@gmail.com'];
+        // Lấy danh sách email từ LocalStorage hoặc dùng mặc định
+        function getAdminEmails() {
+            const stored = localStorage.getItem('allowed_admin_emails');
+            if (stored) {
+                try { return JSON.parse(stored); } catch(e) { }
+            }
+            return ['hiêu199771@gmail.com'];
+        }
+
+        function saveAdminEmails(list) {
+            localStorage.setItem('allowed_admin_emails', JSON.stringify(list));
+        }
 
         function getAdminPassword() {
             return localStorage.getItem('admin_custom_password') || 'admin123';
@@ -185,22 +220,30 @@
             const changePassForm = document.getElementById('changePassForm');
             const newPasswordInput = document.getElementById('newPasswordInput');
 
+            // Elements Quản lý Admin Modal
+            const btnOpenAdminManager = document.getElementById('btnOpenAdminManager');
+            const adminManagerModal = document.getElementById('adminManagerModal');
+            const btnCloseAdminManager = document.getElementById('btnCloseAdminManager');
+            const addAdminForm = document.getElementById('addAdminForm');
+            const newAdminEmailInput = document.getElementById('newAdminEmailInput');
+            const adminEmailsListContainer = document.getElementById('adminEmailsListContainer');
+
             // Chuyển tab đăng nhập
             tabGoogleBtn.addEventListener('click', () => {
-                tabGoogleBtn.className = 'py-2 rounded-lg bg-white text-slate-900 shadow-sm transition';
-                tabPassBtn.className = 'py-2 rounded-lg text-slate-500 hover:text-slate-900 transition';
+                tabGoogleBtn.className = 'py-2 rounded-lg bg-white text-slate-900 shadow-sm transition cursor-pointer';
+                tabPassBtn.className = 'py-2 rounded-lg text-slate-500 hover:text-slate-900 transition cursor-pointer';
                 googleAuthBox.classList.remove('hidden');
                 loginForm.classList.add('hidden');
             });
 
             tabPassBtn.addEventListener('click', () => {
-                tabPassBtn.className = 'py-2 rounded-lg bg-white text-slate-900 shadow-sm transition';
-                tabGoogleBtn.className = 'py-2 rounded-lg text-slate-500 hover:text-slate-900 transition';
+                tabPassBtn.className = 'py-2 rounded-lg bg-white text-slate-900 shadow-sm transition cursor-pointer';
+                tabGoogleBtn.className = 'py-2 rounded-lg text-slate-500 hover:text-slate-900 transition cursor-pointer';
                 loginForm.classList.remove('hidden');
                 googleAuthBox.classList.add('hidden');
             });
 
-            // Kiểm tra trạng thái phiên làm việc (Session Storage - An toàn hơn LocalStorage)
+            // Kiểm tra trạng thái phiên làm việc
             if (sessionStorage.getItem('is_admin_active') === 'true') {
                 openDashboard(sessionStorage.getItem('admin_auth_method') || 'Mật khẩu nội bộ');
             }
@@ -224,6 +267,7 @@
                 loginSection.classList.remove('hidden');
                 btnLogout.classList.add('hidden');
                 btnOpenChangePassModal.classList.add('hidden');
+                btnOpenAdminManager.classList.add('hidden');
                 adminSessionInfo.classList.add('hidden');
                 passwordInput.value = '';
                 loginErrorMsg.classList.add('hidden');
@@ -256,11 +300,66 @@
                 alert('Đổi mật khẩu thành công!');
             });
 
+            // Quản lý Admin Modal Handler
+            btnOpenAdminManager.addEventListener('click', () => {
+                renderAdminEmailsList();
+                adminManagerModal.classList.remove('hidden');
+                adminManagerModal.classList.add('flex');
+            });
+
+            btnCloseAdminManager.addEventListener('click', () => {
+                adminManagerModal.classList.add('hidden');
+                adminManagerModal.classList.remove('flex');
+            });
+
+            addAdminForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = newAdminEmailInput.value.trim().toLowerCase();
+                let emails = getAdminEmails();
+                if (emails.includes(email)) {
+                    alert('Email này đã tồn tại trong danh sách quản trị!');
+                    return;
+                }
+                emails.push(email);
+                saveAdminEmails(emails);
+                newAdminEmailInput.value = '';
+                renderAdminEmailsList();
+                alert('Thêm tài khoản quản trị thành công!');
+            });
+
+            window.removeAdminEmail = function(emailToRemove) {
+                let emails = getAdminEmails();
+                if (emails.length <= 1) {
+                    alert('Cần giữ lại ít nhất một tài khoản quản trị viên!');
+                    return;
+                }
+                if (confirm(`Bạn có chắc muốn xóa quyền admin của ${emailToRemove}?`)) {
+                    emails = emails.filter(e => e !== emailToRemove);
+                    saveAdminEmails(emails);
+                    renderAdminEmailsList();
+                }
+            };
+
+            function renderAdminEmailsList() {
+                const emails = getAdminEmails();
+                adminEmailsListContainer.innerHTML = '';
+                emails.forEach(email => {
+                    const row = document.createElement('div');
+                    row.className = 'flex justify-between items-center bg-white p-2.5 rounded-lg border border-slate-200 text-xs';
+                    row.innerHTML = `
+                        <span class="font-medium text-slate-700"><i class="fa-solid fa-envelope mr-1.5 text-teal-600"></i> ${email}</span>
+                        <button type="button" onclick="removeAdminEmail('${email}')" class="text-red-500 hover:text-red-700 font-semibold cursor-pointer"><i class="fa-solid fa-trash-can"></i> Xóa</button>
+                    `;
+                    adminEmailsListContainer.appendChild(row);
+                });
+            }
+
             function openDashboard(method) {
                 loginSection.classList.add('hidden');
                 mainContent.classList.remove('hidden');
                 btnLogout.classList.remove('hidden');
                 btnOpenChangePassModal.classList.remove('hidden');
+                btnOpenAdminManager.classList.remove('hidden');
                 
                 adminSessionInfo.textContent = `Phiên Admin (${method})`;
                 adminSessionInfo.classList.remove('hidden');
@@ -278,6 +377,7 @@
 
                     const userInfo = JSON.parse(jsonPayload);
                     const userEmail = userInfo.email.toLowerCase().trim();
+                    const ALLOWED_ADMIN_EMAILS = getAdminEmails();
 
                     if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
                         sessionStorage.setItem('is_admin_active', 'true');
