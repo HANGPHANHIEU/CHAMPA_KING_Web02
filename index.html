@@ -25,7 +25,13 @@
                     <span class="text-amber-500 text-lg ml-0.5">.</span>
                 </div>
             </div>
-            <div class="flex items-center gap-1.5">
+            
+            <div class="flex items-center gap-2">
+                <!-- NÚT ĐĂNG NHẬP THÀNH VIÊN -->
+                <button id="btnLoginAccount" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-xl text-xs flex items-center transition shadow-sm">
+                    <i class="fa-solid fa-user-circle mr-1 text-teal-600 text-sm"></i> <span id="loginBtnText">Đăng nhập</span>
+                </button>
+
                 <!-- NÚT CHUYỂN SANG TRANG ADMIN -->
                 <a href="admin.html" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-2.5 py-2 rounded-xl text-xs flex items-center transition shadow-sm mr-1">
                     <i class="fa-solid fa-user-gear mr-1 text-teal-400"></i> Admin
@@ -37,14 +43,16 @@
                 <button id="btnJoinOrg" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-2.5 py-2 rounded-xl text-xs flex items-center transition">
                     <i class="fa-solid fa-building-shield mr-1 text-teal-600"></i> Tổ chức
                 </button>
-                <button id="btnPostJob" class="bg-[#0d9488] hover:bg-teal-700 text-white font-medium px-3 py-2 rounded-xl text-xs flex items-center shadow-sm transition">
-                    <i class="fa-solid fa-plus mr-1"></i> Đăng việc
+
+                <!-- NÚT ĐĂNG VIỆC TRÊN HEADER -->
+                <button id="btnPostJob" class="bg-gradient-to-r from-[#0d9488] to-teal-600 hover:from-teal-700 hover:to-teal-800 text-white font-bold px-4 py-2.5 rounded-xl text-xs md:text-sm flex items-center shadow-md hover:shadow-lg transition transform active:scale-95">
+                    <i class="fa-solid fa-circle-plus mr-1.5 text-base"></i> Đăng việc
                 </button>
             </div>
         </header>
 
-        <!-- CONTAINER CHỨA CÁC TAB NỘI DUNG -->
-        <div class="flex-1 overflow-y-auto px-6 py-5 pb-24">
+        <!-- CONTAINER CHỨA CÁC TAB NỘI DUNG (Thêm padding-bottom lớn để không bị che bởi nav) -->
+        <div class="flex-1 overflow-y-auto px-6 py-5 pb-28">
 
             <!-- TAB 1: TÌM VIỆC -->
             <div id="tabFindJob" class="tab-content space-y-5">
@@ -94,12 +102,12 @@
                     <button data-category="cleaning" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Dọn dẹp</button>
                     <button data-category="repair" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Sửa chữa</button>
                     <button data-category="service" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Phục vụ</button>
-                    <button data-category="service" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Taxi</button>
-                    <button data-category="service" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Gọi Xe ÔTô</button>
-                    <button data-category="service" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">ShipFood</button>
-                    <button data-category="service" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Gọi Xe MôTô</button>
-                    <button data-category="service" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Xe Ôm(Grab)</button>
-                    <button data-category="service" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Xe Ôm(Xanh SM)</button>
+                    <button data-category="taxi" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Taxi</button>
+                    <button data-category="car" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Gọi Xe Ôtô</button>
+                    <button data-category="shipfood" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">ShipFood</button>
+                    <button data-category="moto" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Gọi Xe Môtô</button>
+                    <button data-category="grab" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Xe Ôm (Grab)</button>
+                    <button data-category="xanhsm" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Xe Ôm (Xanh SM)</button>
                 </div>
 
                 <!-- Bộ lọc kết quả -->
@@ -207,23 +215,29 @@
 
         </div>
 
-        <!-- THANH ĐIỀU HƯỚNG DƯỚI CÙNG -->
-        <nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-2 py-2.5 flex justify-around items-center z-30 shadow-lg">
-            <button data-tab="tabFindJob" class="nav-btn flex flex-col items-center text-[#0d9488] transition">
+        <!-- NÚT ĐĂNG VIỆC TO (NỔI Ở GÓC DƯỚI) -->
+        <button id="btnFloatingPostJob" class="fixed bottom-20 right-4 z-40 bg-gradient-to-r from-[#0d9488] to-teal-600 hover:from-teal-700 hover:to-teal-800 text-white font-extrabold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 border border-teal-400/30">
+            <i class="fa-solid fa-circle-plus text-xl text-amber-300"></i>
+            <span class="text-xs md:text-sm tracking-wide">ĐĂNG VIỆC NGAY</span>
+        </button>
+
+        <!-- THANH ĐIỀU HƯỚNG DƯỚI CÙNG (CỐ ĐỊNH, CHIA ĐỀU 4 TABS, HIỂN THỊ TRỌN VẸN CHỮ TỔ CHỨC) -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-3 py-2 flex justify-around items-center z-50 shadow-2xl h-16">
+            <button data-tab="tabFindJob" class="nav-btn flex-1 flex flex-col items-center justify-center text-[#0d9488] transition py-1">
                 <i class="fa-solid fa-magnifying-glass text-base mb-1"></i>
-                <span class="text-[10px] font-medium">Tìm việc</span>
+                <span class="text-[11px] font-medium leading-tight whitespace-nowrap">Tìm việc</span>
             </button>
-            <button data-tab="tabAcceptedJob" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
+            <button data-tab="tabAcceptedJob" class="nav-btn flex-1 flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 transition py-1">
                 <i class="fa-solid fa-briefcase text-base mb-1"></i>
-                <span class="text-[10px]">Đã nhận</span>
+                <span class="text-[11px] font-medium leading-tight whitespace-nowrap">Đã nhận</span>
             </button>
-            <button data-tab="tabOrganization" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
+            <button data-tab="tabOrganization" class="nav-btn flex-1 flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 transition py-1">
                 <i class="fa-solid fa-building-shield text-base mb-1"></i>
-                <span class="text-[10px]">Tổ chức</span>
+                <span class="text-[11px] font-medium leading-tight whitespace-nowrap">Tổ chức</span>
             </button>
-            <button data-tab="tabMap" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-600 transition">
+            <button data-tab="tabMap" class="nav-btn flex-1 flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 transition py-1">
                 <i class="fa-solid fa-map-location-dot text-base mb-1"></i>
-                <span class="text-[10px]">Bản đồ</span>
+                <span class="text-[11px] font-medium leading-tight whitespace-nowrap">Bản đồ</span>
             </button>
         </nav>
     </main>
@@ -277,6 +291,7 @@
                             <option value="Quận 3">Quận 3</option>
                             <option value="Quận 7">Quận 7</option>
                             <option value="Bình Thạnh">Bình Thạnh</option>
+                            <option value="KIÊN GIANG CŨ">KIÊN GIANG CŨ</option>
                         </select>
                     </div>
                 </div>
@@ -331,6 +346,7 @@
                             <option value="Quận 3">Quận 3</option>
                             <option value="Quận 7">Quận 7</option>
                             <option value="Bình Thạnh">Bình Thạnh</option>
+                            <option value="KIÊN GIANG CŨ">KIÊN GIANG CŨ</option>
                         </select>
                     </div>
                 </div>
@@ -374,6 +390,7 @@
                             <option value="Quận 3">Quận 3</option>
                             <option value="Quận 7">Quận 7</option>
                             <option value="Bình Thạnh">Bình Thạnh</option>
+                            <option value="KIÊN GIANG CŨ">KIÊN GIANG CŨ</option>
                         </select>
                     </div>
                 </div>
@@ -389,7 +406,11 @@
         </div>
     </div>
 
+    <!-- CONTAINER HIỂN THỊ MODAL AUTH (Được inject động từ auth.js) -->
+    <div id="authModalContainer"></div>
+
     <!-- Script điều khiển -->
+    <script src="auth.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
