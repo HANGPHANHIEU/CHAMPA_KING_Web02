@@ -1,5 +1,13 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+// --- CẤU HÌNH SUPABASE ---
+const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // Thay bằng URL dự án Supabase của bạn
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Thay bằng ANON KEY của bạn
+
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("--- HỆ THỐNG 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG (FULL FEATURES & TRASH ICON INTEGRATED) ---");
+    console.log("--- HỆ THỐNG 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG (SUPABASE & REALTIME) ---");
 
     // 1. Dọn dẹp tất cả modal bị kẹt khi mới tải trang
     document.querySelectorAll('[id*="Modal"], [id*="modal"]').forEach(modal => {
@@ -7,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('flex');
     });
 
-    // Các phần tử modal & giao diện chính
     const authModal = document.getElementById('authModal');
     const authForm = document.getElementById('authForm');
     const resetForm = document.getElementById('resetForm');
@@ -16,17 +23,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetFooter = document.getElementById('resetFooter');
     const loginBtnText = document.getElementById('loginBtnText');
 
-    // Kiểm tra trạng thái đăng nhập từ LocalStorage
+    // Kiểm tra trạng thái đăng nhập từ LocalStorage & cập nhật icon đăng xuất
     const checkLoginStatus = () => {
         const isLoggedIn = localStorage.getItem('viecgap_logged_in') === 'true';
         if (isLoggedIn && loginBtnText) {
-            loginBtnText.innerText = "Đã đăng nhập";
+            loginBtnText.innerHTML = `<i class="fa-solid fa-right-from-bracket mr-1.5"></i> Đăng xuất`;
         }
         return isLoggedIn;
     };
     checkLoginStatus();
 
     const openAuthModal = () => {
+        const isLoggedIn = localStorage.getItem('viecgap_logged_in') === 'true';
+        if (isLoggedIn) {
+            if (confirm("Bạn có chắc chắn muốn đăng xuất tài khoản không?")) {
+                localStorage.removeItem('viecgap_logged_in');
+                localStorage.removeItem('viecgap_user_phone');
+                if (loginBtnText) {
+                    loginBtnText.innerHTML = `<i class="fa-solid fa-user mr-1.5"></i> Đăng nhập`;
+                }
+                alert("Đã đăng xuất thành công!");
+                window.renderJobs();
+            }
+            return;
+        }
+
         if (authModal) {
             authModal.classList.remove('hidden');
             authModal.classList.add('flex');
@@ -46,17 +67,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- HÀM RENDER DANH SÁCH TỔ CHỨC ĐÃ ĐƯỢC DUYỆT (TAB TỔ CHỨC) ---
-    const renderApprovedOrgs = () => {
+    const renderApprovedOrgs = async () => {
         const orgListContainer = document.getElementById('orgList');
         if (!orgListContainer) return;
 
-        const orgs = JSON.parse(localStorage.getItem('viecgap_orgs') || localStorage.getItem('organizations_list') || '[]');
-        const approvedOrgs = orgs.filter(o => o.status === 'approved');
+        const { data: approvedOrgs, error } = await supabase
+            .from('organizations')
+            .select('*')
+            .eq('status', 'approved')
+            .order('created_at', { ascending: false });
 
-        if (approvedOrgs.length === 0) {
+        if (error || !approvedOrgs || approvedOrgs.length === 0) {
             orgListContainer.innerHTML = `
                 <div class="text-center py-8 text-slate-400 text-sm bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                    Chưa có tổ chức/đối tác nào được phê duyệt[cite: 4].
+                    Chưa có tổ chức/đối tác nào được phê duyệt.
                 </div>
             `;
             return;
@@ -70,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h3 class="font-bold text-slate-900 text-base mt-1">${org.name}</h3>
                     </div>
                     <span class="text-xs bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-xl font-semibold flex items-center gap-1 shadow-sm">
-                        <i class="fa-solid fa-circle-check text-emerald-500"></i> Đã xác minh[cite: 4]
+                        <i class="fa-solid fa-circle-check text-emerald-500"></i> Đã xác minh
                     </span>
                 </div>
                 <p class="text-xs text-slate-600"><i class="fa-solid fa-star text-amber-500 mr-1"></i>Thế mạnh: ${org.strength || 'Chưa cập nhật'}</p>
@@ -83,54 +107,37 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- HÀM RENDER DANH SÁCH CÁ NHÂN ĐÃ ĐƯỢC DUYỆT ---
-    const renderApprovedWorkers = () => {
+    const renderApprovedWorkers = async () => {
         const workerListContainer = document.getElementById('workerList');
         if (!workerListContainer) return;
 
-        const workers = JSON.parse(localStorage.getItem('viecgap_workers') || localStorage.getItem('workers_list') || '[]');
-        const approvedWorkers = workers.filter(w => w.status === 'approved');
+        const { data: approvedWorkers, error } = await supabase
+            .from('workers')
+            .select('*')
+            .eq('status', 'approved')
+            .order('created_at', { ascending: false });
 
-        if (approvedWorkers.length === 0) {
-            workerListContainer.innerHTML = `
-                <div class="text-center py-8 text-slate-400 text-sm bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                    Chưa có hồ sơ cá nhân nào được xác minh.
-                </div>
-            `;
+        if (error || !approvedWorkers || approvedWorkers.length === 0) {
             return;
         }
-
-        workerListContainer.innerHTML = approvedWorkers.map(w => `
-            <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex justify-between items-center">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h4 class="font-bold text-slate-800 text-sm">${w.name}</h4>
-                        <span class="bg-emerald-50 text-emerald-600 text-[10px] font-semibold px-2 py-0.5 rounded-md flex items-center gap-1 shadow-sm">
-                            <i class="fa-solid fa-circle-check text-emerald-500"></i> Đã xác minh[cite: 4]
-                        </span>
-                    </div>
-                    <p class="text-xs text-slate-500 mt-1">Kỹ năng: ${w.skill || 'Đa năng'} &bull; Khu vực: ${w.location || 'An Giang'}</p>
-                </div>
-                <a href="tel:${w.phone}" class="bg-teal-50 hover:bg-teal-100 text-teal-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition">
-                    <i class="fa-solid fa-phone mr-1"></i>Liên hệ
-                </a>
-            </div>
-        `).join('');
     };
 
     // --- HÀM RENDER DANH SÁCH VIỆC LÀM ĐÃ NHẬN (TAB 2) ---
-    const renderAcceptedJobs = () => {
+    const renderAcceptedJobs = async () => {
         const acceptedContainer = document.getElementById('acceptedJobList');
         if (!acceptedContainer) return;
 
         const currentUserPhone = localStorage.getItem('viecgap_user_phone');
-        const jobs = JSON.parse(localStorage.getItem('viecgap_jobs') || '[]');
+        const { data: jobs, error } = await supabase.from('jobs').select('*');
+
+        if (error || !jobs) return;
         
-        const myAcceptedJobs = jobs.filter(job => job.status === 'accepted' && job.acceptedBy === currentUserPhone);
+        const myAcceptedJobs = jobs.filter(job => job.status === 'accepted' && job.accepted_by === currentUserPhone);
 
         if (myAcceptedJobs.length === 0) {
             acceptedContainer.innerHTML = `
                 <div class="text-center py-8 text-slate-400 text-sm bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                    Bạn chưa nhận công việc nào[cite: 4].
+                    Bạn chưa nhận công việc nào.
                 </div>
             `;
             return;
@@ -149,8 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span><i class="fa-solid fa-location-dot mr-1"></i>${job.location}</span>
                     <div class="flex items-center gap-2">
                         <span class="text-emerald-600 font-semibold"><i class="fa-solid fa-check-circle mr-1"></i>Đã nhận việc</span>
-                        <button onclick="window.handleRemoveAcceptedJob('${job.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2.5 py-1 rounded-lg font-semibold transition cursor-pointer flex items-center gap-1">
-                            <i class="fa-solid fa-trash-can text-xs"></i> Hủy nhận
+                        <button onclick="window.handleRemoveAcceptedJob('${job.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2.5 py-1.5 rounded-lg font-semibold transition cursor-pointer flex items-center gap-1.5">
+                            <i class="fa-solid fa-trash-can"></i> Hủy nhận
                         </button>
                     </div>
                 </div>
@@ -158,13 +165,12 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
 
-    // --- HÀM RENDER VÀ ĐẾM SỐ LƯỢNG TRONG THÙNG RÁC ---
+    // --- HÀM RENDER THÙNG RÁC ---
     const renderTrashList = () => {
         const trashContainer = document.getElementById('trashList');
         const trashBadge = document.getElementById('trashBadge');
         const deletedJobs = JSON.parse(localStorage.getItem('viecgap_deleted_jobs') || '[]');
 
-        // Cập nhật số đếm trên badge Thùng rác (nếu có)
         if (trashBadge) {
             trashBadge.innerText = deletedJobs.length;
             if (deletedJobs.length > 0) {
@@ -197,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <i class="fa-solid fa-rotate-left"></i> Khôi phục
                     </button>
                     <button onclick="window.handlePermanentDeleteJob('${job.id}')" class="bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
-                        <i class="fa-solid fa-trash-can"></i> Xóa hẳn
+                        <i class="fa-solid fa-xmark"></i> Xóa hẳn
                     </button>
                 </div>
             </div>
@@ -205,14 +211,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- HÀM RENDER DANH SÁCH VIỆC LÀM RA GIAO DIỆN CHÍNH ---
-    window.renderJobs = () => {
+    window.renderJobs = async () => {
         const jobListContainer = document.getElementById('jobList');
         const jobCountElement = document.getElementById('jobCount');
         if (!jobListContainer) return;
 
-        const jobs = JSON.parse(localStorage.getItem('viecgap_jobs') || '[]');
+        const { data: jobs, error } = await supabase.from('jobs').select('*').order('created_at', { ascending: false });
         const currentUserPhone = localStorage.getItem('viecgap_user_phone');
         
+        if (error || !jobs) return;
+
         const availableJobs = jobs.filter(j => j.status !== 'accepted');
 
         if (jobCountElement) {
@@ -230,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         jobListContainer.innerHTML = availableJobs.map(job => {
             const isOwner = currentUserPhone && job.phone === currentUserPhone;
+            const dateStr = job.created_at ? new Date(job.created_at).toLocaleDateString('vi-VN') : 'Gần đây';
 
             return `
                 <div class="bg-white border border-slate-100 hover:border-teal-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between gap-3">
@@ -246,14 +255,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-50">
                         <div class="flex items-center gap-3">
                             <span><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${job.location}</span>
-                            <span><i class="fa-regular fa-clock text-slate-400 mr-1"></i>${job.createdAt}</span>
+                            <span><i class="fa-regular fa-clock text-slate-400 mr-1"></i>${dateStr}</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <button onclick="window.handleTakeJob('${job.id}')" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-xl font-semibold transition cursor-pointer text-xs flex items-center gap-1">
                                 Nhận việc &rarr;
                             </button>
                             ${isOwner ? `
-                                <button onclick="window.handleDeleteJob('${job.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-xl font-semibold transition cursor-pointer text-xs flex items-center gap-1" title="Chuyển vào thùng rác">
+                                <button onclick="window.handleDeleteJob('${job.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-xl font-semibold transition cursor-pointer text-xs flex items-center gap-1" title="Xóa bài">
                                     <i class="fa-solid fa-trash-can"></i> Xóa
                                 </button>
                             ` : ''}
@@ -270,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- LOGIC NHẬN VIỆC ---
-    window.handleTakeJob = (jobId) => {
+    window.handleTakeJob = async (jobId) => {
         if (!checkLoginStatus()) {
             alert("Vui lòng đăng nhập tài khoản trước khi nhận việc!");
             openAuthModal();
@@ -278,128 +287,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const currentUserPhone = localStorage.getItem('viecgap_user_phone');
-        let jobs = JSON.parse(localStorage.getItem('viecgap_jobs') || '[]');
-        const jobIndex = jobs.findIndex(j => j.id === jobId);
-
-        if (jobIndex === -1) {
+        const { data: jobs } = await supabase.from('jobs').select('*').eq('id', jobId);
+        if (!jobs || jobs.length === 0) {
             alert("Công việc không tồn tại hoặc đã bị xóa!");
             return;
         }
 
-        if (jobs[jobIndex].phone === currentUserPhone) {
+        const job = jobs[0];
+        if (job.phone === currentUserPhone) {
             alert("Bạn không thể tự nhận công việc do chính mình đăng!");
             return;
         }
 
-        if (confirm(`Bạn có chắc chắn muốn nhận công việc: "${jobs[jobIndex].title}"?`)) {
-            jobs[jobIndex].status = 'accepted';
-            jobs[jobIndex].acceptedBy = currentUserPhone;
-
-            localStorage.setItem('viecgap_jobs', JSON.stringify(jobs));
-            alert("Nhận việc thành công! Bạn có thể xem lại ở tab 'Đã nhận'.");
-            window.renderJobs();
+        if (confirm(`Bạn có chắc chắn muốn nhận công việc: "${job.title}"?`)) {
+            const { error } = await supabase.from('jobs').update({ status: 'accepted', accepted_by: currentUserPhone }).eq('id', jobId);
+            if (error) {
+                alert("Lỗi khi nhận việc: " + error.message);
+            } else {
+                alert("Nhận việc thành công! Bạn có thể xem lại ở tab 'Đã nhận'.");
+                window.renderJobs();
+            }
         }
     };
 
-    // --- LOGIC HỦY / XÓA CÔNG VIỆC ĐÃ NHẬN ---
-    window.handleRemoveAcceptedJob = (jobId) => {
+    // --- LOGIC HỦY NHẬN VIỆC ---
+    window.handleRemoveAcceptedJob = async (jobId) => {
         if (confirm("Bạn có chắc chắn muốn hủy nhận công việc này không? Công việc sẽ quay lại danh sách tìm việc.")) {
-            let jobs = JSON.parse(localStorage.getItem('viecgap_jobs') || '[]');
-            const jobIndex = jobs.findIndex(j => j.id === jobId);
-
-            if (jobIndex !== -1) {
-                jobs[jobIndex].status = 'active';
-                delete jobs[jobIndex].acceptedBy;
-
-                localStorage.setItem('viecgap_jobs', JSON.stringify(jobs));
+            const { error } = await supabase.from('jobs').update({ status: 'active', accepted_by: null }).eq('id', jobId);
+            if (!error) {
                 alert("Đã hủy nhận công việc thành công!");
                 window.renderJobs();
             }
         }
     };
 
-    // --- LOGIC XÓA BÀI ĐĂNG (CHUYỂN VÀO THÙNG RÁC) ---
-    window.handleDeleteJob = (jobId) => {
-        const currentUserPhone = localStorage.getItem('viecgap_user_phone');
-        let jobs = JSON.parse(localStorage.getItem('viecgap_jobs') || '[]');
-        const job = jobs.find(j => j.id === jobId);
-
-        if (!job) return;
-
-        if (job.phone !== currentUserPhone) {
-            alert("Bạn không có quyền xóa công việc của người khác!");
-            return;
-        }
-
-        if (confirm("Bạn có chắc chắn muốn xóa bài đăng này không? Bài sẽ được chuyển vào Thùng rác.")) {
-            const updatedJobs = jobs.filter(j => j.id !== jobId);
-            localStorage.setItem('viecgap_jobs', JSON.stringify(updatedJobs));
-
-            let deletedJobs = JSON.parse(localStorage.getItem('viecgap_deleted_jobs') || '[]');
-            deletedJobs.unshift({
-                ...job,
-                deletedAt: new Date().toLocaleDateString('vi-VN') + ' ' + new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
-            });
-            localStorage.setItem('viecgap_deleted_jobs', JSON.stringify(deletedJobs));
-
-            alert("Đã xóa công việc và chuyển vào Thùng rác thành công!");
-            window.renderJobs();
+    // --- LOGIC XÓA BÀI ĐĂNG ---
+    window.handleDeleteJob = async (jobId) => {
+        if (confirm("Bạn có chắc chắn muốn xóa bài đăng này không?")) {
+            const { error } = await supabase.from('jobs').delete().eq('id', jobId);
+            if (!error) {
+                alert("Đã xóa công việc thành công!");
+                window.renderJobs();
+            }
         }
     };
-
-    // --- LOGIC KHÔI PHỤC CÔNG VIỆC TỪ THÙNG RÁC ---
-    window.handleRestoreJob = (jobId) => {
-        let deletedJobs = JSON.parse(localStorage.getItem('viecgap_deleted_jobs') || '[]');
-        const jobIndex = deletedJobs.findIndex(j => j.id === jobId);
-
-        if (jobIndex !== -1) {
-            const restoredJob = { ...deletedJobs[jobIndex] };
-            delete restoredJob.deletedAt;
-
-            deletedJobs.splice(jobIndex, 1);
-            localStorage.setItem('viecgap_deleted_jobs', JSON.stringify(deletedJobs));
-
-            let jobs = JSON.parse(localStorage.getItem('viecgap_jobs') || '[]');
-            jobs.unshift(restoredJob);
-            localStorage.setItem('viecgap_jobs', JSON.stringify(jobs));
-
-            alert("Khôi phục công việc thành công!");
-            window.renderJobs();
-        }
-    };
-
-    // --- LOGIC XÓA VĨNH VIỄN 1 BÀI ĐĂNG TRONG THÙNG RÁC ---
-    window.handlePermanentDeleteJob = (jobId) => {
-        if (confirm("Bạn có chắc chắn muốn xóa VĨNH VIỄN bài đăng này? Hành động này không thể hoàn tác.")) {
-            let deletedJobs = JSON.parse(localStorage.getItem('viecgap_deleted_jobs') || '[]');
-            deletedJobs = deletedJobs.filter(j => j.id !== jobId);
-            localStorage.setItem('viecgap_deleted_jobs', JSON.stringify(deletedJobs));
-
-            alert("Đã xóa vĩnh viễn bài đăng!");
-            window.renderJobs();
-        }
-    };
-
-    // --- XÓA SẠCH THÙNG RÁC VĨNH VIỄN ---
-    document.getElementById('btnEmptyTrash')?.addEventListener('click', () => {
-        if (confirm("Bạn có chắc chắn muốn dọn sạch toàn bộ thùng rác không?")) {
-            localStorage.removeItem('viecgap_deleted_jobs');
-            window.renderJobs();
-            alert("Đã dọn sạch thùng rác!");
-        }
-    });
-
-    // Mở & Đóng Modal Thùng Rác
-    const trashModal = document.getElementById('trashModal');
-    document.getElementById('btnOpenTrash')?.addEventListener('click', () => {
-        renderTrashList();
-        trashModal?.classList.remove('hidden');
-        trashModal?.classList.add('flex');
-    });
-    document.getElementById('btnCloseTrashModal')?.addEventListener('click', () => {
-        trashModal?.classList.add('hidden');
-        trashModal?.classList.remove('flex');
-    });
 
     // Render khởi tạo ban đầu
     window.renderJobs();
@@ -421,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnCloseOrgModal')?.addEventListener('click', closeOrgModal);
     document.getElementById('btnCancelOrgModal')?.addEventListener('click', closeOrgModal);
 
-    orgForm?.addEventListener('submit', (e) => {
+    orgForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const newOrg = {
             id: 'org_' + Date.now(),
@@ -432,17 +363,16 @@ document.addEventListener('DOMContentLoaded', () => {
             ward: document.getElementById('orgWardInput')?.value,
             address: document.getElementById('orgAddressInput')?.value,
             strength: document.getElementById('orgStrengthInput')?.value,
-            status: 'pending',[cite: 4]
-            createdAt: new Date().toLocaleDateString('vi-VN')
+            status: 'pending'
         };
 
-        let orgs = JSON.parse(localStorage.getItem('viecgap_orgs') || '[]');
-        orgs.unshift(newOrg);
-        localStorage.setItem('viecgap_orgs', JSON.stringify(orgs));
-        localStorage.setItem('organizations_list', JSON.stringify(orgs));
-
-        alert("Ghi danh Tổ chức thành công! Hồ sơ của bạn đang chờ Admin phê duyệt[cite: 4].");
-        closeOrgModal();
+        const { error } = await supabase.from('organizations').insert([newOrg]);
+        if (error) {
+            alert("Lỗi ghi danh: " + error.message);
+        } else {
+            alert("Ghi danh Tổ chức thành công! Hồ sơ đang chờ Admin phê duyệt.");
+            closeOrgModal();
+        }
     });
 
     // --- ĐĂNG KÝ CÁ NHÂN ---
@@ -462,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnCloseWorkerModal')?.addEventListener('click', closeWorkerModal);
     document.getElementById('btnCancelWorkerModal')?.addEventListener('click', closeWorkerModal);
 
-    workerForm?.addEventListener('submit', (e) => {
+    workerForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const newWorker = {
             id: 'worker_' + Date.now(),
@@ -470,17 +400,16 @@ document.addEventListener('DOMContentLoaded', () => {
             phone: document.getElementById('workerPhoneInput')?.value,
             location: document.getElementById('workerLocationInput')?.value,
             skill: document.getElementById('workerSkillInput')?.value,
-            status: 'pending',[cite: 4]
-            createdAt: new Date().toLocaleDateString('vi-VN')
+            status: 'pending'
         };
 
-        let workers = JSON.parse(localStorage.getItem('viecgap_workers') || '[]');
-        workers.unshift(newWorker);
-        localStorage.setItem('viecgap_workers', JSON.stringify(workers));
-        localStorage.setItem('workers_list', JSON.stringify(workers));
-
-        alert("Đăng ký hồ sơ cá nhân thành công! Hồ sơ của bạn đang chờ Admin phê duyệt[cite: 4].");
-        closeWorkerModal();
+        const { error } = await supabase.from('workers').insert([newWorker]);
+        if (error) {
+            alert("Lỗi đăng ký: " + error.message);
+        } else {
+            alert("Đăng ký hồ sơ cá nhân thành công! Hồ sơ đang chờ Admin phê duyệt.");
+            closeWorkerModal();
+        }
     });
 
     // --- ĐĂNG NHẬP ---
@@ -490,7 +419,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (phone) {
             localStorage.setItem('viecgap_logged_in', 'true');
             localStorage.setItem('viecgap_user_phone', phone);
-            if (loginBtnText) loginBtnText.innerText = "Đã đăng nhập";
+            if (loginBtnText) {
+                loginBtnText.innerHTML = `<i class="fa-solid fa-right-from-bracket mr-1.5"></i> Đăng xuất`;
+            }
             alert('Đăng nhập thành công!');
             closeAuthModal();
             window.renderJobs();
@@ -500,7 +431,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnLoginAccount')?.addEventListener('click', openAuthModal);
     document.getElementById('btnCloseAuthModal')?.addEventListener('click', closeAuthModal);
     document.getElementById('btnCancelAuthModal')?.addEventListener('click', closeAuthModal);
-    document.getElementById('btnCancelReset')?.addEventListener('click', closeAuthModal);
 
     // --- ĐĂNG VIỆC ---
     const postJobModal = document.getElementById('postJobModal');
@@ -527,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnCloseModal')?.addEventListener('click', closePostJobModal);
     document.getElementById('btnCancelModal')?.addEventListener('click', closePostJobModal);
 
-    postJobForm?.addEventListener('submit', (e) => {
+    postJobForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const currentUserPhone = localStorage.getItem('viecgap_user_phone') || '';
 
@@ -539,16 +469,16 @@ document.addEventListener('DOMContentLoaded', () => {
             salary: document.getElementById('jobSalaryInput')?.value || 'Thỏa thuận',
             urgent: document.getElementById('jobUrgentInput')?.checked || false,
             phone: currentUserPhone,
-            status: 'active',
-            createdAt: new Date().toLocaleDateString('vi-VN')
+            status: 'active'
         };
 
-        let jobs = JSON.parse(localStorage.getItem('viecgap_jobs') || '[]');
-        jobs.unshift(newJob);
-        localStorage.setItem('viecgap_jobs', JSON.stringify(jobs));
-
-        closePostJobModal();
-        window.renderJobs();
+        const { error } = await supabase.from('jobs').insert([newJob]);
+        if (error) {
+            alert("Lỗi đăng việc: " + error.message);
+        } else {
+            closePostJobModal();
+            window.renderJobs();
+        }
     });
 
     // Chuyển đổi Tab điều hướng dưới cùng
@@ -574,4 +504,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // --- LẮNG NGHE SUPABASE REALTIME (ĐỒNG BỘ ĐA THIẾT BỊ) ---
+    supabase
+        .channel('public:viecgap_live_sync')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'organizations' }, () => window.renderJobs())
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'workers' }, () => window.renderJobs())
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, () => window.renderJobs())
+        .subscribe();
 });
