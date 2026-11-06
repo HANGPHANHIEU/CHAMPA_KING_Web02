@@ -1,240 +1,41 @@
-// --- QUẢN TRỊ ADMIN (JS/ADMIN-APP.JS) ---
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-const DEFAULT_ADMIN_HASH = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
+// --- CẤU HÌNH SUPABASE ---
+const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // Thay bằng URL dự án Supabase của bạn
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Thay bằng ANON KEY của bạn
 
-async function hashPassword(plainText) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(plainText);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function getAdminPasswordHash() {
-    return localStorage.getItem('admin_custom_password_hash') || DEFAULT_ADMIN_HASH;
-}
-
-function getAdminEmails() {
-    const stored = localStorage.getItem('allowed_admin_emails');
-    if (stored) {
-        try { return JSON.parse(stored); } catch(e) { }
-    }
-    return ['hieu199771@gmail.com'];
-}
-
-function saveAdminEmails(list) {
-    localStorage.setItem('allowed_admin_emails', JSON.stringify(list));
-}
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 document.addEventListener('DOMContentLoaded', () => {
-    const loginSection = document.getElementById('adminLoginSection');
-    const mainContent = document.getElementById('adminMainContent');
-    const loginForm = document.getElementById('adminLoginForm');
-    const passwordInput = document.getElementById('adminPasswordInput');
-    const loginErrorMsg = document.getElementById('loginErrorMsg');
-    const googleErrorMsg = document.getElementById('googleErrorMsg');
-    const btnLogout = document.getElementById('btnLogout');
-    const adminSessionInfo = document.getElementById('adminSessionInfo');
-    
-    const tabGoogleBtn = document.getElementById('tabGoogleBtn');
-    const tabPassBtn = document.getElementById('tabPassBtn');
-    const googleAuthBox = document.getElementById('googleAuthBox');
+    console.log("--- HỆ THỐNG ADMIN 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG (SUPABASE & REALTIME) ---");
 
-    const btnOpenChangePassModal = document.getElementById('btnOpenChangePassModal');
-    const changePassModal = document.getElementById('changePassModal');
-    const btnCloseChangePass = document.getElementById('btnCloseChangePass');
-    const changePassForm = document.getElementById('changePassForm');
-    const newPasswordInput = document.getElementById('newPasswordInput');
-
-    const btnOpenAdminManager = document.getElementById('btnOpenAdminManager');
-    const adminManagerModal = document.getElementById('adminManagerModal');
-    const btnCloseAdminManager = document.getElementById('btnCloseAdminManager');
-    const addAdminForm = document.getElementById('addAdminForm');
-    const newAdminEmailInput = document.getElementById('newAdminEmailInput');
-    const adminEmailsListContainer = document.getElementById('adminEmailsListContainer');
-
-    // Chuyển Tab đăng nhập (Google / Mật khẩu)
-    tabGoogleBtn?.addEventListener('click', () => {
-        tabGoogleBtn.className = 'py-2 rounded-lg bg-white text-slate-900 shadow-sm transition cursor-pointer';
-        tabPassBtn.className = 'py-2 rounded-lg text-slate-500 hover:text-slate-900 transition cursor-pointer';
-        googleAuthBox?.classList.remove('hidden');
-        loginForm?.classList.add('hidden');
+    // Dọn dẹp modal khi tải trang
+    document.querySelectorAll('[id*="Modal"], [id*="modal"]').forEach(modal => {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
     });
 
-    tabPassBtn?.addEventListener('click', () => {
-        tabPassBtn.className = 'py-2 rounded-lg bg-white text-slate-900 shadow-sm transition cursor-pointer';
-        tabGoogleBtn.className = 'py-2 rounded-lg text-slate-500 hover:text-slate-900 transition cursor-pointer';
-        loginForm?.classList.remove('hidden');
-        googleAuthBox?.classList.add('hidden');
-    });
+    // --- HÀM TẢI VÀ HIỂN THỊ DỮ LIỆU CHỜ DUYỆT TỪ SUPABASE ---
+    window.loadPendingData = async () => {
+        // Lấy danh sách tổ chức chưa duyệt ('pending' hoặc chưa có status)
+        const { data: orgs, error: orgError } = await supabase
+            .from('organizations')
+            .select('*')
+            .order('created_at', { ascending: false });
 
-    if (sessionStorage.getItem('is_admin_active') === 'true') {
-        openDashboard(sessionStorage.getItem('admin_auth_method') || 'Mật khẩu nội bộ');
-    }
+        // Lấy danh sách cá nhân chưa duyệt
+        const { data: workers, error: workerError } = await supabase
+            .from('workers')
+            .select('*')
+            .order('created_at', { ascending: false });
 
-    loginForm?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const inputVal = passwordInput.value.trim();
-        const inputHash = await hashPassword(inputVal);
+        if (orgError) console.error("Lỗi tải tổ chức:", orgError.message);
+        if (workerError) console.error("Lỗi tải cá nhân:", workerError.message);
 
-        if (inputHash === getAdminPasswordHash()) {
-            sessionStorage.setItem('is_admin_active', 'true');
-            sessionStorage.setItem('admin_auth_method', 'Mật khẩu');
-            openDashboard('Mật khẩu');
-        } else {
-            loginErrorMsg?.classList.remove('hidden');
-        }
-    });
+        const pendingOrgs = (orgs || []).filter(o => o.status === 'pending' || !o.status);
+        const pendingWorkers = (workers || []).filter(w => w.status === 'pending' || !w.status);
 
-    btnLogout?.addEventListener('click', () => {
-        sessionStorage.clear();
-        mainContent?.classList.add('hidden');
-        loginSection?.classList.remove('hidden');
-        btnLogout?.classList.add('hidden');
-        btnOpenChangePassModal?.classList.add('hidden');
-        btnOpenAdminManager?.classList.add('hidden');
-        adminSessionInfo?.classList.add('hidden');
-        if (passwordInput) passwordInput.value = '';
-        loginErrorMsg?.classList.add('hidden');
-        googleErrorMsg?.classList.add('hidden');
-    });
-
-    btnOpenChangePassModal?.addEventListener('click', () => {
-        changePassModal?.classList.remove('hidden');
-        changePassModal?.classList.add('flex');
-    });
-
-    btnCloseChangePass?.addEventListener('click', () => {
-        changePassModal?.classList.add('hidden');
-        changePassModal?.classList.remove('flex');
-        if (newPasswordInput) newPasswordInput.value = '';
-    });
-
-    changePassForm?.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const newPass = newPasswordInput.value.trim();
-        if (newPass.length < 4) {
-            alert('Mật khẩu tối thiểu phải có 4 ký tự!');
-            return;
-        }
-        const newHash = await hashPassword(newPass);
-        localStorage.setItem('admin_custom_password_hash', newHash);
-        changePassModal?.classList.add('hidden');
-        changePassModal?.classList.remove('flex');
-        if (newPasswordInput) newPasswordInput.value = '';
-        alert('Đổi mật khẩu admin thành công!');
-    });
-
-    btnOpenAdminManager?.addEventListener('click', () => {
-        renderAdminEmailsList();
-        adminManagerModal?.classList.remove('hidden');
-        adminManagerModal?.classList.add('flex');
-    });
-
-    btnCloseAdminManager?.addEventListener('click', () => {
-        adminManagerModal?.classList.add('hidden');
-        adminManagerModal?.classList.remove('flex');
-    });
-
-    addAdminForm?.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = newAdminEmailInput.value.trim().toLowerCase();
-        let emails = getAdminEmails();
-        if (emails.includes(email)) {
-            alert('Email này đã tồn tại!');
-            return;
-        }
-        emails.push(email);
-        saveAdminEmails(emails);
-        newAdminEmailInput.value = '';
-        renderAdminEmailsList();
-        alert('Thêm tài khoản admin thành công!');
-    });
-
-    window.removeAdminEmail = function(emailToRemove) {
-        let emails = getAdminEmails();
-        if (emails.length <= 1) {
-            alert('Cần giữ lại ít nhất một tài khoản!');
-            return;
-        }
-        if (confirm(`Bạn có chắc muốn xóa quyền admin của ${emailToRemove}?`)) {
-            emails = emails.filter(e => e !== emailToRemove);
-            saveAdminEmails(emails);
-            renderAdminEmailsList();
-        }
-    };
-
-    function renderAdminEmailsList() {
-        const emails = getAdminEmails();
-        if (!adminEmailsListContainer) return;
-        adminEmailsListContainer.innerHTML = '';
-        emails.forEach(email => {
-            const row = document.createElement('div');
-            row.className = 'flex justify-between items-center bg-white p-2.5 rounded-lg border border-slate-200 text-xs';
-            row.innerHTML = `
-                <span class="font-medium text-slate-700"><i class="fa-solid fa-envelope mr-1.5 text-teal-600"></i> ${email}</span>
-                <button type="button" onclick="removeAdminEmail('${email}')" class="text-red-500 hover:text-red-700 font-semibold cursor-pointer"><i class="fa-solid fa-trash-can"></i> Xóa</button>
-            `;
-            adminEmailsListContainer.appendChild(row);
-        });
-    }
-
-    function openDashboard(method) {
-        loginSection?.classList.add('hidden');
-        mainContent?.classList.remove('hidden');
-        btnLogout?.classList.remove('hidden');
-        btnOpenChangePassModal?.classList.remove('hidden');
-        btnOpenAdminManager?.classList.remove('hidden');
-        
-        if (adminSessionInfo) {
-            adminSessionInfo.textContent = `Phiên Admin (${method})`;
-            adminSessionInfo.classList.remove('hidden');
-        }
-        loadPendingData();
-    }
-
-    window.handleGoogleLogin = function(response) {
-        try {
-            const base64Url = response.credential.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-
-            const userInfo = JSON.parse(jsonPayload);
-            const userEmail = userInfo.email.toLowerCase().trim();
-            const ALLOWED_ADMIN_EMAILS = getAdminEmails();
-
-            if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
-                sessionStorage.setItem('is_admin_active', 'true');
-                sessionStorage.setItem('admin_auth_method', 'Google (' + userEmail + ')');
-                googleErrorMsg?.classList.add('hidden');
-                openDashboard('Google');
-            } else {
-                if (googleErrorMsg) {
-                    googleErrorMsg.textContent = `Email (${userEmail}) không có quyền Quản trị viên!`;
-                    googleErrorMsg.classList.remove('hidden');
-                }
-            }
-        } catch (err) {
-            if (googleErrorMsg) {
-                googleErrorMsg.textContent = 'Xác thực Google thất bại!';
-                googleErrorMsg.classList.remove('hidden');
-            }
-        }
-    };
-
-    // --- HÀM TẢI VÀ HIỂN THỊ DỮ LIỆU CHỜ DUYỆT ---
-    async function loadPendingData() {
-        // Đọc dữ liệu từ cả 2 nguồn key để tránh bị lệch
-        let workers = JSON.parse(localStorage.getItem('viecgap_workers') || localStorage.getItem('workers_list') || '[]');
-        let orgs = JSON.parse(localStorage.getItem('viecgap_orgs') || localStorage.getItem('organizations_list') || '[]');
-
-        // Lọc các hồ sơ ở trạng thái 'pending' hoặc chưa có status
-        const pendingWorkers = workers.filter(w => w.status === 'pending' || !w.status);
-        const pendingOrgs = orgs.filter(o => o.status === 'pending' || !o.status);
-
-        // Cập nhật số lượng hiển thị trên Badge
+        // Cập nhật Badge số lượng
         const statPendingWorkers = document.getElementById('statPendingWorkers');
         const statPendingOrgs = document.getElementById('statPendingOrgs');
         if (statPendingWorkers) statPendingWorkers.textContent = pendingWorkers.length;
@@ -252,12 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     item.className = 'p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs mb-2';
                     item.innerHTML = `
                         <div>
-                            <h4 class="font-bold text-slate-800 text-sm">${w.name} - <span class="text-amber-600">${w.skill || w.category || 'Cá nhân'}</span></h4>
-                            <p class="text-slate-600 mt-0.5">📞 ${w.phone} &bull; 📍 ${w.location || 'Chưa cập nhật'}</p>
+                            <h4 class="font-bold text-slate-800 text-sm">${w.name || 'Chưa có tên'} - <span class="text-amber-600">${w.skill || 'Cá nhân'}</span></h4>
+                            <p class="text-slate-600 mt-0.5">📞 ${w.phone || 'N/A'} &bull; 📍 ${w.location || 'Chưa cập nhật'}</p>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="approveWorker('${w.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition cursor-pointer">Đồng ý</button>
-                            <button onclick="rejectWorker('${w.id}')" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition cursor-pointer">Từ chối</button>
+                            <button onclick="window.approveWorker('${w.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition cursor-pointer">Đồng ý</button>
+                            <button onclick="window.rejectWorker('${w.id}')" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition cursor-pointer">Từ chối</button>
                         </div>
                     `;
                     workerContainer.appendChild(item);
@@ -277,65 +78,77 @@ document.addEventListener('DOMContentLoaded', () => {
                     item.className = 'p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs mb-2';
                     item.innerHTML = `
                         <div>
-                            <h4 class="font-bold text-slate-800 text-sm">${o.name}</h4>
-                            <p class="text-slate-600 mt-0.5">📞 ${o.phone} &bull; 📍 ${o.district || o.province || o.address || ''}</p>
+                            <h4 class="font-bold text-slate-800 text-sm">${o.name || 'Chưa có tên tổ chức'}</h4>
+                            <p class="text-slate-600 mt-0.5">📞 ${o.phone || 'N/A'} &bull; 📍 ${o.district || o.province || o.address || ''}</p>
                             <p class="text-blue-700 font-medium mt-0.5">Thế mạnh: ${o.strength || 'Chưa cập nhật'}</p>
                         </div>
                         <div class="flex gap-2">
-                            <button onclick="approveOrg('${o.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition cursor-pointer">Đồng ý</button>
-                            <button onclick="rejectOrg('${o.id}')" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition cursor-pointer">Từ chối</button>
+                            <button onclick="window.approveOrg('${o.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition cursor-pointer">Đồng ý</button>
+                            <button onclick="window.rejectOrg('${o.id}')" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-lg transition cursor-pointer">Từ chối</button>
                         </div>
                     `;
                     orgContainer.appendChild(item);
                 });
             }
         }
-    }
-
-    // --- CÁC HÀM XỬ LÝ PHÊ DUYỆT / TỪ CHỐI (GHI ĐỒNG BỘ CẢ 2 KEY) ---
-    window.approveOrg = function(id) {
-        let orgs = JSON.parse(localStorage.getItem('viecgap_orgs') || localStorage.getItem('organizations_list') || '[]');
-        orgs = orgs.map(o => o.id == id ? { ...o, status: 'approved' } : o);
-        
-        localStorage.setItem('viecgap_orgs', JSON.stringify(orgs));
-        localStorage.setItem('organizations_list', JSON.stringify(orgs));
-
-        alert("Đã phê duyệt tổ chức thành công!");
-        loadPendingData();
     };
 
-    window.rejectOrg = function(id) {
+    // --- CÁC HÀM XỬ LÝ PHÊ DUYỆT / TỪ CHỐI TRÊN SUPABASE ---
+    window.approveOrg = async (id) => {
+        const { error } = await supabase.from('organizations').update({ status: 'approved' }).eq('id', id);
+        if (error) {
+            alert("Lỗi phê duyệt: " + error.message);
+        } else {
+            alert("Đã phê duyệt tổ chức thành công!");
+            window.loadPendingData();
+        }
+    };
+
+    window.rejectOrg = async (id) => {
         if (confirm("Bạn có chắc chắn muốn từ chối và xóa hồ sơ tổ chức này?")) {
-            let orgs = JSON.parse(localStorage.getItem('viecgap_orgs') || localStorage.getItem('organizations_list') || '[]');
-            orgs = orgs.filter(o => o.id != id);
-
-            localStorage.setItem('viecgap_orgs', JSON.stringify(orgs));
-            localStorage.setItem('organizations_list', JSON.stringify(orgs));
-
-            loadPendingData();
+            const { error } = await supabase.from('organizations').delete().eq('id', id);
+            if (error) {
+                alert("Lỗi khi xóa: " + error.message);
+            } else {
+                window.loadPendingData();
+            }
         }
     };
 
-    window.approveWorker = function(id) {
-        let workers = JSON.parse(localStorage.getItem('viecgap_workers') || localStorage.getItem('workers_list') || '[]');
-        workers = workers.map(w => w.id == id ? { ...w, status: 'approved' } : w);
-        
-        localStorage.setItem('viecgap_workers', JSON.stringify(workers));
-        localStorage.setItem('workers_list', JSON.stringify(workers));
-
-        alert("Đã phê duyệt hồ sơ cá nhân thành công!");
-        loadPendingData();
+    window.approveWorker = async (id) => {
+        const { error } = await supabase.from('workers').update({ status: 'approved' }).eq('id', id);
+        if (error) {
+            alert("Lỗi phê duyệt: " + error.message);
+        } else {
+            alert("Đã phê duyệt hồ sơ cá nhân thành công!");
+            window.loadPendingData();
+        }
     };
 
-    window.rejectWorker = function(id) {
+    window.rejectWorker = async (id) => {
         if (confirm("Bạn có chắc chắn muốn từ chối và xóa hồ sơ cá nhân này?")) {
-            let workers = JSON.parse(localStorage.getItem('viecgap_workers') || localStorage.getItem('workers_list') || '[]');
-            workers = workers.filter(w => w.id != id);
-
-            localStorage.setItem('viecgap_workers', JSON.stringify(workers));
-            localStorage.setItem('workers_list', JSON.stringify(workers));
-
-            loadPendingData();
+            const { error } = await supabase.from('workers').delete().eq('id', id);
+            if (error) {
+                alert("Lỗi khi xóa: " + error.message);
+            } else {
+                window.loadPendingData();
+            }
         }
     };
+
+    // Tải dữ liệu lần đầu khi vào trang admin
+    window.loadPendingData();
+
+    // --- LẮNG NGHE REALTIME SUPABASE CHO TRANG ADMIN ---
+    supabase
+        .channel('public:admin_live_sync')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'organizations' }, () => {
+            console.log('Realtime Admin - Tổ chức có thay đổi mới');
+            window.loadPendingData();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'workers' }, () => {
+            console.log('Realtime Admin - Cá nhân có thay đổi mới');
+            window.loadPendingData();
+        })
+        .subscribe();
 });
