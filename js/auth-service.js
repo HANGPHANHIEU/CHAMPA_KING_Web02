@@ -1,40 +1,56 @@
-import { Storage } from './storage.js';
-
 export const AuthService = {
-    // 1. Đăng nhập
-    login(phone, password) {
-        const users = Storage.getUsers();
-        return users.find(u => u.phone === phone && u.password === password) || null;
+    // Lấy danh sách users từ localStorage
+    getUsers() {
+        return JSON.parse(localStorage.getItem('users_list')) || [];
     },
 
-    // 2. Đăng ký
+    // Lưu danh sách users
+    saveUsers(users) {
+        localStorage.setItem('users_list', JSON.stringify(users));
+    },
+
+    // Đăng ký tài khoản mới
     register(name, phone, password) {
-        const users = Storage.getUsers();
-        if (users.some(u => u.phone === phone)) {
+        const users = this.getUsers();
+        const existingUser = users.find(u => u.phone === phone);
+        
+        if (existingUser) {
             return { success: false, message: 'Số điện thoại này đã được đăng ký!' };
         }
-        const newUser = { id: Date.now(), name, phone, password };
+
+        const newUser = {
+            id: Date.now(),
+            name,
+            phone,
+            password, // Có thể mã hóa SHA-256 nếu cần bảo mật cao
+            role: 'worker',
+            status: 'active',
+            created_at: new Date().toISOString()
+        };
+
         users.push(newUser);
-        Storage.saveUsers(users);
+        this.saveUsers(users);
         return { success: true, user: newUser };
     },
 
-    // 3. Quên / Đổi mật khẩu
+    // Đăng nhập
+    login(phone, password) {
+        const users = this.getUsers();
+        const user = users.find(u => u.phone === phone && u.password === password);
+        return user || null;
+    },
+
+    // Đổi / Quên mật khẩu
     resetPassword(phone, newPassword) {
-        const users = Storage.getUsers();
-        const idx = users.findIndex(u => u.phone === phone);
-        if (idx !== -1) {
-            users[idx].password = newPassword;
-            Storage.saveUsers(users);
-            
-            // Cập nhật lại phiên nếu đang đăng nhập tài khoản này
-            const currentUser = Storage.getUser();
-            if (currentUser && currentUser.phone === phone) {
-                currentUser.password = newPassword;
-                Storage.setUser(currentUser);
-            }
-            return { success: true, message: 'Đổi mật khẩu thành công!' };
+        const users = this.getUsers();
+        const userIndex = users.findIndex(u => u.phone === phone);
+
+        if (userIndex === -1) {
+            return { success: false, message: 'Không tìm thấy số điện thoại này trong hệ thống!' };
         }
-        return { success: false, message: 'Số điện thoại chưa được đăng ký trên hệ thống!' };
+
+        users[userIndex].password = newPassword;
+        this.saveUsers(users);
+        return { success: true, message: 'Đặt lại mật khẩu thành công! Vui lòng đăng nhập lại.' };
     }
 };
