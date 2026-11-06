@@ -1,20 +1,41 @@
+import { supabase } from './supabaseClient.js';
+
 export const Storage = {
-    getUser: () => JSON.parse(localStorage.getItem('current_logged_user') || 'null'),
-    setUser: (u) => u ? localStorage.setItem('current_logged_user', JSON.stringify(u)) : localStorage.removeItem('current_logged_user'),
-    
-    getUsers: () => JSON.parse(localStorage.getItem('app_registered_users') || '[]'),
-    saveUsers: (list) => localStorage.setItem('app_registered_users', JSON.stringify(list)),
+    // --- TỔ CHỨC / ĐỐI TÁC ---
+    getOrgs: async () => {
+        const { data, error } = await supabase.from('organizations').select('*').order('created_at', { ascending: false });
+        if (error) { console.error(error); return []; }
+        return data;
+    },
+    saveOrg: async (o) => {
+        const { error } = await supabase.from('organizations').insert([o]);
+        if (error) alert("Lỗi khi ghi danh tổ chức: " + error.message);
+    },
+    updateOrgStatus: async (id, newStatus) => {
+        const { error } = await supabase.from('organizations').update({ status: newStatus }).eq('id', id);
+        if (error) alert("Lỗi cập nhật: " + error.message);
+    },
+    deleteOrg: async (id) => {
+        const { error } = await supabase.from('organizations').delete().eq('id', id);
+        if (error) alert("Lỗi khi xóa: " + error.message);
+    },
 
-    getAccepted: () => JSON.parse(localStorage.getItem('accepted_jobs_list') || '[]'),
-    saveAccepted: (list) => localStorage.setItem('accepted_jobs_list', JSON.stringify(list)),
-
-    getDeleted: () => JSON.parse(localStorage.getItem('app_deleted_jobs') || '[]'),
-    saveDeleted: (list) => localStorage.setItem('app_deleted_jobs', JSON.stringify(list)),
-
-    getWorkers: () => JSON.parse(localStorage.getItem('workers_list') || '[]'),
-    saveWorker: (w) => {
-        const list = Storage.getWorkers();
-        list.unshift(w);
-        localStorage.setItem('workers_list', JSON.stringify(list));
+    // --- HỒ SƠ CÁ NHÂN (WORKERS) ---
+    getWorkers: async () => {
+        const { data, error } = await supabase.from('workers').select('*').order('created_at', { ascending: false });
+        if (error) { console.error(error); return []; }
+        return data;
+    },
+    saveWorker: async (w) => {
+        const { error } = await supabase.from('workers').insert([w]);
+        if (error) alert("Lỗi khi đăng ký hồ sơ: " + error.message);
+    },
+    updateWorkerStatus: async (id, newStatus) => {
+        const { error } = await supabase.from('workers').update({ status: newStatus }).eq('id', id);
+        if (error) alert("Lỗi cập nhật: " + error.message);
+    },
+    deleteWorker: async (id) => {
+        const { error } = await supabase.from('workers').delete().eq('id', id);
+        if (error) alert("Lỗi khi xóa: " + error.message);
     }
 };
