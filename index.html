@@ -18,6 +18,7 @@
         
         <!-- Header Ứng dụng -->
         <header class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-white z-20">
+            <!-- LOGO Ở BÊN TRÁI -->
             <div class="flex items-center space-x-2">
                 <div class="text-[#0d9488] text-xl font-bold flex items-center">
                     <i class="fa-solid fa-bolt-lightning text-xl mr-1"></i>
@@ -26,14 +27,8 @@
                 </div>
             </div>
             
+            <!-- NHÓM NÚT THAO TÁC BÊN PHẢI (Nút Thùng rác đặt sau nút Tổ chức) -->
             <div class="flex items-center gap-2">
-                <!-- NÚT THÙNG RÁC (MỚI THÊM) -->
-                <button id="btnOpenTrash" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-xl text-xs flex items-center transition shadow-sm relative" title="Thùng rác bài đã xóa">
-                    <i class="fa-solid fa-trash-can text-red-500 mr-1 text-sm"></i>
-                    <span>Thùng rác</span>
-                    <span id="trashBadge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
-                </button>
-
                 <!-- NÚT ĐĂNG NHẬP THÀNH VIÊN -->
                 <button id="btnLoginAccount" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-xl text-xs flex items-center transition shadow-sm">
                     <i class="fa-solid fa-user-circle mr-1 text-teal-600 text-sm"></i> <span id="loginBtnText">Đăng nhập</span>
@@ -47,8 +42,15 @@
                 <button id="btnRegisterWorker" class="bg-amber-500 hover:bg-amber-600 text-white font-medium px-2.5 py-2 rounded-xl text-xs flex items-center transition shadow-sm">
                     <i class="fa-solid fa-user-plus mr-1"></i> Đăng ký cá nhân
                 </button>
-                <button id="btnJoinOrg" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-2.5 py-2 rounded-xl text-xs flex items-center transition">
+                <button id="btnJoinOrg" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-xl text-xs flex items-center transition">
                     <i class="fa-solid fa-building-shield mr-1 text-teal-600"></i> Tổ chức
+                </button>
+
+                <!-- NÚT THÙNG RÁC (ĐÃ DỜI RA SAU NÚT TỔ CHỨC) -->
+                <button id="btnOpenTrash" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-xl text-xs flex items-center transition shadow-sm relative" title="Thùng rác bài đã xóa">
+                    <i class="fa-solid fa-trash-can text-red-500 mr-1 text-sm"></i>
+                    <span>Thùng rác</span>
+                    <span id="trashBadge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
                 </button>
 
                 <!-- NÚT ĐĂNG VIỆC TRÊN HEADER -->
@@ -66,20 +68,6 @@
                 <div class="mb-5">
                     <h1 class="text-2xl font-bold text-slate-900">Việc gần bạn</h1>
                     <p class="text-sm text-slate-500 mt-0.5">Chọn việc phù hợp tại Châu Thành, Long Xuyên & các khu vực lân cận. Bắt đầu ngay.</p>
-                </div>
-
-                <!-- Banner nổi bật -->
-                <div class="bg-gradient-to-r from-teal-800 via-teal-700 to-teal-900 rounded-2xl p-6 text-white relative overflow-hidden mb-6 shadow-md">
-                    <div class="absolute right-[-20px] bottom-[-20px] opacity-15 text-white text-9xl pointer-events-none">
-                        <i class="fa-solid fa-bicycle"></i>
-                    </div>
-                    <div class="relative z-10 max-w-lg">
-                        <span class="bg-amber-500 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md inline-flex items-center mb-3 shadow-sm">
-                            <i class="fa-solid fa-bolt mr-1"></i> Cần người ngay
-                        </span>
-                        <h2 class="text-xl md:text-2xl font-bold leading-snug mb-2">Một chuyến giao hàng.<br>Một khoản thu nhập ngay.</h2>
-                        <p class="text-xs md:text-sm text-teal-100 mb-4 font-medium">Trong 30 phút &bull; 180.000đ / chuyến</p>
-                    </div>
                 </div>
 
                 <!-- Thanh tìm kiếm và bộ lọc khu vực -->
@@ -124,7 +112,21 @@
                 </div>
 
                 <!-- DANH SÁCH VIỆC LÀM -->
-                <div id="jobList" class="space-y-3"></div>
+                <div id="jobList" class="space-y-3 mb-6"></div>
+
+                <!-- BANNER NỔI BẬT -->
+                <div class="bg-gradient-to-r from-teal-800 via-teal-700 to-teal-900 rounded-2xl p-6 text-white relative overflow-hidden shadow-md mt-6">
+                    <div class="absolute right-[-20px] bottom-[-20px] opacity-15 text-white text-9xl pointer-events-none">
+                        <i class="fa-solid fa-bicycle"></i>
+                    </div>
+                    <div class="relative z-10 max-w-lg">
+                        <span class="bg-amber-500 text-white text-[11px] font-semibold px-2.5 py-1 rounded-md inline-flex items-center mb-3 shadow-sm">
+                            <i class="fa-solid fa-bolt mr-1"></i> Cần người ngay
+                        </span>
+                        <h2 class="text-xl md:text-2xl font-bold leading-snug mb-2">Một chuyến giao hàng.<br>Một khoản thu nhập ngay.</h2>
+                        <p class="text-xs md:text-sm text-teal-100 mb-1 font-medium">Trong 30 phút &bull; 180.000đ / chuyến</p>
+                    </div>
+                </div>
             </div>
 
             <!-- TAB 2: ĐÃ NHẬN VIỆC -->
@@ -206,12 +208,12 @@
 
     <!-- MODAL ĐĂNG VIỆC -->
     <div id="postJobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 flex flex-col max-h-[85vh] overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
                 <h3 class="font-bold text-slate-800 text-lg">Đăng công việc mới</h3>
                 <button id="btnCloseModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
             </div>
-            <form id="postJobForm" class="p-5 space-y-3">
+            <form id="postJobForm" class="p-4 space-y-3 overflow-y-auto flex-1">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Tên công việc <span class="text-red-500">*</span></label>
                     <input type="text" id="jobTitleInput" required placeholder="Ví dụ: Giao hàng nhanh Châu Thành..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
@@ -244,22 +246,22 @@
                     <input type="checkbox" id="jobUrgentInput" class="w-4 h-4 text-teal-600 rounded border-slate-300 focus:ring-teal-500">
                     <label for="jobUrgentInput" class="text-sm font-medium text-slate-700 cursor-pointer">Cần tuyển gấp</label>
                 </div>
-                <div class="pt-2 flex gap-2">
-                    <button type="button" id="btnCancelModal" class="w-1/2 py-2 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition text-sm">Hủy</button>
-                    <button type="submit" class="w-1/2 py-2 bg-[#0d9488] hover:bg-teal-700 text-white font-medium rounded-xl transition shadow-sm text-sm">Đăng ngay</button>
-                </div>
             </form>
+            <div class="p-3 border-t border-slate-100 bg-slate-50 flex gap-2 shrink-0">
+                <button type="button" id="btnCancelModal" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center">Hủy</button>
+                <button type="submit" form="postJobForm" class="flex-1 py-2.5 bg-[#0d9488] hover:bg-teal-700 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center">Đăng ngay</button>
+            </div>
         </div>
     </div>
 
     <!-- MODAL ĐĂNG KÝ TỔ CHỨC -->
     <div id="orgModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 flex flex-col max-h-[85vh] overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
                 <h3 class="font-bold text-slate-800 text-lg">Ghi danh Tổ chức / Đối tác</h3>
                 <button id="btnCloseOrgModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
             </div>
-            <form id="orgForm" class="p-5 space-y-3">
+            <form id="orgForm" class="p-4 space-y-3 overflow-y-auto flex-1">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Tên Tổ chức / Doanh nghiệp <span class="text-red-500">*</span></label>
                     <input type="text" id="orgNameInput" required placeholder="Công ty Vận tải & Dịch vụ An Giang" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
@@ -296,22 +298,22 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Thế mạnh dịch vụ <span class="text-red-500">*</span></label>
                     <input type="text" id="orgStrengthInput" required placeholder="Giao hàng hỏa tốc, Dịch vụ nhanh..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                 </div>
-                <div class="pt-2 flex gap-2">
-                    <button type="button" id="btnCancelOrgModal" class="w-1/2 py-2 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition text-sm">Hủy</button>
-                    <button type="submit" class="w-1/2 py-2 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl transition shadow-sm text-sm">Ghi danh ngay</button>
-                </div>
             </form>
+            <div class="p-3 border-t border-slate-100 bg-slate-50 flex gap-2 shrink-0">
+                <button type="button" id="btnCancelOrgModal" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center">Hủy</button>
+                <button type="submit" form="orgForm" class="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center">Ghi danh ngay</button>
+            </div>
         </div>
     </div>
 
     <!-- MODAL ĐĂNG KÝ CÁ NHÂN -->
     <div id="workerModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
-            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 flex flex-col max-h-[85vh] overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
                 <h3 class="font-bold text-slate-800 text-lg">Đăng ký Hồ sơ Cá nhân</h3>
                 <button id="btnCloseWorkerModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
             </div>
-            <form id="workerForm" class="p-5 space-y-3">
+            <form id="workerForm" class="p-4 space-y-3 overflow-y-auto flex-1">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
                     <input type="text" id="workerNameInput" required placeholder="Nguyễn Văn A" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
@@ -335,18 +337,18 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1">Nghề nghiệp / Kỹ năng sở trường <span class="text-red-500">*</span></label>
                     <input type="text" id="workerSkillInput" required placeholder="Giao hàng, Dọn dẹp, Sửa điện nước..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                 </div>
-                <div class="pt-2 flex gap-2">
-                    <button type="button" id="btnCancelWorkerModal" class="w-1/2 py-2 bg-slate-100 text-slate-700 font-medium rounded-xl hover:bg-slate-200 transition text-sm">Hủy</button>
-                    <button type="submit" class="w-1/2 py-2 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-xl transition shadow-sm text-sm">Lưu hồ sơ</button>
-                </div>
             </form>
+            <div class="p-3 border-t border-slate-100 bg-slate-50 flex gap-2 shrink-0">
+                <button type="button" id="btnCancelWorkerModal" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center">Hủy</button>
+                <button type="submit" form="workerForm" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center">Lưu hồ sơ</button>
+            </div>
         </div>
     </div>
 
-    <!-- MODAL THÙNG RÁC (MỚI THÊM) -->
+    <!-- MODAL THÙNG RÁC -->
     <div id="trashModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[80vh]">
-            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-trash-can text-red-500 text-lg"></i>
                     <h3 class="font-bold text-slate-800 text-lg">Thùng rác bài đăng</h3>
@@ -354,7 +356,7 @@
                 <button id="btnCloseTrashModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
             </div>
             <div id="trashList" class="p-4 overflow-y-auto flex-1 space-y-3"></div>
-            <div class="p-3 border-t border-slate-100 bg-slate-50 text-right">
+            <div class="p-3 border-t border-slate-100 bg-slate-50 text-right shrink-0">
                 <button id="btnEmptyTrash" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 font-bold text-xs rounded-xl transition">
                     Xóa tất cả vĩnh viễn
                 </button>
@@ -362,7 +364,61 @@
         </div>
     </div>
 
+    <!-- MODAL ĐĂNG NHẬP & ĐỔI MẬT KHẨU -->
+    <div id="authModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 flex flex-col max-h-[85vh] overflow-hidden">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+                <h3 id="authModalTitle" class="font-bold text-slate-800 text-lg">Đăng nhập tài khoản</h3>
+                <button id="btnCloseAuthModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+            </div>
+
+            <!-- Form Đăng nhập -->
+            <form id="authForm" class="p-4 space-y-3 overflow-y-auto flex-1">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
+                    <input type="tel" id="loginPhone" required placeholder="0901234567" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu <span class="text-red-500">*</span></label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+                
+                <!-- Link Quên / Đổi mật khẩu -->
+                <div class="flex justify-between items-center text-xs pt-1">
+                    <button type="button" id="btnToggleReset" class="text-teal-600 hover:underline font-medium">Quên / Đổi mật khẩu?</button>
+                </div>
+            </form>
+
+            <!-- Form Đổi mật khẩu (Ẩn mặc định) -->
+            <form id="resetForm" class="p-4 space-y-3 overflow-y-auto flex-1 hidden">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Số điện thoại đã đăng ký <span class="text-red-500">*</span></label>
+                    <input type="tel" id="resetPhone" required placeholder="0901234567" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Mật khẩu mới <span class="text-red-500">*</span></label>
+                    <input type="password" id="newPassword" required placeholder="Nhập mật khẩu mới..." class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                </div>
+                
+                <div class="flex justify-between items-center text-xs pt-1">
+                    <button type="button" id="btnBackToLogin" class="text-slate-600 hover:underline font-medium">&larr; Quay lại đăng nhập</button>
+                </div>
+            </form>
+
+            <!-- Footer chứa nút Hủy và Đăng nhập -->
+            <div id="authFooter" class="p-3 border-t border-slate-100 bg-slate-50 flex gap-2 shrink-0">
+                <button type="button" id="btnCancelAuthModal" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center">Hủy</button>
+                <button type="submit" form="authForm" class="flex-1 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center">Đăng nhập</button>
+            </div>
+
+            <div id="resetFooter" class="p-3 border-t border-slate-100 bg-slate-50 flex gap-2 shrink-0 hidden">
+                <button type="button" id="btnCancelReset" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center">Hủy</button>
+                <button type="submit" form="resetForm" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center">Xác nhận đổi</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Script điều khiển chính -->
-    <script src="script.js"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>
