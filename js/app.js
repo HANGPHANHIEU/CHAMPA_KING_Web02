@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("--- HỆ THỐNG 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG (FULL FEATURES) ---");
+    console.log("--- HỆ THỐNG 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG (FULL FEATURES & TRASH ICON INTEGRATED) ---");
 
     // 1. Dọn dẹp tất cả modal bị kẹt khi mới tải trang
     document.querySelectorAll('[id*="Modal"], [id*="modal"]').forEach(modal => {
@@ -50,13 +50,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const orgListContainer = document.getElementById('orgList');
         if (!orgListContainer) return;
 
-        const orgs = JSON.parse(localStorage.getItem('viecgap_orgs') || '[]');
+        const orgs = JSON.parse(localStorage.getItem('viecgap_orgs') || localStorage.getItem('organizations_list') || '[]');
         const approvedOrgs = orgs.filter(o => o.status === 'approved');
 
         if (approvedOrgs.length === 0) {
             orgListContainer.innerHTML = `
                 <div class="text-center py-8 text-slate-400 text-sm bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                    Chưa có tổ chức/đối tác nào được phê duyệt.
+                    Chưa có tổ chức/đối tác nào được phê duyệt[cite: 4].
                 </div>
             `;
             return;
@@ -66,16 +66,53 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-2">
                 <div class="flex justify-between items-start">
                     <div>
-                        <span class="bg-teal-50 text-teal-700 text-[11px] font-semibold px-2 py-0.5 rounded-md uppercase">${org.province || 'An Giang'}</span>
+                        <span class="bg-teal-50 text-teal-700 text-[11px] font-semibold px-2 py-0.5 rounded-md uppercase">${org.province || org.district || 'An Giang'}</span>
                         <h3 class="font-bold text-slate-900 text-base mt-1">${org.name}</h3>
                     </div>
-                    <span class="text-xs bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-xl font-semibold"><i class="fa-solid fa-circle-check mr-1"></i>Đã xác minh</span>
+                    <span class="text-xs bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-xl font-semibold flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-circle-check text-emerald-500"></i> Đã xác minh[cite: 4]
+                    </span>
                 </div>
-                <p class="text-xs text-slate-600"><i class="fa-solid fa-star text-amber-500 mr-1"></i>Thế mạnh: ${org.strength}</p>
+                <p class="text-xs text-slate-600"><i class="fa-solid fa-star text-amber-500 mr-1"></i>Thế mạnh: ${org.strength || 'Chưa cập nhật'}</p>
                 <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-50">
-                    <span><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${org.address}, ${org.district}</span>
+                    <span><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${org.address || ''} ${org.district || ''}</span>
                     <a href="tel:${org.phone}" class="text-teal-600 font-bold hover:underline"><i class="fa-solid fa-phone mr-1"></i>${org.phone}</a>
                 </div>
+            </div>
+        `).join('');
+    };
+
+    // --- HÀM RENDER DANH SÁCH CÁ NHÂN ĐÃ ĐƯỢC DUYỆT ---
+    const renderApprovedWorkers = () => {
+        const workerListContainer = document.getElementById('workerList');
+        if (!workerListContainer) return;
+
+        const workers = JSON.parse(localStorage.getItem('viecgap_workers') || localStorage.getItem('workers_list') || '[]');
+        const approvedWorkers = workers.filter(w => w.status === 'approved');
+
+        if (approvedWorkers.length === 0) {
+            workerListContainer.innerHTML = `
+                <div class="text-center py-8 text-slate-400 text-sm bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                    Chưa có hồ sơ cá nhân nào được xác minh.
+                </div>
+            `;
+            return;
+        }
+
+        workerListContainer.innerHTML = approvedWorkers.map(w => `
+            <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex justify-between items-center">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h4 class="font-bold text-slate-800 text-sm">${w.name}</h4>
+                        <span class="bg-emerald-50 text-emerald-600 text-[10px] font-semibold px-2 py-0.5 rounded-md flex items-center gap-1 shadow-sm">
+                            <i class="fa-solid fa-circle-check text-emerald-500"></i> Đã xác minh[cite: 4]
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">Kỹ năng: ${w.skill || 'Đa năng'} &bull; Khu vực: ${w.location || 'An Giang'}</p>
+                </div>
+                <a href="tel:${w.phone}" class="bg-teal-50 hover:bg-teal-100 text-teal-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition">
+                    <i class="fa-solid fa-phone mr-1"></i>Liên hệ
+                </a>
             </div>
         `).join('');
     };
@@ -93,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (myAcceptedJobs.length === 0) {
             acceptedContainer.innerHTML = `
                 <div class="text-center py-8 text-slate-400 text-sm bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                    Bạn chưa nhận công việc nào.
+                    Bạn chưa nhận công việc nào[cite: 4].
                 </div>
             `;
             return;
@@ -110,7 +147,58 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-50">
                     <span><i class="fa-solid fa-location-dot mr-1"></i>${job.location}</span>
-                    <span class="text-emerald-600 font-semibold"><i class="fa-solid fa-check-circle mr-1"></i>Đã nhận việc</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-emerald-600 font-semibold"><i class="fa-solid fa-check-circle mr-1"></i>Đã nhận việc</span>
+                        <button onclick="window.handleRemoveAcceptedJob('${job.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2.5 py-1 rounded-lg font-semibold transition cursor-pointer flex items-center gap-1">
+                            <i class="fa-solid fa-trash-can text-xs"></i> Hủy nhận
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    };
+
+    // --- HÀM RENDER VÀ ĐẾM SỐ LƯỢNG TRONG THÙNG RÁC ---
+    const renderTrashList = () => {
+        const trashContainer = document.getElementById('trashList');
+        const trashBadge = document.getElementById('trashBadge');
+        const deletedJobs = JSON.parse(localStorage.getItem('viecgap_deleted_jobs') || '[]');
+
+        // Cập nhật số đếm trên badge Thùng rác (nếu có)
+        if (trashBadge) {
+            trashBadge.innerText = deletedJobs.length;
+            if (deletedJobs.length > 0) {
+                trashBadge.classList.remove('hidden');
+            } else {
+                trashBadge.classList.add('hidden');
+            }
+        }
+
+        if (!trashContainer) return;
+
+        if (deletedJobs.length === 0) {
+            trashContainer.innerHTML = `
+                <div class="text-center py-8 text-slate-400 text-sm bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                    <i class="fa-solid fa-trash-can text-2xl text-slate-300 mb-2 block"></i>
+                    Thùng rác trống. Chưa có bài đăng nào bị xóa.
+                </div>
+            `;
+            return;
+        }
+
+        trashContainer.innerHTML = deletedJobs.map(job => `
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs mb-2">
+                <div>
+                    <h4 class="font-bold text-slate-800 text-sm">${job.title}</h4>
+                    <p class="text-slate-500 mt-0.5">Khu vực: ${job.location} | Lương: ${job.salary} | Ngày xóa: ${job.deletedAt || 'Vừa xong'}</p>
+                </div>
+                <div class="flex items-center gap-2 self-end sm:self-center">
+                    <button onclick="window.handleRestoreJob('${job.id}')" class="bg-teal-100 hover:bg-teal-200 text-teal-700 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-rotate-left"></i> Khôi phục
+                    </button>
+                    <button onclick="window.handlePermanentDeleteJob('${job.id}')" class="bg-red-100 hover:bg-red-200 text-red-700 font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1 cursor-pointer">
+                        <i class="fa-solid fa-trash-can"></i> Xóa hẳn
+                    </button>
                 </div>
             </div>
         `).join('');
@@ -165,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 Nhận việc &rarr;
                             </button>
                             ${isOwner ? `
-                                <button onclick="window.handleDeleteJob('${job.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-xl font-semibold transition cursor-pointer text-xs flex items-center gap-1">
+                                <button onclick="window.handleDeleteJob('${job.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-xl font-semibold transition cursor-pointer text-xs flex items-center gap-1" title="Chuyển vào thùng rác">
                                     <i class="fa-solid fa-trash-can"></i> Xóa
                                 </button>
                             ` : ''}
@@ -177,46 +265,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderAcceptedJobs();
         renderApprovedOrgs();
+        renderApprovedWorkers();
         renderTrashList();
-    };
-
-    // --- HÀM RENDER THÙNG RÁC ---
-    const renderTrashList = () => {
-        const trashContainer = document.getElementById('trashList');
-        const trashBadge = document.getElementById('trashBadge');
-        if (!trashContainer) return;
-
-        const deletedJobs = JSON.parse(localStorage.getItem('viecgap_deleted_jobs') || '[]');
-
-        if (trashBadge) {
-            trashBadge.innerText = deletedJobs.length;
-            if (deletedJobs.length > 0) {
-                trashBadge.classList.remove('hidden');
-            } else {
-                trashBadge.classList.add('hidden');
-            }
-        }
-
-        if (deletedJobs.length === 0) {
-            trashContainer.innerHTML = `
-                <div class="text-center py-8 text-slate-400 text-sm">
-                    Thùng rác trống.
-                </div>
-            `;
-            return;
-        }
-
-        trashContainer.innerHTML = deletedJobs.map(job => `
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex justify-between items-center text-xs">
-                <div>
-                    <h4 class="font-bold text-slate-800">${job.title}</h4>
-                    <p class="text-slate-500">Khu vực: ${job.location} | Lương: ${job.salary}</p>
-                </div>
-                <button onclick="window.handleRestoreJob('${job.id}')" class="bg-teal-100 hover:bg-teal-200 text-teal-700 font-semibold px-2.5 py-1 rounded-lg transition">
-                    Khôi phục
-                </button>
-            </div>
-        `).join('');
     };
 
     // --- LOGIC NHẬN VIỆC ---
@@ -251,7 +301,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- LOGIC XÓA VIỆC (CHỈ CHÍNH CHỦ MỚI ĐƯỢC XÓA) ---
+    // --- LOGIC HỦY / XÓA CÔNG VIỆC ĐÃ NHẬN ---
+    window.handleRemoveAcceptedJob = (jobId) => {
+        if (confirm("Bạn có chắc chắn muốn hủy nhận công việc này không? Công việc sẽ quay lại danh sách tìm việc.")) {
+            let jobs = JSON.parse(localStorage.getItem('viecgap_jobs') || '[]');
+            const jobIndex = jobs.findIndex(j => j.id === jobId);
+
+            if (jobIndex !== -1) {
+                jobs[jobIndex].status = 'active';
+                delete jobs[jobIndex].acceptedBy;
+
+                localStorage.setItem('viecgap_jobs', JSON.stringify(jobs));
+                alert("Đã hủy nhận công việc thành công!");
+                window.renderJobs();
+            }
+        }
+    };
+
+    // --- LOGIC XÓA BÀI ĐĂNG (CHUYỂN VÀO THÙNG RÁC) ---
     window.handleDeleteJob = (jobId) => {
         const currentUserPhone = localStorage.getItem('viecgap_user_phone');
         let jobs = JSON.parse(localStorage.getItem('viecgap_jobs') || '[]');
@@ -264,15 +331,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (confirm("Bạn có chắc chắn muốn xóa bài đăng này không?")) {
+        if (confirm("Bạn có chắc chắn muốn xóa bài đăng này không? Bài sẽ được chuyển vào Thùng rác.")) {
             const updatedJobs = jobs.filter(j => j.id !== jobId);
             localStorage.setItem('viecgap_jobs', JSON.stringify(updatedJobs));
 
             let deletedJobs = JSON.parse(localStorage.getItem('viecgap_deleted_jobs') || '[]');
-            deletedJobs.push(job);
+            deletedJobs.unshift({
+                ...job,
+                deletedAt: new Date().toLocaleDateString('vi-VN') + ' ' + new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+            });
             localStorage.setItem('viecgap_deleted_jobs', JSON.stringify(deletedJobs));
 
-            alert("Đã xóa công việc thành công và chuyển vào thùng rác!");
+            alert("Đã xóa công việc và chuyển vào Thùng rác thành công!");
             window.renderJobs();
         }
     };
@@ -283,7 +353,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const jobIndex = deletedJobs.findIndex(j => j.id === jobId);
 
         if (jobIndex !== -1) {
-            const restoredJob = deletedJobs[jobIndex];
+            const restoredJob = { ...deletedJobs[jobIndex] };
+            delete restoredJob.deletedAt;
+
             deletedJobs.splice(jobIndex, 1);
             localStorage.setItem('viecgap_deleted_jobs', JSON.stringify(deletedJobs));
 
@@ -296,40 +368,38 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- LOGIC XÓA VĨNH VIỄN 1 BÀI ĐĂNG TRONG THÙNG RÁC ---
+    window.handlePermanentDeleteJob = (jobId) => {
+        if (confirm("Bạn có chắc chắn muốn xóa VĨNH VIỄN bài đăng này? Hành động này không thể hoàn tác.")) {
+            let deletedJobs = JSON.parse(localStorage.getItem('viecgap_deleted_jobs') || '[]');
+            deletedJobs = deletedJobs.filter(j => j.id !== jobId);
+            localStorage.setItem('viecgap_deleted_jobs', JSON.stringify(deletedJobs));
+
+            alert("Đã xóa vĩnh viễn bài đăng!");
+            window.renderJobs();
+        }
+    };
+
     // --- XÓA SẠCH THÙNG RÁC VĨNH VIỄN ---
     document.getElementById('btnEmptyTrash')?.addEventListener('click', () => {
-        if (confirm("Bạn có chắc chắn muốn xóa vĩnh viễn toàn bộ bài trong thùng rác không?")) {
+        if (confirm("Bạn có chắc chắn muốn dọn sạch toàn bộ thùng rác không?")) {
             localStorage.removeItem('viecgap_deleted_jobs');
-            renderTrashList();
+            window.renderJobs();
             alert("Đã dọn sạch thùng rác!");
         }
     });
 
-    // --- PHÊ DUYỆT / TỪ CHỐI CHO ADMIN ---
-    window.approveRegistration = (id, type) => {
-        const key = type === 'worker' ? 'viecgap_workers' : 'viecgap_orgs';
-        let list = JSON.parse(localStorage.getItem(key) || '[]');
-        const index = list.findIndex(item => item.id === id);
-
-        if (index !== -1) {
-            list[index].status = 'approved';
-            localStorage.setItem(key, JSON.stringify(list));
-            alert(`Đã phê duyệt ${type === 'worker' ? 'cá nhân' : 'tổ chức'} thành công!`);
-            window.renderJobs();
-        }
-    };
-
-    window.rejectRegistration = (id, type) => {
-        const key = type === 'worker' ? 'viecgap_workers' : 'viecgap_orgs';
-        let list = JSON.parse(localStorage.getItem(key) || '[]');
-        const updatedList = list.filter(item => item.id !== id);
-
-        if (confirm(`Bạn có chắc chắn muốn từ chối đăng ký này?`)) {
-            localStorage.setItem(key, JSON.stringify(updatedList));
-            alert(`Đã từ chối đăng ký!`);
-            window.renderJobs();
-        }
-    };
+    // Mở & Đóng Modal Thùng Rác
+    const trashModal = document.getElementById('trashModal');
+    document.getElementById('btnOpenTrash')?.addEventListener('click', () => {
+        renderTrashList();
+        trashModal?.classList.remove('hidden');
+        trashModal?.classList.add('flex');
+    });
+    document.getElementById('btnCloseTrashModal')?.addEventListener('click', () => {
+        trashModal?.classList.add('hidden');
+        trashModal?.classList.remove('flex');
+    });
 
     // Render khởi tạo ban đầu
     window.renderJobs();
@@ -362,15 +432,16 @@ document.addEventListener('DOMContentLoaded', () => {
             ward: document.getElementById('orgWardInput')?.value,
             address: document.getElementById('orgAddressInput')?.value,
             strength: document.getElementById('orgStrengthInput')?.value,
-            status: 'pending',
+            status: 'pending',[cite: 4]
             createdAt: new Date().toLocaleDateString('vi-VN')
         };
 
         let orgs = JSON.parse(localStorage.getItem('viecgap_orgs') || '[]');
         orgs.unshift(newOrg);
         localStorage.setItem('viecgap_orgs', JSON.stringify(orgs));
+        localStorage.setItem('organizations_list', JSON.stringify(orgs));
 
-        alert("Ghi danh Tổ chức thành công! Hồ sơ của bạn đang chờ Admin phê duyệt.");
+        alert("Ghi danh Tổ chức thành công! Hồ sơ của bạn đang chờ Admin phê duyệt[cite: 4].");
         closeOrgModal();
     });
 
@@ -399,15 +470,16 @@ document.addEventListener('DOMContentLoaded', () => {
             phone: document.getElementById('workerPhoneInput')?.value,
             location: document.getElementById('workerLocationInput')?.value,
             skill: document.getElementById('workerSkillInput')?.value,
-            status: 'pending',
+            status: 'pending',[cite: 4]
             createdAt: new Date().toLocaleDateString('vi-VN')
         };
 
         let workers = JSON.parse(localStorage.getItem('viecgap_workers') || '[]');
         workers.unshift(newWorker);
         localStorage.setItem('viecgap_workers', JSON.stringify(workers));
+        localStorage.setItem('workers_list', JSON.stringify(workers));
 
-        alert("Đăng ký hồ sơ cá nhân thành công! Hồ sơ của bạn đang chờ Admin phê duyệt.");
+        alert("Đăng ký hồ sơ cá nhân thành công! Hồ sơ của bạn đang chờ Admin phê duyệt[cite: 4].");
         closeWorkerModal();
     });
 
@@ -479,15 +551,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.renderJobs();
     });
 
-    // Modal Thùng rác
-    const trashModal = document.getElementById('trashModal');
-    document.getElementById('btnOpenTrash')?.addEventListener('click', () => {
-        renderTrashList();
-        trashModal?.classList.remove('hidden');
-        trashModal?.classList.add('flex');
-    });
-    document.getElementById('btnCloseTrashModal')?.addEventListener('click', () => trashModal?.classList.add('hidden'));
-
     // Chuyển đổi Tab điều hướng dưới cùng
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -506,6 +569,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderAcceptedJobs();
             } else if (tabId === 'tabOrganization') {
                 renderApprovedOrgs();
+            } else if (tabId === 'tabWorker') {
+                renderApprovedWorkers();
             }
         });
     });
