@@ -1,13 +1,13 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 // --- CẤU HÌNH SUPABASE ---
-const SUPABASE_URL = 'https://rznzypehvmwysxmjxxxp.supabase.co'; // Thay bằng URL dự án Supabase của bạn
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6bnp5cGVodm13eXN4bWp4eHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNTkxNTYsImV4cCI6MjEwODkzNTE1Nn0.B-5onxhT0EoqgtJ0ZP-ZbGSz4Gmo7xuRPEcsAYz65wA'; // Thay bằng ANON KEY của bạn
+const SUPABASE_URL = 'https://rznzypehvmwysxmjxxxp.supabase.co'; 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6bnp5cGVodm13eXN4bWp4eHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNTkxNTYsImV4cCI6MjEwODkzNTE1Nn0.B-5onxhT0EoqgtJ0ZP-ZbGSz4Gmo7xuRPEcsAYz65wA';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("--- HỆ THỐNG 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG (SUPABASE & REALTIME) ---");
+    console.log("--- HỆ THỐNG 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG (BẢO MẬT CHÍNH CHỦ & REALTIME) ---");
 
     // 1. Dọn dẹp tất cả modal bị kẹt khi mới tải trang
     document.querySelectorAll('[id*="Modal"], [id*="modal"]').forEach(modal => {
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
 
-    // --- HÀM RENDER DANH SÁCH CÁ NHÂN ĐÃ ĐƯỢC DUYỆT (ĐÃ BỔ SUNG HOÀN CHỈNH) ---
+    // --- HÀM RENDER DANH SÁCH CÁ NHÂN ĐÃ ĐƯỢC DUYỆT ---
     const renderApprovedWorkers = async () => {
         const workerListContainer = document.getElementById('workerList');
         if (!workerListContainer) return;
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
 
-    // --- HÀM RENDER DANH SÁCH VIỆC LÀM RA GIAO DIỆN CHÍNH ---
+    // --- HÀM RENDER DANH SÁCH VIỆC LÀM RA GIAO DIỆN CHÍNH (CÓ PHÂN QUYỀN CHÍNH CHỦ) ---
     window.renderJobs = async () => {
         const jobListContainer = document.getElementById('jobList');
         const jobCountElement = document.getElementById('jobCount');
@@ -245,24 +245,51 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (error || !jobs) return;
 
-        const availableJobs = jobs.filter(j => j.status !== 'accepted');
-
         if (jobCountElement) {
-            jobCountElement.innerText = `${availableJobs.length} việc phù hợp`;
+            jobCountElement.innerText = `${jobs.length} việc trên hệ thống`;
         }
 
-        if (availableJobs.length === 0) {
+        if (jobs.length === 0) {
             jobListContainer.innerHTML = `
                 <div class="text-center py-8 text-slate-400 text-sm bg-slate-50 rounded-2xl border border-dashed border-slate-200">
-                    Chưa có công việc nào sẵn có. Hãy đăng nhập và "Đăng việc" ngay!
+                    Chưa có công việc nào. Hãy đăng nhập và "Đăng việc" ngay!
                 </div>
             `;
             return;
         }
 
-        jobListContainer.innerHTML = availableJobs.map(job => {
+        jobListContainer.innerHTML = jobs.map(job => {
             const isOwner = currentUserPhone && job.phone === currentUserPhone;
             const dateStr = job.created_at ? new Date(job.created_at).toLocaleDateString('vi-VN') : 'Gần đây';
+
+            let actionButtonHTML = '';
+            let acceptedStatusHTML = '';
+
+            if (job.status === 'accepted') {
+                if (isOwner) {
+                    // CHÍNH CHỦ (Người đăng): Thấy rõ số điện thoại của người nhận việc để liên hệ
+                    acceptedStatusHTML = `
+                        <div class="mt-2 p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs flex items-center justify-between">
+                            <span class="text-emerald-800 font-medium"><i class="fa-solid fa-user-check mr-1"></i> Đã có thợ nhận việc:</span>
+                            <a href="tel:${job.accepted_by}" class="font-bold text-teal-700 hover:underline">📞 ${job.accepted_by}</a>
+                        </div>
+                    `;
+                } else {
+                    // NGƯỜI DÙNG KHÁC: Chỉ thấy nhãn che bảo mật, tuyệt đối không thấy SĐT thợ
+                    acceptedStatusHTML = `
+                        <div class="mt-2 p-2 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-500 flex items-center justify-between">
+                            <span><i class="fa-solid fa-lock mr-1 text-amber-500"></i> Công việc này đã có người nhận</span>
+                            <span class="text-[10px] italic text-slate-400">(Thông tin bảo mật)</span>
+                        </div>
+                    `;
+                }
+            } else {
+                actionButtonHTML = `
+                    <button onclick="window.handleTakeJob('${job.id}')" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-xl font-semibold transition cursor-pointer text-xs flex items-center gap-1">
+                        Nhận việc &rarr;
+                    </button>
+                `;
+            }
 
             return `
                 <div class="bg-white border border-slate-100 hover:border-teal-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition flex flex-col justify-between gap-3">
@@ -276,15 +303,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <span class="text-teal-600 font-bold text-sm bg-teal-50 px-2.5 py-1 rounded-xl">${job.salary}</span>
                     </div>
+
+                    ${acceptedStatusHTML}
+
                     <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-50">
                         <div class="flex items-center gap-3">
                             <span><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${job.location}</span>
                             <span><i class="fa-regular fa-clock text-slate-400 mr-1"></i>${dateStr}</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="window.handleTakeJob('${job.id}')" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-xl font-semibold transition cursor-pointer text-xs flex items-center gap-1">
-                                Nhận việc &rarr;
-                            </button>
+                            ${actionButtonHTML}
                             ${isOwner ? `
                                 <button onclick="window.handleDeleteJob('${job.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-xl font-semibold transition cursor-pointer text-xs flex items-center gap-1" title="Xóa bài">
                                     <i class="fa-solid fa-trash-can"></i> Xóa
@@ -489,7 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
             category: document.getElementById('jobCategoryInput')?.value || 'delivery',
             salary: document.getElementById('jobSalaryInput')?.value || 'Thỏa thuận',
             urgent: document.getElementById('jobUrgentInput')?.checked || false,
-            phone: currentUserPhone,
+            phone: currentUserPhone, // 👈 Lưu số điện thoại để xác thực chính chủ bài đăng
             status: 'active'
         };
 
@@ -497,6 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (error) {
             alert("Lỗi đăng việc: " + error.message);
         } else {
+            alert("Đăng việc thành công!");
             closePostJobModal();
             window.renderJobs();
         }
