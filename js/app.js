@@ -1,8 +1,8 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 // --- CẤU HÌNH SUPABASE ---
-const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // Thay bằng URL dự án Supabase của bạn
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Thay bằng ANON KEY của bạn
+const SUPABASE_URL = 'https://rznzypehvmwysxmjxxxp.supabase.co'; // Thay bằng URL dự án Supabase của bạn
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6bnp5cGVodm13eXN4bWp4eHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNTkxNTYsImV4cCI6MjEwODkzNTE1Nn0.B-5onxhT0EoqgtJ0ZP-ZbGSz4Gmo7xuRPEcsAYz65wA'; // Thay bằng ANON KEY của bạn
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
 
-    // --- HÀM RENDER DANH SÁCH CÁ NHÂN ĐÃ ĐƯỢC DUYỆT ---
+    // --- HÀM RENDER DANH SÁCH CÁ NHÂN ĐÃ ĐƯỢC DUYỆT (ĐÃ BỔ SUNG HOÀN CHỈNH) ---
     const renderApprovedWorkers = async () => {
         const workerListContainer = document.getElementById('workerList');
         if (!workerListContainer) return;
@@ -118,8 +118,32 @@ document.addEventListener('DOMContentLoaded', () => {
             .order('created_at', { ascending: false });
 
         if (error || !approvedWorkers || approvedWorkers.length === 0) {
+            workerListContainer.innerHTML = `
+                <div class="text-center py-8 text-slate-400 text-sm bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                    Chưa có hồ sơ cá nhân nào được phê duyệt.
+                </div>
+            `;
             return;
         }
+
+        workerListContainer.innerHTML = approvedWorkers.map(worker => `
+            <div class="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-2">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="bg-teal-50 text-teal-700 text-[11px] font-semibold px-2 py-0.5 rounded-md uppercase">${worker.location || 'Châu Thành'}</span>
+                        <h3 class="font-bold text-slate-900 text-base mt-1">${worker.name}</h3>
+                    </div>
+                    <span class="text-xs bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-xl font-semibold flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-circle-check text-emerald-500"></i> Đã xác minh
+                    </span>
+                </div>
+                <p class="text-xs text-slate-600"><i class="fa-solid fa-briefcase text-teal-600 mr-1"></i>Kỹ năng/Nghề nghiệp: ${worker.skill || 'Chưa cập nhật'}</p>
+                <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-50">
+                    <span><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${worker.location || ''}</span>
+                    <a href="tel:${worker.phone}" class="text-teal-600 font-bold hover:underline"><i class="fa-solid fa-phone mr-1"></i>${worker.phone}</a>
+                </div>
+            </div>
+        `).join('');
     };
 
     // --- HÀM RENDER DANH SÁCH VIỆC LÀM ĐÃ NHẬN (TAB 2) ---
@@ -355,7 +379,6 @@ document.addEventListener('DOMContentLoaded', () => {
     orgForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const newOrg = {
-            id: 'org_' + Date.now(),
             name: document.getElementById('orgNameInput')?.value,
             phone: document.getElementById('orgPhoneInput')?.value,
             province: document.getElementById('orgProvinceInput')?.value,
@@ -395,7 +418,6 @@ document.addEventListener('DOMContentLoaded', () => {
     workerForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const newWorker = {
-            id: 'worker_' + Date.now(),
             name: document.getElementById('workerNameInput')?.value,
             phone: document.getElementById('workerPhoneInput')?.value,
             location: document.getElementById('workerLocationInput')?.value,
@@ -462,7 +484,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentUserPhone = localStorage.getItem('viecgap_user_phone') || '';
 
         const newJob = {
-            id: 'job_' + Date.now(),
             title: document.getElementById('jobTitleInput')?.value || 'Công việc mới',
             location: document.getElementById('jobLocationInput')?.value || 'Châu Thành',
             category: document.getElementById('jobCategoryInput')?.value || 'delivery',
@@ -508,8 +529,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- LẮNG NGHE SUPABASE REALTIME (ĐỒNG BỘ ĐA THIẾT BỊ) ---
     supabase
         .channel('public:viecgap_live_sync')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'organizations' }, () => window.renderJobs())
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'workers' }, () => window.renderJobs())
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, () => window.renderJobs())
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'organizations' }, () => {
+            renderApprovedOrgs();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'workers' }, () => {
+            renderApprovedWorkers();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, () => {
+            window.renderJobs();
+        })
         .subscribe();
 });
