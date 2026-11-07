@@ -1,13 +1,13 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 // --- CẤU HÌNH SUPABASE ---
-const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // Thay bằng URL dự án Supabase của bạn
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Thay bằng ANON KEY của bạn
+const SUPABASE_URL = 'https://rznzypehvmwysxmjxxxp.supabase.co'; // Đã bổ sung chuẩn .co
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6bnp5cGVodm13eXN4bWp4eHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNTkxNTYsImV4cCI6MjEwODkzNTE1Nn0.B-5onxhT0EoqgtJ0ZP-ZbGSz4Gmo7xuRPEcsAYz65wA';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("--- HỆ THỐNG ADMIN 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG (SUPABASE & REALTIME) ---");
+    console.log("--- HỆ THỐNG ADMIN 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG (HOÀN CHỈNH & REALTIME) ---");
 
     // Dọn dẹp modal khi tải trang
     document.querySelectorAll('[id*="Modal"], [id*="modal"]').forEach(modal => {
@@ -15,15 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.remove('flex');
     });
 
-    // --- HÀM TẢI VÀ HIỂN THỊ DỮ LIỆU CHỜ DUYỆT TỪ SUPABASE ---
+    // --- 1. TẢI VÀ HIỂN THỊ DỮ LIỆU CHỜ DUYỆT ---
     window.loadPendingData = async () => {
-        // Lấy danh sách tổ chức chưa duyệt ('pending' hoặc chưa có status)
         const { data: orgs, error: orgError } = await supabase
             .from('organizations')
             .select('*')
             .order('created_at', { ascending: false });
 
-        // Lấy danh sách cá nhân chưa duyệt
         const { data: workers, error: workerError } = await supabase
             .from('workers')
             .select('*')
@@ -35,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pendingOrgs = (orgs || []).filter(o => o.status === 'pending' || !o.status);
         const pendingWorkers = (workers || []).filter(w => w.status === 'pending' || !w.status);
 
-        // Cập nhật Badge số lượng
+        // Cập nhật Badge số lượng chờ duyệt
         const statPendingWorkers = document.getElementById('statPendingWorkers');
         const statPendingOrgs = document.getElementById('statPendingOrgs');
         if (statPendingWorkers) statPendingWorkers.textContent = pendingWorkers.length;
@@ -93,7 +91,75 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- CÁC HÀM XỬ LÝ PHÊ DUYỆT / TỪ CHỐI TRÊN SUPABASE ---
+    // --- 2. TẢI VÀ HIỂN THỊ DANH SÁCH ĐÃ PHÊ DUYỆT ---
+    window.loadApprovedData = async () => {
+        const { data: orgs, error: orgError } = await supabase
+            .from('organizations')
+            .select('*')
+            .eq('status', 'approved')
+            .order('created_at', { ascending: false });
+
+        const { data: workers, error: workerError } = await supabase
+            .from('workers')
+            .select('*')
+            .eq('status', 'approved')
+            .order('created_at', { ascending: false });
+
+        if (orgError) console.error("Lỗi tải tổ chức đã duyệt:", orgError.message);
+        if (workerError) console.error("Lỗi tải cá nhân đã duyệt:", workerError.message);
+
+        // Cập nhật số lượng hiển thị trên tiêu đề
+        const countApprovedOrgs = document.getElementById('countApprovedOrgs');
+        const countApprovedWorkers = document.getElementById('countApprovedWorkers');
+        if (countApprovedOrgs) countApprovedOrgs.textContent = (orgs || []).length;
+        if (countApprovedWorkers) countApprovedWorkers.textContent = (workers || []).length;
+
+        // Render Tổ chức đã duyệt
+        const orgContainer = document.getElementById('adminApprovedOrgList');
+        if (orgContainer) {
+            orgContainer.innerHTML = '';
+            if (!orgs || orgs.length === 0) {
+                orgContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">Chưa có tổ chức nào được duyệt.</p>`;
+            } else {
+                orgs.forEach(o => {
+                    const item = document.createElement('div');
+                    item.className = 'p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs mb-2';
+                    item.innerHTML = `
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm">${o.name}</h4>
+                            <p class="text-slate-500 mt-0.5">📞 ${o.phone} &bull; 📍 ${o.district || o.province || ''}</p>
+                        </div>
+                        <span class="text-emerald-600 font-semibold bg-emerald-50 px-2.5 py-1 rounded-md">Đã duyệt</span>
+                    `;
+                    orgContainer.appendChild(item);
+                });
+            }
+        }
+
+        // Render Cá nhân đã duyệt
+        const workerContainer = document.getElementById('adminApprovedWorkerList');
+        if (workerContainer) {
+            workerContainer.innerHTML = '';
+            if (!workers || workers.length === 0) {
+                workerContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-3">Chưa có cá nhân nào được duyệt.</p>`;
+            } else {
+                workers.forEach(w => {
+                    const item = document.createElement('div');
+                    item.className = 'p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs mb-2';
+                    item.innerHTML = `
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm">${w.name} - <span class="text-amber-600">${w.skill}</span></h4>
+                            <p class="text-slate-500 mt-0.5">📞 ${w.phone} &bull; 📍 ${w.location}</p>
+                        </div>
+                        <span class="text-emerald-600 font-semibold bg-emerald-50 px-2.5 py-1 rounded-md">Đã duyệt</span>
+                    `;
+                    workerContainer.appendChild(item);
+                });
+            }
+        }
+    };
+
+    // --- 3. CÁC HÀM XỬ LÝ PHÊ DUYỆT / TỪ CHỐI ---
     window.approveOrg = async (id) => {
         const { error } = await supabase.from('organizations').update({ status: 'approved' }).eq('id', id);
         if (error) {
@@ -101,6 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             alert("Đã phê duyệt tổ chức thành công!");
             window.loadPendingData();
+            window.loadApprovedData();
         }
     };
 
@@ -111,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert("Lỗi khi xóa: " + error.message);
             } else {
                 window.loadPendingData();
+                window.loadApprovedData();
             }
         }
     };
@@ -122,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             alert("Đã phê duyệt hồ sơ cá nhân thành công!");
             window.loadPendingData();
+            window.loadApprovedData();
         }
     };
 
@@ -132,23 +201,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert("Lỗi khi xóa: " + error.message);
             } else {
                 window.loadPendingData();
+                window.loadApprovedData();
             }
         }
     };
 
-    // Tải dữ liệu lần đầu khi vào trang admin
+    // Tải toàn bộ dữ liệu lần đầu khi vào trang admin
     window.loadPendingData();
+    window.loadApprovedData();
 
-    // --- LẮNG NGHE REALTIME SUPABASE CHO TRANG ADMIN ---
+    // --- 4. LẮNG NGHE REALTIME SUPABASE ---
     supabase
-        .channel('public:admin_live_sync')
+        .channel('public:admin_complete_sync')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'organizations' }, () => {
-            console.log('Realtime Admin - Tổ chức có thay đổi mới');
+            console.log('Realtime Admin - Tổ chức thay đổi');
             window.loadPendingData();
+            window.loadApprovedData();
         })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'workers' }, () => {
-            console.log('Realtime Admin - Cá nhân có thay đổi mới');
+            console.log('Realtime Admin - Cá nhân thay đổi');
             window.loadPendingData();
+            window.loadApprovedData();
         })
         .subscribe();
 });
