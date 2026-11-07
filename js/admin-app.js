@@ -1,13 +1,30 @@
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
 // --- CẤU HÌNH SUPABASE ---
-const SUPABASE_URL = 'https://rznzypehvmwysxmjxxxp.supabase.co'; // Đã bổ sung chuẩn .co
+const SUPABASE_URL = 'https://rznzypehvmwysxmjxxxp.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6bnp5cGVodm13eXN4bWp4eHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNTkxNTYsImV4cCI6MjEwODkzNTE1Nn0.B-5onxhT0EoqgtJ0ZP-ZbGSz4Gmo7xuRPEcsAYz65wA';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// --- CẤU HÌNH MẬT KHẨU ADMIN ---
+const ADMIN_PASSWORD = "123";
+
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("--- HỆ THỐNG ADMIN 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG (HOÀN CHỈNH & REALTIME) ---");
+    // --- BẢO MẬT: XÁC THỰC MẬT KHẨU ADMIN ---
+    let isAuthed = sessionStorage.getItem('admin_authenticated') === 'true';
+    if (!isAuthed) {
+        const inputPass = prompt("🔒 Vui lòng nhập mật khẩu Quản trị viên (Admin):");
+        if (inputPass === ADMIN_PASSWORD) {
+            sessionStorage.setItem('admin_authenticated', 'true');
+            alert("Đăng nhập Admin thành công!");
+        } else {
+            alert("❌ Mật khẩu không chính xác! Đang quay lại trang chủ.");
+            window.location.href = 'index.html';
+            return;
+        }
+    }
+
+    console.log("--- HỆ THỐNG ADMIN 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG (ĐẦY ĐỦ TÍNH NĂNG DUYỆT & REALTIME) ---");
 
     // Dọn dẹp modal khi tải trang
     document.querySelectorAll('[id*="Modal"], [id*="modal"]').forEach(modal => {
@@ -108,7 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (orgError) console.error("Lỗi tải tổ chức đã duyệt:", orgError.message);
         if (workerError) console.error("Lỗi tải cá nhân đã duyệt:", workerError.message);
 
-        // Cập nhật số lượng hiển thị trên tiêu đề
         const countApprovedOrgs = document.getElementById('countApprovedOrgs');
         const countApprovedWorkers = document.getElementById('countApprovedWorkers');
         if (countApprovedOrgs) countApprovedOrgs.textContent = (orgs || []).length;
@@ -172,14 +188,18 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.rejectOrg = async (id) => {
-        if (confirm("Bạn có chắc chắn muốn từ chối và xóa hồ sơ tổ chức này?")) {
+        if (confirm("Bạn có chắc chắn muốn từ chối hồ sơ tổ chức này?")) {
             const { error } = await supabase.from('organizations').delete().eq('id', id);
             if (error) {
-                alert("Lỗi khi xóa: " + error.message);
-            } else {
-                window.loadPendingData();
-                window.loadApprovedData();
+                const { error: updateErr } = await supabase.from('organizations').update({ status: 'rejected' }).eq('id', id);
+                if (updateErr) {
+                    alert("Lỗi từ chối: " + error.message);
+                    return;
+                }
             }
+            alert("Đã từ chối hồ sơ tổ chức thành công!");
+            window.loadPendingData();
+            window.loadApprovedData();
         }
     };
 
@@ -195,18 +215,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.rejectWorker = async (id) => {
-        if (confirm("Bạn có chắc chắn muốn từ chối và xóa hồ sơ cá nhân này?")) {
+        if (confirm("Bạn có chắc chắn muốn từ chối hồ sơ cá nhân này?")) {
             const { error } = await supabase.from('workers').delete().eq('id', id);
             if (error) {
-                alert("Lỗi khi xóa: " + error.message);
-            } else {
-                window.loadPendingData();
-                window.loadApprovedData();
+                const { error: updateErr } = await supabase.from('workers').update({ status: 'rejected' }).eq('id', id);
+                if (updateErr) {
+                    alert("Lỗi từ chối: " + error.message);
+                    return;
+                }
             }
+            alert("Đã từ chối hồ sơ cá nhân thành công!");
+            window.loadPendingData();
+            window.loadApprovedData();
         }
     };
 
-    // Tải toàn bộ dữ liệu lần đầu khi vào trang admin
+    // Tải dữ liệu lần đầu
     window.loadPendingData();
     window.loadApprovedData();
 
@@ -214,12 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
     supabase
         .channel('public:admin_complete_sync')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'organizations' }, () => {
-            console.log('Realtime Admin - Tổ chức thay đổi');
             window.loadPendingData();
             window.loadApprovedData();
         })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'workers' }, () => {
-            console.log('Realtime Admin - Cá nhân thay đổi');
             window.loadPendingData();
             window.loadApprovedData();
         })
