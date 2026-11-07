@@ -27,10 +27,10 @@
                 </div>
             </div>
             
-            <!-- NHÓM NÚT THAO TÁC BÊN PHẢI (Nút Thùng rác đặt sau nút Tổ chức) -->
+            <!-- NHÓM NÚT THAO TÁC BÊN PHẢI -->
             <div class="flex items-center gap-2">
                 <!-- NÚT ĐĂNG NHẬP THÀNH VIÊN -->
-                <button id="btnLoginAccount" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-xl text-xs flex items-center transition shadow-sm">
+                <button id="btnLoginAccount" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-xl text-xs flex items-center transition shadow-sm cursor-pointer">
                     <i class="fa-solid fa-user-circle mr-1 text-teal-600 text-sm"></i> <span id="loginBtnText">Đăng nhập</span>
                 </button>
 
@@ -38,23 +38,29 @@
                 <a href="admin.html" class="bg-slate-900 hover:bg-slate-800 text-white font-medium px-2.5 py-2 rounded-xl text-xs flex items-center transition shadow-sm mr-1">
                     <i class="fa-solid fa-user-gear mr-1 text-teal-400"></i> Admin
                 </a>
+
+                <!-- NÚT & ICON XEM DANH SÁCH NHẬN VIỆC & ĐÁNH GIÁ (MỚI THÊM) -->
+                <a href="worker-management.html" class="bg-teal-50 hover:bg-teal-100 text-teal-700 font-medium px-3 py-2 rounded-xl text-xs flex items-center transition shadow-sm mr-1 cursor-pointer" title="Danh sách nhận việc & Đánh giá nhân sự">
+                    <i class="fa-solid fa-users-viewfinder text-teal-600 text-sm mr-1.5"></i>
+                    <span class="hidden sm:inline">Danh sách nhận việc</span>
+                </a>
                 
-                <button id="btnRegisterWorker" class="bg-amber-500 hover:bg-amber-600 text-white font-medium px-2.5 py-2 rounded-xl text-xs flex items-center transition shadow-sm">
+                <button id="btnRegisterWorker" class="bg-amber-500 hover:bg-amber-600 text-white font-medium px-2.5 py-2 rounded-xl text-xs flex items-center transition shadow-sm cursor-pointer">
                     <i class="fa-solid fa-user-plus mr-1"></i> Đăng ký cá nhân
                 </button>
-                <button id="btnJoinOrg" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-xl text-xs flex items-center transition">
+                <button id="btnJoinOrg" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-xl text-xs flex items-center transition cursor-pointer">
                     <i class="fa-solid fa-building-shield mr-1 text-teal-600"></i> Tổ chức
                 </button>
 
-                <!-- NÚT THÙNG RÁC (ĐÃ DỜI RA SAU NÚT TỔ CHỨC) -->
-                <button id="btnOpenTrash" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-xl text-xs flex items-center transition shadow-sm relative" title="Thùng rác bài đã xóa">
+                <!-- NÚT THÙNG RÁC -->
+                <button id="btnOpenTrash" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-2 rounded-xl text-xs flex items-center transition shadow-sm relative cursor-pointer" title="Thùng rác bài đã xóa">
                     <i class="fa-solid fa-trash-can text-red-500 mr-1 text-sm"></i>
                     <span>Thùng rác</span>
                     <span id="trashBadge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
                 </button>
 
                 <!-- NÚT ĐĂNG VIỆC TRÊN HEADER -->
-                <button id="btnPostJob" class="bg-gradient-to-r from-[#0d9488] to-teal-600 hover:from-teal-700 hover:to-teal-800 text-white font-bold px-4 py-2.5 rounded-xl text-xs md:text-sm flex items-center shadow-md hover:shadow-lg transition transform active:scale-95">
+                <button id="btnPostJob" class="bg-gradient-to-r from-[#0d9488] to-teal-600 hover:from-teal-700 hover:to-teal-800 text-white font-bold px-4 py-2.5 rounded-xl text-xs md:text-sm flex items-center shadow-md hover:shadow-lg transition transform active:scale-95 cursor-pointer">
                     <i class="fa-solid fa-circle-plus mr-1.5 text-base"></i> Đăng việc
                 </button>
             </div>
@@ -93,11 +99,11 @@
 
                 <!-- Danh mục dạng pills -->
                 <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none mb-5" id="categoryContainer">
-                    <button data-category="all" class="category-btn bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap shadow-sm transition">Tất cả</button>
-                    <button data-category="delivery" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Giao hàng</button>
-                    <button data-category="cleaning" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Dọn dẹp</button>
-                    <button data-category="repair" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Sửa chữa</button>
-                    <button data-category="service" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition">Phục vụ</button>
+                    <button data-category="all" class="category-btn bg-slate-900 text-white px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap shadow-sm transition cursor-pointer">Tất cả</button>
+                    <button data-category="delivery" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition cursor-pointer">Giao hàng</button>
+                    <button data-category="cleaning" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition cursor-pointer">Dọn dẹp</button>
+                    <button data-category="repair" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition cursor-pointer">Sửa chữa</button>
+                    <button data-category="service" class="category-btn bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition cursor-pointer">Phục vụ</button>
                 </div>
 
                 <!-- Bộ lọc kết quả -->
@@ -146,7 +152,7 @@
                         <p class="text-sm text-slate-500 mt-0.5">Danh sách các doanh nghiệp và đơn vị cung cấp dịch vụ tại địa bàn.</p>
                     </div>
                     <div class="flex gap-2">
-                        <select id="filterOrgDistrict" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:border-teal-600">
+                        <select id="filterOrgDistrict" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:border-teal-600 cursor-pointer">
                             <option value="">Tất cả Quận / Huyện</option>
                             <option value="Châu Thành">Huyện Châu Thành</option>
                             <option value="Long Xuyên">TP. Long Xuyên</option>
@@ -180,26 +186,26 @@
         </div>
 
         <!-- NÚT ĐĂNG VIỆC TO (NỔI Ở GÓC DƯỚI) -->
-        <button id="btnFloatingPostJob" class="fixed bottom-20 right-4 z-40 bg-gradient-to-r from-[#0d9488] to-teal-600 hover:from-teal-700 hover:to-teal-800 text-white font-extrabold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 border border-teal-400/30">
+        <button id="btnFloatingPostJob" class="fixed bottom-20 right-4 z-40 bg-gradient-to-r from-[#0d9488] to-teal-600 hover:from-teal-700 hover:to-teal-800 text-white font-extrabold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 transition-all transform hover:scale-105 active:scale-95 border border-teal-400/30 cursor-pointer">
             <i class="fa-solid fa-circle-plus text-xl text-amber-300"></i>
             <span class="text-xs md:text-sm tracking-wide">ĐĂNG VIỆC NGAY</span>
         </button>
 
         <!-- THANH ĐIỀU HƯỚNG DƯỚI CÙNG -->
         <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-3 py-2 flex justify-around items-center z-50 shadow-2xl h-16">
-            <button data-tab="tabFindJob" class="nav-btn flex-1 flex flex-col items-center justify-center text-[#0d9488] transition py-1">
+            <button data-tab="tabFindJob" class="nav-btn flex-1 flex flex-col items-center justify-center text-[#0d9488] transition py-1 cursor-pointer">
                 <i class="fa-solid fa-magnifying-glass text-base mb-1"></i>
                 <span class="text-[11px] font-medium leading-tight whitespace-nowrap">Tìm việc</span>
             </button>
-            <button data-tab="tabAcceptedJob" class="nav-btn flex-1 flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 transition py-1">
+            <button data-tab="tabAcceptedJob" class="nav-btn flex-1 flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 transition py-1 cursor-pointer">
                 <i class="fa-solid fa-briefcase text-base mb-1"></i>
                 <span class="text-[11px] font-medium leading-tight whitespace-nowrap">Đã nhận</span>
             </button>
-            <button data-tab="tabOrganization" class="nav-btn flex-1 flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 transition py-1">
+            <button data-tab="tabOrganization" class="nav-btn flex-1 flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 transition py-1 cursor-pointer">
                 <i class="fa-solid fa-building-shield text-base mb-1"></i>
                 <span class="text-[11px] font-medium leading-tight whitespace-nowrap">Tổ chức</span>
             </button>
-            <button data-tab="tabMap" class="nav-btn flex-1 flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 transition py-1">
+            <button data-tab="tabMap" class="nav-btn flex-1 flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 transition py-1 cursor-pointer">
                 <i class="fa-solid fa-map-location-dot text-base mb-1"></i>
                 <span class="text-[11px] font-medium leading-tight whitespace-nowrap">Bản đồ</span>
             </button>
@@ -211,7 +217,7 @@
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 flex flex-col max-h-[85vh] overflow-hidden">
             <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
                 <h3 class="font-bold text-slate-800 text-lg">Đăng công việc mới</h3>
-                <button id="btnCloseModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+                <button id="btnCloseModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold cursor-pointer">&times;</button>
             </div>
             <form id="postJobForm" class="p-4 space-y-3 overflow-y-auto flex-1">
                 <div>
@@ -221,7 +227,7 @@
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Khu vực</label>
-                        <select id="jobLocationInput" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                        <select id="jobLocationInput" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600 cursor-pointer">
                             <option value="Châu Thành">Châu Thành</option>
                             <option value="Long Xuyên">Long Xuyên</option>
                             <option value="Quận 1">Quận 1</option>
@@ -230,7 +236,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Danh mục</label>
-                        <select id="jobCategoryInput" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                        <select id="jobCategoryInput" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600 cursor-pointer">
                             <option value="delivery">Giao hàng</option>
                             <option value="cleaning">Dọn dẹp</option>
                             <option value="repair">Sửa chữa</option>
@@ -248,8 +254,8 @@
                 </div>
             </form>
             <div class="p-3 border-t border-slate-100 bg-slate-50 flex gap-2 shrink-0">
-                <button type="button" id="btnCancelModal" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center">Hủy</button>
-                <button type="submit" form="postJobForm" class="flex-1 py-2.5 bg-[#0d9488] hover:bg-teal-700 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center">Đăng ngay</button>
+                <button type="button" id="btnCancelModal" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center cursor-pointer">Hủy</button>
+                <button type="submit" form="postJobForm" class="flex-1 py-2.5 bg-[#0d9488] hover:bg-teal-700 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center cursor-pointer">Đăng ngay</button>
             </div>
         </div>
     </div>
@@ -259,7 +265,7 @@
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 flex flex-col max-h-[85vh] overflow-hidden">
             <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
                 <h3 class="font-bold text-slate-800 text-lg">Ghi danh Tổ chức / Đối tác</h3>
-                <button id="btnCloseOrgModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+                <button id="btnCloseOrgModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold cursor-pointer">&times;</button>
             </div>
             <form id="orgForm" class="p-4 space-y-3 overflow-y-auto flex-1">
                 <div>
@@ -273,7 +279,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Tỉnh / Thành phố</label>
-                        <select id="orgProvinceInput" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                        <select id="orgProvinceInput" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600 cursor-pointer">
                             <option value="An Giang">An Giang</option>
                             <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
                             <option value="Cần Thơ">Cần Thơ</option>
@@ -300,8 +306,8 @@
                 </div>
             </form>
             <div class="p-3 border-t border-slate-100 bg-slate-50 flex gap-2 shrink-0">
-                <button type="button" id="btnCancelOrgModal" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center">Hủy</button>
-                <button type="submit" form="orgForm" class="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center">Ghi danh ngay</button>
+                <button type="button" id="btnCancelOrgModal" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center cursor-pointer">Hủy</button>
+                <button type="submit" form="orgForm" class="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center cursor-pointer">Ghi danh ngay</button>
             </div>
         </div>
     </div>
@@ -311,7 +317,7 @@
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 flex flex-col max-h-[85vh] overflow-hidden">
             <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
                 <h3 class="font-bold text-slate-800 text-lg">Đăng ký Hồ sơ Cá nhân</h3>
-                <button id="btnCloseWorkerModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+                <button id="btnCloseWorkerModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold cursor-pointer">&times;</button>
             </div>
             <form id="workerForm" class="p-4 space-y-3 overflow-y-auto flex-1">
                 <div>
@@ -325,7 +331,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">Khu vực sinh sống</label>
-                        <select id="workerLocationInput" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
+                        <select id="workerLocationInput" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600 cursor-pointer">
                             <option value="Châu Thành">Châu Thành</option>
                             <option value="Long Xuyên">Long Xuyên</option>
                             <option value="Quận 1">Quận 1</option>
@@ -339,8 +345,8 @@
                 </div>
             </form>
             <div class="p-3 border-t border-slate-100 bg-slate-50 flex gap-2 shrink-0">
-                <button type="button" id="btnCancelWorkerModal" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center">Hủy</button>
-                <button type="submit" form="workerForm" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center">Lưu hồ sơ</button>
+                <button type="button" id="btnCancelWorkerModal" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center cursor-pointer">Hủy</button>
+                <button type="submit" form="workerForm" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center cursor-pointer">Lưu hồ sơ</button>
             </div>
         </div>
     </div>
@@ -353,11 +359,11 @@
                     <i class="fa-solid fa-trash-can text-red-500 text-lg"></i>
                     <h3 class="font-bold text-slate-800 text-lg">Thùng rác bài đăng</h3>
                 </div>
-                <button id="btnCloseTrashModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+                <button id="btnCloseTrashModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold cursor-pointer">&times;</button>
             </div>
             <div id="trashList" class="p-4 overflow-y-auto flex-1 space-y-3"></div>
             <div class="p-3 border-t border-slate-100 bg-slate-50 text-right shrink-0">
-                <button id="btnEmptyTrash" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 font-bold text-xs rounded-xl transition">
+                <button id="btnEmptyTrash" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 font-bold text-xs rounded-xl transition cursor-pointer">
                     Xóa tất cả vĩnh viễn
                 </button>
             </div>
@@ -369,7 +375,7 @@
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 flex flex-col max-h-[85vh] overflow-hidden">
             <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
                 <h3 id="authModalTitle" class="font-bold text-slate-800 text-lg">Đăng nhập tài khoản</h3>
-                <button id="btnCloseAuthModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold">&times;</button>
+                <button id="btnCloseAuthModal" class="text-slate-400 hover:text-slate-600 text-2xl font-bold cursor-pointer">&times;</button>
             </div>
 
             <!-- Form Đăng nhập -->
@@ -383,9 +389,8 @@
                     <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-teal-600">
                 </div>
                 
-                <!-- Link Quên / Đổi mật khẩu -->
                 <div class="flex justify-between items-center text-xs pt-1">
-                    <button type="button" id="btnToggleReset" class="text-teal-600 hover:underline font-medium">Quên / Đổi mật khẩu?</button>
+                    <button type="button" id="btnToggleReset" class="text-teal-600 hover:underline font-medium cursor-pointer">Quên / Đổi mật khẩu?</button>
                 </div>
             </form>
 
@@ -401,24 +406,24 @@
                 </div>
                 
                 <div class="flex justify-between items-center text-xs pt-1">
-                    <button type="button" id="btnBackToLogin" class="text-slate-600 hover:underline font-medium">&larr; Quay lại đăng nhập</button>
+                    <button type="button" id="btnBackToLogin" class="text-slate-600 hover:underline font-medium cursor-pointer">&larr; Quay lại đăng nhập</button>
                 </div>
             </form>
 
             <!-- Footer chứa nút Hủy và Đăng nhập -->
             <div id="authFooter" class="p-3 border-t border-slate-100 bg-slate-50 flex gap-2 shrink-0">
-                <button type="button" id="btnCancelAuthModal" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center">Hủy</button>
-                <button type="submit" form="authForm" class="flex-1 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center">Đăng nhập</button>
+                <button type="button" id="btnCancelAuthModal" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center cursor-pointer">Hủy</button>
+                <button type="submit" form="authForm" class="flex-1 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center cursor-pointer">Đăng nhập</button>
             </div>
 
             <div id="resetFooter" class="p-3 border-t border-slate-100 bg-slate-50 flex gap-2 shrink-0 hidden">
-                <button type="button" id="btnCancelReset" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center">Hủy</button>
-                <button type="submit" form="resetForm" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center">Xác nhận đổi</button>
+                <button type="button" id="btnCancelReset" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition text-sm text-center cursor-pointer">Hủy</button>
+                <button type="submit" form="resetForm" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl transition shadow-sm text-sm text-center cursor-pointer">Xác nhận đổi</button>
             </div>
         </div>
     </div>
 
-    <!-- Script điều khiển chính -->
+    <!-- Script điều khiển chính đặt trong thư mục js/ -->
     <script type="module" src="js/app.js"></script>
 </body>
 </html>
