@@ -11,8 +11,8 @@
     
     <!-- ÉP CHỐNG CACHE SAFARI IPAD -->
     <script>
-        if (!window.location.search.includes('v=2026_job_category')) {
-            window.location.replace(window.location.pathname + '?v=2026_job_category');
+        if (!window.location.search.includes('v=2026_final_complete')) {
+            window.location.replace(window.location.pathname + '?v=2026_final_complete');
         }
     </script>
 </head>
@@ -63,7 +63,7 @@
             <!-- FORM ĐĂNG KÝ -->
             <form id="formRegisterSection" onsubmit="event.preventDefault();" class="space-y-3">
                 <div class="bg-teal-950/80 border border-teal-600/50 p-3 rounded-2xl text-[11px] text-teal-200">
-                    <i class="fa-solid fa-shield-halved text-amber-400 mr-1"></i> Nhập số điện thoại để nhận mã OTP qua <strong>Zalo</strong> hoặc <strong>WhatsApp</strong>.
+                    <i class="fa-solid fa-shield-halved text-amber-400 mr-1"></i> Nhập số điện thoại để nhận mã OTP qua <strong>Zalo</strong> hoặc <strong>WhatsApp</strong>[cite: 6].
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Số điện thoại liên hệ *</label>
@@ -80,10 +80,10 @@
                     </div>
                 </div>
                 <button type="button" id="btnSendRegCode" onclick="window.requestRegisterOTP()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold py-3.5 rounded-xl text-sm shadow-xl cursor-pointer">
-                    📲 Gửi mã xác thực qua Zalo / WhatsApp
+                    📲 Gửi mã xác thực qua Zalo / WhatsApp[cite: 6]
                 </button>
                 <button type="button" id="btnConfirmReg" onclick="window.confirmRegisterAccount()" class="hidden w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold py-3.5 rounded-xl text-sm shadow-xl cursor-pointer">
-                    ✅ Xác nhận Đăng ký & Đăng nhập ngay
+                    ✅ Xác nhận Đăng ký & Đăng nhập ngay[cite: 6]
                 </button>
             </form>
 
@@ -97,11 +97,11 @@
                     <label class="block text-xs font-bold text-slate-300 mb-1">Mật khẩu truy cập</label>
                     <input type="password" id="loginPasswordInput" placeholder="Nhập mật khẩu..." style="background-color:#ffffff !important; color:#000000 !important;" class="w-full border-4 border-slate-300 rounded-xl px-4 py-3 text-sm font-extrabold focus:outline-none">
                     <div class="text-right pt-1.5">
-                        <button type="button" onclick="window.triggerForgotPassword()" class="text-xs text-amber-300 hover:underline font-bold cursor-pointer">Quên mật khẩu? (Nhận mã Zalo / WhatsApp)</button>
+                        <button type="button" onclick="window.triggerForgotPassword()" class="text-xs text-amber-300 hover:underline font-bold cursor-pointer">Quên mật khẩu? (Nhận mã Zalo / WhatsApp)[cite: 6]</button>
                     </div>
                 </div>
                 <button type="button" onclick="window.processAuthLogin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold py-3.5 rounded-xl text-sm shadow-xl cursor-pointer">
-                    🔓 Xác nhận Đăng nhập
+                    🔓 Xác nhận Đăng nhập[cite: 6]
                 </button>
             </form>
         </div>
@@ -117,10 +117,10 @@
             </div>
             <div class="flex items-center gap-2">
                 <button type="button" onclick="window.openChangePasswordModal()" class="bg-teal-50 hover:bg-teal-100 text-teal-700 font-bold px-3 py-1.5 rounded-xl text-xs transition cursor-pointer">
-                    <i class="fa-solid fa-key mr-1"></i> Đổi mật khẩu
+                    <i class="fa-solid fa-key mr-1"></i> Đổi mật khẩu[cite: 6]
                 </button>
                 <button type="button" onclick="window.handleLogout()" class="bg-red-50 hover:bg-red-100 text-red-700 font-bold px-3 py-1.5 rounded-xl text-xs transition cursor-pointer">
-                    Đăng xuất
+                    Đăng xuất[cite: 6]
                 </button>
             </div>
         </div>
@@ -133,7 +133,7 @@
                 <p class="text-xs text-teal-100 max-w-lg">Nền tảng kết nối trực tiếp người cần thuê và người nhận việc an toàn, bảo mật và minh bạch.</p>
                 <div class="pt-2 flex flex-wrap gap-2">
                     <button id="btnPostJob" class="bg-white text-teal-800 hover:bg-teal-50 font-bold px-4 py-2 rounded-xl text-xs shadow transition flex items-center gap-2 cursor-pointer">
-                        <i class="fa-solid fa-plus-circle text-teal-600"></i> Đăng việc ngay
+                        <i class="fa-solid fa-plus-circle text-teal-600"></i> Đăng việc ngay[cite: 6]
                     </button>
                 </div>
             </div>
@@ -144,16 +144,16 @@
             <div class="flex items-center justify-between border-b border-slate-200 pb-2 overflow-x-auto">
                 <div class="flex gap-2 min-w-max">
                     <button class="nav-btn bg-teal-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm cursor-pointer" data-tab="tabJobList">
-                        <i class="fa-solid fa-briefcase mr-1"></i> Bảng tin việc làm (<span id="jobCount">0</span>)
+                        <i class="fa-solid fa-briefcase mr-1"></i> Bảng tin việc làm (<span id="jobCount">0</span>)[cite: 6]
                     </button>
                     <button class="nav-btn bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-xs font-semibold transition border border-slate-200 cursor-pointer" data-tab="tabAcceptedJob">
-                        <i class="fa-solid fa-check-to-slot mr-1"></i> Việc đã nhận
+                        <i class="fa-solid fa-check-to-slot mr-1"></i> Việc đã nhận[cite: 6]
                     </button>
                     <button class="nav-btn bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-xs font-semibold transition border border-slate-200 cursor-pointer" data-tab="tabOrganization">
-                        <i class="fa-solid fa-building mr-1"></i> Tổ chức/Đối tác
+                        <i class="fa-solid fa-building mr-1"></i> Tổ chức/Đối tác[cite: 6]
                     </button>
                     <button class="nav-btn bg-white hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-xs font-semibold transition border border-slate-200 cursor-pointer" data-tab="tabWorker">
-                        <i class="fa-solid fa-hard-hat mr-1"></i> Hồ sơ thợ
+                        <i class="fa-solid fa-hard-hat mr-1"></i> Hồ sơ thợ[cite: 6]
                     </button>
                 </div>
             </div>
@@ -162,35 +162,35 @@
             <div id="tabJobList" class="tab-content space-y-3">
                 <div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
                     <div class="flex items-center gap-2 mb-2 text-xs font-bold text-slate-700">
-                        <i class="fa-solid fa-filter text-teal-600"></i> Lọc nhanh theo khu vực:
+                        <i class="fa-solid fa-filter text-teal-600"></i> Lọc nhanh theo khu vực:[cite: 6]
                     </div>
                     <div id="locationFilterScroll" class="flex gap-2 overflow-x-auto pb-1 min-w-max scrollbar-thin">
                         <button onclick="window.filterJobsByLocation('ALL')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-teal-600 text-white transition shadow-sm cursor-pointer">
-                            🌐 Tất cả khu vực
+                            🌐 Tất cả khu vực[cite: 6]
                         </button>
                         <button onclick="window.filterJobsByLocation('Huyện Châu Thành')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 Huyện Châu Thành
+                            📍 Huyện Châu Thành[cite: 6]
                         </button>
                         <button onclick="window.filterJobsByLocation('An Hòa')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 Xã An Hòa
+                            📍 Xã An Hòa[cite: 6]
                         </button>
                         <button onclick="window.filterJobsByLocation('Bình Hòa')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 Xã Bình Hòa
+                            📍 Xã Bình Hòa[cite: 6]
                         </button>
                         <button onclick="window.filterJobsByLocation('Cần Đăng')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 Xã Cần Đăng
+                            📍 Xã Cần Đăng[cite: 6]
                         </button>
                         <button onclick="window.filterJobsByLocation('Vĩnh An')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 Xã Vĩnh An
+                            📍 Xã Vĩnh An[cite: 6]
                         </button>
                         <button onclick="window.filterJobsByLocation('An Châu')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 TT. An Châu
+                            📍 TT. An Châu[cite: 6]
                         </button>
                         <button onclick="window.filterJobsByLocation('Long Xuyên')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 TP. Long Xuyên
+                            📍 TP. Long Xuyên[cite: 6]
                         </button>
                         <button onclick="window.filterJobsByLocation('Toàn quốc')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            🗺️ Toàn quốc
+                            🗺️ Toàn quốc[cite: 6]
                         </button>
                     </div>
                 </div>
@@ -203,9 +203,9 @@
             <!-- TAB 2: VIỆC ĐÃ NHẬN -->
             <div id="tabAcceptedJob" class="tab-content space-y-3 hidden">
                 <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                    <h3 class="font-bold text-slate-900 text-sm mb-3">Công việc do bạn nhận thực hiện</h3>
+                    <h3 class="font-bold text-slate-900 text-sm mb-3">Công việc do bạn nhận thực hiện[cite: 6]</h3>
                     <div id="acceptedJobList" class="space-y-3">
-                        <div class="text-center py-6 text-slate-400 text-xs">Vui lòng đăng nhập để xem việc đã nhận.</div>
+                        <div class="text-center py-6 text-slate-400 text-xs">Vui lòng đăng nhập để xem việc đã nhận.[cite: 6]</div>
                     </div>
                 </div>
             </div>
@@ -213,9 +213,9 @@
             <!-- TAB 3: TỔ CHỨC -->
             <div id="tabOrganization" class="tab-content space-y-3 hidden">
                 <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-bold text-slate-800 text-sm">Danh sách Tổ chức / Đội nhóm uy tín</h3>
-                    <button id="btnJoinOrg" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs px-3 py-1.5 rounded-xl transition cursor-pointer">
-                        + Ghi danh Tổ chức
+                    <h3 class="font-bold text-slate-800 text-sm">Danh sách Tổ chức / Đội nhóm uy tín[cite: 6]</h3>
+                    <button type="button" id="btnJoinOrg" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs px-3 py-1.5 rounded-xl transition cursor-pointer">
+                        + Ghi danh Tổ chức[cite: 6]
                     </button>
                 </div>
                 <div id="orgList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
@@ -224,9 +224,9 @@
             <!-- TAB 4: HỒ SƠ THỢ -->
             <div id="tabWorker" class="tab-content space-y-3 hidden">
                 <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-bold text-slate-800 text-sm">Danh sách thợ & nhân sự kỹ thuật</h3>
-                    <button id="btnRegisterWorker" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs px-3 py-1.5 rounded-xl transition cursor-pointer">
-                        + Đăng ký làm thợ
+                    <h3 class="font-bold text-slate-800 text-sm">Danh sách thợ & nhân sự kỹ thuật[cite: 6]</h3>
+                    <button type="button" id="btnRegisterWorker" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs px-3 py-1.5 rounded-xl transition cursor-pointer">
+                        + Đăng ký làm thợ[cite: 6]
                     </button>
                 </div>
                 <div id="workerList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
@@ -237,11 +237,11 @@
         <section class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm mt-8">
             <div class="flex justify-between items-center mb-3">
                 <h3 class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
-                    <i class="fa-solid fa-trash-can text-slate-400"></i> Thùng rác bài đăng <span id="trashBadge" class="hidden bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full text-[10px]">0</span>
+                    <i class="fa-solid fa-trash-can text-slate-400"></i> Thùng rác bài đăng <span id="trashBadge" class="hidden bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full text-[10px]">0</span>[cite: 6]
                 </h3>
             </div>
             <div id="trashList" class="space-y-2">
-                <div class="text-center py-4 text-slate-400 text-xs">Thùng rác trống.</div>
+                <div class="text-center py-4 text-slate-400 text-xs">Thùng rác trống.[cite: 6]</div>
             </div>
         </section>
     </main>
@@ -257,71 +257,103 @@
     <div id="changePassModal" style="display: none;" class="fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 relative">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <h3 class="font-extrabold text-slate-900 text-base"><i class="fa-solid fa-shield-halved text-teal-600 mr-1"></i> Đổi mật khẩu tài khoản</h3>
+                <h3 class="font-extrabold text-slate-900 text-base"><i class="fa-solid fa-shield-halved text-teal-600 mr-1"></i> Đổi mật khẩu tài khoản[cite: 6]</h3>
                 <button type="button" onclick="window.closeChangePasswordModal()" class="text-slate-500 hover:text-slate-800 font-bold text-lg cursor-pointer px-2">✕</button>
             </div>
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu hiện tại</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu hiện tại[cite: 6]</label>
                     <input type="password" id="cpOldPass" placeholder="Nhập mật khẩu cũ..." style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu mới (tối thiểu 4 ký tự)</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu mới (tối thiểu 4 ký tự)[cite: 6]</label>
                     <input type="password" id="cpNewPass" placeholder="Nhập mật khẩu mới..." style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none">
                 </div>
                 <button type="button" onclick="window.submitChangePasswordUser()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl text-xs transition cursor-pointer shadow">
-                    Xác nhận đổi mật khẩu
+                    Xác nhận đổi mật khẩu[cite: 6]
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL ĐĂNG CÔNG VIỆC MỚI (CÓ THÊM DANH MỤC NGÀNH NGHỀ) -->
+    <!-- MODAL ĐĂNG CÔNG VIỆC MỚI -->
     <div id="postJobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center">
-                <h3 class="font-extrabold text-slate-900 text-base"><i class="fa-solid fa-briefcase text-teal-600 mr-1"></i> Đăng bài tuyển dụng công việc</h3>
-                <button id="btnCloseModal" class="text-slate-400 hover:text-slate-700 cursor-pointer text-lg font-bold">✕</button>
+                <h3 class="font-extrabold text-slate-900 text-base"><i class="fa-solid fa-briefcase text-teal-600 mr-1"></i> Đăng bài tuyển dụng công việc[cite: 6]</h3>
+                <button type="button" id="btnCloseModal" class="text-slate-400 hover:text-slate-700 cursor-pointer text-lg font-bold">✕</button>
             </div>
             <form id="postJobForm" class="space-y-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Danh mục ngành nghề *</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Danh mục ngành nghề *[cite: 6]</label>
                     <select id="jobCategoryInput" style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-teal-600 font-bold">
-                        <option value="Xây dựng / Thợ hồ" selected>🧱 Xây dựng / Thợ hồ</option>
-                        <option value="Điện / Nước / Sửa chữa">⚡ Điện / Nước / Sửa chữa</option>
-                        <option value="Vận chuyển / Giao nhận">🚚 Vận chuyển / Giao nhận</option>
-                        <option value="Tạp vụ / Quán ăn / Phục vụ">🍽️ Tạp vụ / Quán ăn / Phục vụ</option>
-                        <option value="Nông nghiệp / Vườn tược">🌱 Nông nghiệp / Vườn tược</option>
-                        <option value="Việc khác / Tự do">💼 Việc khác / Tự do</option>
+                        <option value="Xây dựng / Thợ hồ" selected>🧱 Xây dựng / Thợ hồ[cite: 6]</option>
+                        <option value="Điện / Nước / Sửa chữa">⚡ Điện / Nước / Sửa chữa[cite: 6]</option>
+                        <option value="Vận chuyển / Giao nhận">🚚 Vận chuyển / Giao nhận[cite: 6]</option>
+                        <option value="Tạp vụ / Quán ăn / Phục vụ">🍽️ Tạp vụ / Quán ăn / Phục vụ[cite: 6]</option>
+                        <option value="Nông nghiệp / Vườn tược">🌱 Nông nghiệp / Vườn tược[cite: 6]</option>
+                        <option value="Việc khác / Tự do">💼 Việc khác / Tự do[cite: 6]</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Tiêu đề công việc *</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tiêu đề công việc *[cite: 6]</label>
                     <input type="text" id="jobTitleInput" required placeholder="Ví dụ: Cần thợ hồ xây tường gấp..." style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-teal-600 font-bold">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Khu vực làm việc *</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Khu vực làm việc *[cite: 6]</label>
                     <select id="jobLocationInput" style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-teal-600 font-bold">
-                        <option value="Huyện Châu Thành - An Giang" selected>Huyện Châu Thành (An Giang)</option>
-                        <option value="Xã An Hòa - Châu Thành">Xã An Hòa (Châu Thành)</option>
-                        <option value="Xã Bình Hòa - Châu Thành">Xã Bình Hòa (Châu Thành)</option>
-                        <option value="Xã Cần Đăng - Châu Thành">Xã Cần Đăng (Châu Thành)</option>
-                        <option value="Xã Vĩnh An - Châu Thành">Xã Vĩnh An (Châu Thành)</option>
-                        <option value="Thị trấn An Châu - Châu Thành">Thị trấn An Châu (Châu Thành)</option>
-                        <option value="TP. Long Xuyên - An Giang">TP. Long Xuyên (An Giang)</option>
-                        <option value="Toàn quốc">Toàn quốc</option>
+                        <option value="Huyện Châu Thành - An Giang" selected>Huyện Châu Thành (An Giang)[cite: 6]</option>
+                        <option value="Xã An Hòa - Châu Thành">Xã An Hòa (Châu Thành)[cite: 6]</option>
+                        <option value="Xã Bình Hòa - Châu Thành">Xã Bình Hòa (Châu Thành)[cite: 6]</option>
+                        <option value="Xã Cần Đăng - Châu Thành">Xã Cần Đăng (Châu Thành)[cite: 6]</option>
+                        <option value="Xã Vĩnh An - Châu Thành">Xã Vĩnh An (Châu Thành)[cite: 6]</option>
+                        <option value="Thị trấn An Châu - Châu Thành">Thị trấn An Châu (Châu Thành)[cite: 6]</option>
+                        <option value="TP. Long Xuyên - An Giang">TP. Long Xuyên (An Giang)[cite: 6]</option>
+                        <option value="Toàn quốc">Toàn quốc[cite: 6]</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Mức lương / Thù lao *</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Mức lương / Thù lao *[cite: 6]</label>
                     <input type="text" id="jobSalaryInput" required placeholder="Ví dụ: 300k/ngày hoặc Thỏa thuận..." style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-teal-600 font-bold">
                 </div>
                 <div class="bg-teal-50 border border-teal-200 p-2.5 rounded-xl text-[11px] text-teal-800">
-                    <i class="fa-solid fa-circle-info mr-1"></i> Số điện thoại đăng: <strong id="jobPosterPhoneDisplay">...</strong> (Lấy tự động từ tài khoản đang đăng nhập).
+                    <i class="fa-solid fa-circle-info mr-1"></i> Số điện thoại đăng: <strong id="jobPosterPhoneDisplay">...</strong> (Lấy tự động từ tài khoản đang đăng nhập).[cite: 6]
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" id="btnCancelModal" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-semibold cursor-pointer">Hủy</button>
-                    <button type="submit" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 rounded-xl text-xs font-bold text-white shadow transition cursor-pointer">🚀 Đăng bài viết ngay</button>
+                    <button type="button" id="btnCancelModal" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-semibold cursor-pointer">Hủy[cite: 6]</button>
+                    <button type="submit" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 rounded-xl text-xs font-bold text-white shadow transition cursor-pointer">🚀 Đăng bài viết ngay[cite: 6]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL GHI DANH TỔ CHỨC / ĐỘI NHÓM -->
+    <div id="orgModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center">
+                <h3 class="font-extrabold text-slate-900 text-base"><i class="fa-solid fa-building text-teal-600 mr-1"></i> Ghi danh Tổ chức / Đội nhóm[cite: 6]</h3>
+                <button type="button" id="btnCloseOrgModal" class="text-slate-400 hover:text-slate-700 cursor-pointer text-lg font-bold">✕</button>
+            </div>
+            <form id="orgForm" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Tên tổ chức / Đội nhóm *[cite: 6]</label>
+                    <input type="text" id="orgNameInput" required placeholder="Ví dụ: Đội thợ xây Châu Thành..." style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-teal-600 font-bold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Người đại diện / Trưởng nhóm *[cite: 6]</label>
+                    <input type="text" id="orgLeaderInput" required placeholder="Họ và tên trưởng nhóm..." style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-teal-600 font-bold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Số điện thoại liên hệ *[cite: 6]</label>
+                    <input type="tel" id="orgPhoneInput" required placeholder="Số điện thoại..." style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-teal-600 font-bold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Khu vực hoạt động *[cite: 6]</label>
+                    <input type="text" id="orgLocationInput" required placeholder="Ví dụ: Huyện Châu Thành, An Giang..." style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-teal-600 font-bold">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" id="btnCancelOrgModal" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-semibold cursor-pointer">Hủy[cite: 6]</button>
+                    <button type="submit" class="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 rounded-xl text-xs font-bold text-white shadow transition cursor-pointer">✅ Ghi danh ngay[cite: 6]</button>
                 </div>
             </form>
         </div>
@@ -331,8 +363,8 @@
     <div id="workerModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center">
-                <h3 class="font-extrabold text-slate-900 text-base">Đăng ký hồ sơ Thợ / Cá nhân</h3>
-                <button id="btnCloseWorkerModal" class="text-slate-400 hover:text-slate-700">✕</button>
+                <h3 class="font-extrabold text-slate-900 text-base">Đăng ký hồ sơ Thợ / Cá nhân[cite: 6]</h3>
+                <button type="button" id="btnCloseWorkerModal" class="text-slate-400 hover:text-slate-700">✕</button>
             </div>
             <form id="workerForm" class="space-y-3">
                 <input type="text" id="workerNameInput" required placeholder="Họ và tên thợ" style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs">
@@ -340,8 +372,8 @@
                 <input type="text" id="workerLocationInput" placeholder="Khu vực hoạt động" style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs">
                 <input type="text" id="workerSkillInput" placeholder="Nghề nghiệp / Kỹ năng" style="background-color:#fff; color:#000;" class="w-full border-2 border-slate-300 rounded-xl px-3 py-2.5 text-xs">
                 <div class="flex justify-end gap-2 pt-2">
-                    <button type="button" id="btnCancelWorkerModal" class="px-4 py-2 bg-slate-100 rounded-xl text-xs font-semibold">Hủy</button>
-                    <button type="submit" class="px-4 py-2 bg-teal-600 rounded-xl text-xs font-bold text-white cursor-pointer">Gửi hồ sơ</button>
+                    <button type="button" id="btnCancelWorkerModal" class="px-4 py-2 bg-slate-100 rounded-xl text-xs font-semibold">Hủy[cite: 6]</button>
+                    <button type="submit" class="px-4 py-2 bg-teal-600 rounded-xl text-xs font-bold text-white cursor-pointer">Gửi hồ sơ[cite: 6]</button>
                 </div>
             </form>
         </div>
@@ -391,14 +423,13 @@
             document.getElementById('btnCloseModal')?.addEventListener('click', () => document.getElementById('postJobModal')?.classList.add('hidden'));
             document.getElementById('btnCancelModal')?.addEventListener('click', () => document.getElementById('postJobModal')?.classList.add('hidden'));
 
-            // GỬI THÔNG TIN ĐĂNG VIỆC MỚI (KÈM DANH MỤC)
+            // GỬI THÔNG TIN ĐĂNG VIỆC MỚI
             document.getElementById('postJobForm')?.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const category = document.getElementById('jobCategoryInput')?.value;
                 const title = document.getElementById('jobTitleInput')?.value.trim();
                 const location = document.getElementById('jobLocationInput')?.value;
                 const salary = document.getElementById('jobSalaryInput')?.value.trim();
-                const currentPhone = localStorage.getItem('viecgap_logged_phone') || '0966507481';
 
                 if (!title || !salary) {
                     alert('⚠️ Vui lòng nhập đầy đủ tiêu đề và mức lương!');
@@ -410,8 +441,6 @@
                     title: title,
                     location: location,
                     salary: salary,
-                    contact: currentPhone,
-                    phone: currentPhone,
                     status: 'active',
                     created_at: new Date()
                 }]);
@@ -423,6 +452,41 @@
                     location.reload();
                 } else {
                     alert("❌ Lỗi khi đăng bài: " + error.message);
+                }
+            });
+
+            // MODAL GHI DANH TỔ CHỨC
+            const orgModal = document.getElementById('orgModal');
+            document.getElementById('btnJoinOrg')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                orgModal?.classList.remove('hidden');
+                orgModal?.classList.add('flex');
+            });
+            document.getElementById('btnCloseOrgModal')?.addEventListener('click', () => orgModal?.classList.add('hidden'));
+            document.getElementById('btnCancelOrgModal')?.addEventListener('click', () => orgModal?.classList.add('hidden'));
+
+            document.getElementById('orgForm')?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('orgNameInput')?.value.trim();
+                const leader = document.getElementById('orgLeaderInput')?.value.trim();
+                const phone = document.getElementById('orgPhoneInput')?.value.trim();
+                const location = document.getElementById('orgLocationInput')?.value.trim();
+
+                const { error } = await supabase.from('organizations').insert([{
+                    name: name,
+                    leader: leader,
+                    phone: phone,
+                    location: location,
+                    created_at: new Date()
+                }]);
+
+                if (!error) {
+                    alert("🎉 Ghi danh Tổ chức / Đội nhóm thành công!");
+                    orgModal?.classList.add('hidden');
+                    e.target.reset();
+                    location.reload();
+                } else {
+                    alert("❌ Lỗi khi ghi danh: " + error.message);
                 }
             });
 
