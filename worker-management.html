@@ -8,6 +8,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- MẸO CHỐNG CACHE: Tự động ép tải lại nếu chưa có tham số v=2026 -->
+    <script>
+        if (!window.location.search.includes('v=2026')) {
+            window.location.replace(window.location.pathname + '?v=2026');
+        }
+    </script>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased pb-24">
 
@@ -63,32 +70,31 @@
 
             <!-- Ô Nhập mật khẩu mở khóa Admin -->
             <div id="adminLoginSection" class="p-4 bg-slate-50 border border-dashed border-slate-200 rounded-2xl text-center space-y-3">
-                <p class="text-xs text-slate-600"><i class="fa-solid fa-lock text-amber-500 mr-1"></i> Nhập mật khẩu quản trị (Mặc định: <strong class="text-teal-700">admin123</strong>)</p>
+                <p class="text-xs text-slate-600"><i class="fa-solid fa-lock text-amber-500 mr-1"></i> Nhập mật khẩu để mở khóa hệ thống quản trị (Mặc định: <strong class="text-teal-700">admin123</strong>)</p>
                 <div class="flex justify-center gap-2 max-w-xs mx-auto">
-                    <input type="text" id="adminPasswordInput" placeholder="Nhập mật khẩu..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-600 font-bold">
+                    <input type="text" id="adminPasswordInput" placeholder="Nhập admin123..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-600 font-bold">
                     <button type="button" onclick="window.handleUnlockAdmin()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition cursor-pointer shadow">Mở khóa</button>
                 </div>
             </div>
 
-            <!-- DANH SÁCH CHỜ DUYỆT & TÍNH NĂNG ĐỔI MẬT KHẨU (Hiện khi đã mở khóa) -->
+            <!-- DANH SÁCH CHỜ DUYỆT & ĐỔI MẬT KHẨU (Hiện khi đã mở khóa) -->
             <div id="adminPanel" class="hidden space-y-6 pt-2">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs text-emerald-800 font-semibold">
-                    <span>🔓 Đã mở khóa quyền Quản trị viên (Admin) thành công!</span>
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="window.toggleChangePassBox()" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg shadow cursor-pointer">
-                            <i class="fa-solid fa-key mr-1"></i> Đổi mật khẩu
-                        </button>
-                        <button type="button" onclick="window.handleLockAdmin()" class="text-red-600 hover:underline cursor-pointer font-bold px-2 py-1">Khóa lại</button>
-                    </div>
+                <div class="flex justify-between items-center bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs text-emerald-800 font-semibold">
+                    <span>🔓 Đã mở khóa hệ thống quản trị thành công!</span>
+                    <button type="button" onclick="window.handleLockAdmin()" class="text-red-600 hover:underline cursor-pointer font-bold">Khóa lại</button>
                 </div>
 
-                <!-- KHUNG ĐỔI MẬT KHẨU (Ẩn/Hiện linh hoạt) -->
-                <div id="changePassBox" class="hidden bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-3">
-                    <h4 class="font-bold text-xs text-slate-800"><i class="fa-solid fa-shield-halved text-teal-600 mr-1"></i> Thay đổi mật khẩu Quản trị viên</h4>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <input type="password" id="oldPassInput" placeholder="Mật khẩu cũ" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-600">
-                        <input type="password" id="newPassInput" placeholder="Mật khẩu mới" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-600">
-                        <button type="button" onclick="window.submitChangePassword()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition cursor-pointer shadow">Xác nhận đổi</button>
+                <!-- KHUNG ĐỔI MẬT KHẨU RÕ RÀNG -->
+                <div class="bg-teal-50 border border-teal-200 p-4 rounded-2xl space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-xs text-teal-900"><i class="fa-solid fa-key mr-1"></i> Quản lý Mật khẩu Admin</h4>
+                        <button type="button" onclick="window.submitChangePassword()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow cursor-pointer">
+                            Cập nhật mật khẩu mới
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <input type="password" id="oldPassInput" placeholder="Nhập mật khẩu cũ..." class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-600">
+                        <input type="password" id="newPassInput" placeholder="Nhập mật khẩu mới (tối thiểu 4 ký tự)..." class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-600">
                     </div>
                 </div>
                 
@@ -124,7 +130,6 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6bnp5cGVodm13eXN4bWp4eHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNTkxNTYsImV4cCI6MjEwODkzNTE1Nn0.B-5onxhT0EoqgtJ0ZP-ZbGSz4Gmo7xuRPEcsAYz65wA';
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Lấy mật khẩu Admin hiện tại (mặc định là admin123)
         const getAdminPassword = () => {
             return localStorage.getItem('viecgap_custom_admin_pass') || 'admin123';
         };
@@ -192,12 +197,6 @@
             document.getElementById('adminPasswordInput').value = '';
             document.getElementById('adminLoginSection')?.classList.remove('hidden');
             document.getElementById('adminPanel')?.classList.add('hidden');
-            document.getElementById('changePassBox')?.classList.add('hidden');
-        };
-
-        window.toggleChangePassBox = () => {
-            const box = document.getElementById('changePassBox');
-            box?.classList.toggle('hidden');
         };
 
         window.submitChangePassword = () => {
@@ -216,10 +215,9 @@
             }
 
             localStorage.setItem('viecgap_custom_admin_pass', newPass);
-            alert('🎉 Đổi mật khẩu quản trị thành công! Vui lòng sử dụng mật khẩu mới cho các lần đăng nhập sau.');
+            alert('🎉 Đổi mật khẩu quản trị thành công! Vui lòng sử dụng mật khẩu mới cho các lần sau.');
             document.getElementById('oldPassInput').value = '';
             document.getElementById('newPassInput').value = '';
-            document.getElementById('changePassBox')?.classList.add('hidden');
         };
 
         window.approveWorker = async (id) => {
