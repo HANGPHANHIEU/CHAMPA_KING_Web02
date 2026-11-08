@@ -9,10 +9,10 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- ÉP CHỐNG CACHE SAFARI IPAD -->
+    <!-- ÉP CHỐNG CACHE SAFARI IPAD BẰNG THAM SỐ PHIÊN BẢN MỚI -->
     <script>
-        if (!window.location.search.includes('v=2026_supabase_sync')) {
-            window.location.replace(window.location.pathname + '?v=2026_supabase_sync');
+        if (!window.location.search.includes('v=2026_reg_fixed')) {
+            window.location.replace(window.location.pathname + '?v=2026_reg_fixed');
         }
     </script>
 </head>
@@ -45,9 +45,11 @@
         </div>
     </header>
 
-    <!-- KHU VỰC ĐĂNG KÝ / ĐĂNG NHẬP TRỰC TIẾP -->
+    <!-- KHU VỰC ĐĂNG KÝ / ĐĂNG NHẬP TRỰC TIẾP (FIX DỨT ĐIỂM KẸT CẢM ỨNG IPAD) -->
     <div id="inlineAuthBox" class="hidden bg-slate-900 text-white border-b border-slate-700 py-6 px-4 shadow-2xl">
         <div class="max-w-md mx-auto space-y-4 bg-slate-800 p-6 rounded-3xl border-2 border-teal-500">
+            
+            <!-- CHUYỂN ĐỔI TAB ĐĂNG KÝ VÀ ĐĂNG NHẬP -->
             <div class="flex border-b border-slate-700 pb-3 justify-between items-center">
                 <div class="flex gap-2">
                     <button type="button" id="tabBtnRegister" onclick="window.switchAuthTab('register')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-teal-600 text-white shadow">
@@ -60,39 +62,45 @@
                 <button type="button" onclick="window.toggleAuthBox()" class="text-slate-400 hover:text-white font-bold text-sm">✕ Đóng</button>
             </div>
 
-            <!-- FORM ĐĂNG KÝ -->
-            <form id="formRegisterSection" onsubmit="event.preventDefault();" class="space-y-3">
+            <!-- TAB 1: FORM ĐĂNG KÝ QUA MÃ ZALO / WHATSAPP -->
+            <form id="formRegisterSection" onsubmit="event.preventDefault(); window.processRegisterStep();" class="space-y-3">
                 <div class="bg-teal-950/80 border border-teal-600/50 p-3 rounded-2xl text-[11px] text-teal-200">
-                    <i class="fa-solid fa-shield-halved text-amber-400 mr-1"></i> Nhập số điện thoại để nhận mã OTP qua <strong>Zalo</strong> hoặc <strong>WhatsApp</strong> lưu trực tiếp lên Supabase.
+                    <i class="fa-solid fa-shield-halved text-amber-400 mr-1"></i> Nhập số điện thoại để nhận mã OTP xác thực qua <strong>Zalo</strong> hoặc <strong>WhatsApp</strong> trước khi khởi tạo tài khoản.
                 </div>
+
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Số điện thoại liên hệ *</label>
                     <input type="tel" id="regPhoneInput" placeholder="Ví dụ: 0912345678" style="background-color:#ffffff !important; color:#000000 !important;" class="w-full border-4 border-teal-500 rounded-xl px-4 py-3 text-sm font-extrabold focus:outline-none">
                 </div>
+
                 <div id="regOtpStepGroup" class="hidden space-y-3 pt-1">
                     <div>
                         <label class="block text-xs font-bold text-amber-300 mb-1">Mã xác thực OTP (6 chữ số) *</label>
                         <input type="text" id="regOtpInput" placeholder="Nhập mã 6 số..." style="background-color:#ffffff !important; color:#000000 !important;" class="w-full border-4 border-amber-400 rounded-xl px-4 py-3 text-sm font-extrabold focus:outline-none">
                     </div>
+
                     <div>
-                        <label class="block text-xs font-bold text-slate-300 mb-1">Tạo mật khẩu (Mặc định: 123456)</label>
-                        <input type="password" id="regPassInput" placeholder="Nhập mật khẩu..." style="background-color:#ffffff !important; color:#000000 !important;" class="w-full border-4 border-slate-300 rounded-xl px-4 py-3 text-sm font-extrabold focus:outline-none">
+                        <label class="block text-xs font-bold text-slate-300 mb-1">Tạo mật khẩu đăng nhập (Mặc định: 123456)</label>
+                        <input type="password" id="regPassInput" placeholder="Nhập mật khẩu tự chọn..." style="background-color:#ffffff !important; color:#000000 !important;" class="w-full border-4 border-slate-300 rounded-xl px-4 py-3 text-sm font-extrabold focus:outline-none">
                     </div>
                 </div>
+
                 <button type="button" id="btnSendRegCode" onclick="window.requestRegisterOTP()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold py-3.5 rounded-xl text-sm shadow-xl cursor-pointer">
                     📲 Gửi mã xác thực qua Zalo / WhatsApp
                 </button>
+
                 <button type="button" id="btnConfirmReg" onclick="window.confirmRegisterAccount()" class="hidden w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold py-3.5 rounded-xl text-sm shadow-xl cursor-pointer">
-                    ✅ Xác nhận Đăng ký & Lưu Supabase
+                    ✅ Xác nhận Đăng ký & Tạo tài khoản
                 </button>
             </form>
 
-            <!-- FORM ĐĂNG NHẬP -->
-            <form id="formLoginSection" onsubmit="event.preventDefault();" class="hidden space-y-3">
+            <!-- TAB 2: FORM ĐĂNG NHẬP BẰNG MẬT KHẨU -->
+            <form id="formLoginSection" onsubmit="event.preventDefault(); window.processAuthLogin();" class="hidden space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Số điện thoại liên hệ *</label>
                     <input type="tel" id="loginPhoneInput" placeholder="Ví dụ: 0912345678" style="background-color:#ffffff !important; color:#000000 !important;" class="w-full border-4 border-teal-500 rounded-xl px-4 py-3 text-sm font-extrabold focus:outline-none">
                 </div>
+
                 <div>
                     <label class="block text-xs font-bold text-slate-300 mb-1">Mật khẩu truy cập</label>
                     <input type="password" id="loginPasswordInput" placeholder="Nhập mật khẩu..." style="background-color:#ffffff !important; color:#000000 !important;" class="w-full border-4 border-slate-300 rounded-xl px-4 py-3 text-sm font-extrabold focus:outline-none">
@@ -100,17 +108,19 @@
                         <button type="button" onclick="window.triggerForgotPassword()" class="text-xs text-amber-300 hover:underline font-bold cursor-pointer">Quên mật khẩu? (Nhận mã Zalo / WhatsApp)</button>
                     </div>
                 </div>
+
                 <button type="button" onclick="window.processAuthLogin()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold py-3.5 rounded-xl text-sm shadow-xl cursor-pointer">
                     🔓 Xác nhận Đăng nhập
                 </button>
             </form>
+
         </div>
     </div>
 
     <!-- MAIN CONTAINER -->
     <main class="max-w-4xl mx-auto px-4 py-5 space-y-6">
 
-        <!-- THÔNG TIN TÀI KHOẢN ĐANG ĐĂNG NHẬP -->
+        <!-- THÔNG TIN TÀI KHOẢN ĐANG ĐĂNG NHẬP & ĐỔI MẬT KHẨU -->
         <div id="userAccountSection" class="hidden bg-white border border-teal-200 rounded-3xl p-4 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div class="text-xs text-slate-700">
                 <i class="fa-solid fa-id-badge text-teal-600 mr-1"></i> SĐT đang kết nối: <strong id="currentLoggedInPhone" class="text-teal-800"></strong>
@@ -158,46 +168,8 @@
                 </div>
             </div>
 
-            <!-- TAB 1: BẢNG TIN (CÓ THANH CUỘN LỌC PHÂN KHU VỰC) -->
+            <!-- TAB 1: BẢNG TIN -->
             <div id="tabJobList" class="tab-content space-y-3">
-                
-                <!-- THANH CUỘN LỌC KHU VỰC -->
-                <div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-sm">
-                    <div class="flex items-center gap-2 mb-2 text-xs font-bold text-slate-700">
-                        <i class="fa-solid fa-filter text-teal-600"></i> Lọc nhanh theo khu vực:
-                    </div>
-                    <div id="locationFilterScroll" class="flex gap-2 overflow-x-auto pb-1 min-w-max scrollbar-thin">
-                        <button onclick="window.filterJobsByLocation('ALL')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-teal-600 text-white transition shadow-sm cursor-pointer">
-                            🌐 Tất cả khu vực
-                        </button>
-                        <button onclick="window.filterJobsByLocation('Huyện Châu Thành')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 Huyện Châu Thành
-                        </button>
-                        <button onclick="window.filterJobsByLocation('An Hòa')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 Xã An Hòa
-                        </button>
-                        <button onclick="window.filterJobsByLocation('Bình Hòa')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 Xã Bình Hòa
-                        </button>
-                        <button onclick="window.filterJobsByLocation('Cần Đăng')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 Xã Cần Đăng
-                        </button>
-                        <button onclick="window.filterJobsByLocation('Vĩnh An')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 Xã Vĩnh An
-                        </button>
-                        <button onclick="window.filterJobsByLocation('An Châu')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 TT. An Châu
-                        </button>
-                        <button onclick="window.filterJobsByLocation('Long Xuyên')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            📍 TP. Long Xuyên
-                        </button>
-                        <button onclick="window.filterJobsByLocation('Toàn quốc')" class="loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">
-                            🗺️ Toàn quốc
-                        </button>
-                    </div>
-                </div>
-
-                <!-- DANH SÁCH VIỆC LÀM -->
                 <div id="jobList" class="space-y-3">
                     <div class="text-center py-8 text-slate-400 text-xs">Đang tải danh sách công việc...</div>
                 </div>
@@ -236,7 +208,7 @@
             </div>
         </section>
 
-        <!-- THÙNG RÁC -->
+        <!-- THÙNG RÁC QUẢN LÝ BÀI XÓA -->
         <section class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm mt-8">
             <div class="flex justify-between items-center mb-3">
                 <h3 class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
@@ -256,13 +228,14 @@
         </button>
     </div>
 
-    <!-- MODAL ĐỔI MẬT KHẨU -->
+    <!-- MODAL ĐỔI MẬT KHẨU CÁ NHÂN -->
     <div id="changePassModal" style="display: none;" class="fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4 relative">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <h3 class="font-extrabold text-slate-900 text-base"><i class="fa-solid fa-shield-halved text-teal-600 mr-1"></i> Đổi mật khẩu tài khoản</h3>
                 <button type="button" onclick="window.closeChangePasswordModal()" class="text-slate-500 hover:text-slate-800 font-bold text-lg cursor-pointer px-2">✕</button>
             </div>
+
             <div class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Mật khẩu hiện tại</label>
@@ -290,11 +263,6 @@
                 <input type="text" id="jobTitleInput" required placeholder="Tiêu đề công việc" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs">
                 <select id="jobLocationInput" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs">
                     <option value="Huyện Châu Thành - An Giang" selected>Huyện Châu Thành (An Giang)</option>
-                    <option value="Xã An Hòa - Châu Thành">Xã An Hòa (Châu Thành)</option>
-                    <option value="Xã Bình Hòa - Châu Thành">Xã Bình Hòa (Châu Thành)</option>
-                    <option value="Xã Cần Đăng - Châu Thành">Xã Cần Đăng (Châu Thành)</option>
-                    <option value="Xã Vĩnh An - Châu Thành">Xã Vĩnh An (Châu Thành)</option>
-                    <option value="Thị trấn An Châu - Châu Thành">Thị trấn An Châu (Châu Thành)</option>
                     <option value="TP. Long Xuyên - An Giang">TP. Long Xuyên (An Giang)</option>
                     <option value="Toàn quốc">Toàn quốc</option>
                 </select>
@@ -327,7 +295,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT KẾT NỐI SUPABASE HOÀN CHỈNH -->
+    <!-- SCRIPT TÍCH HỢP XỬ LÝ DỊCH VỤ -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
@@ -338,16 +306,9 @@
         let tempGeneratedOtp = null;
         let tempRegisterPhone = null;
 
-        document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', () => {
             const loggedPhone = localStorage.getItem('viecgap_logged_phone');
             if (loggedPhone) {
-                // ĐỒNG BỘ TRẠNG THÁI VÀ BƠM VÀO SUPABASE SESSION/APP
-                window.currentUser = { phone: loggedPhone, phone_number: loggedPhone };
-                window.isLoggedIn = true;
-                localStorage.setItem('currentUserPhone', loggedPhone);
-                localStorage.setItem('userPhone', loggedPhone);
-                localStorage.setItem('loggedInUser', JSON.stringify({ phone: loggedPhone }));
-
                 document.getElementById('userAccountSection')?.classList.remove('hidden');
                 document.getElementById('currentLoggedInPhone').textContent = loggedPhone;
                 document.getElementById('loginBtnText').textContent = loggedPhone;
@@ -378,18 +339,6 @@
                 }
             });
         });
-
-        // HÀM LỌC VIỆC LÀM THEO KHU VỰC
-        window.currentSelectedLocation = 'ALL';
-        window.filterJobsByLocation = (loc) => {
-            window.currentSelectedLocation = loc;
-            document.querySelectorAll('.loc-filter-btn').forEach(btn => {
-                btn.className = "loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer";
-            });
-            event.currentTarget.className = "loc-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-teal-600 text-white transition shadow-sm cursor-pointer";
-
-            window.dispatchEvent(new CustomEvent('filterJobLocationChanged', { detail: { location: loc } }));
-        };
 
         window.toggleAuthBox = () => {
             const loggedPhone = localStorage.getItem('viecgap_logged_phone');
@@ -425,30 +374,27 @@
             }
         };
 
-        window.requestRegisterOTP = async () => {
+        // YÊU CẦU MÃ OTP ĐĂNG KÝ TÙY CHỌN ZALO HOẶC WHATSAPP
+        window.requestRegisterOTP = () => {
             const phone = document.getElementById('regPhoneInput')?.value?.trim();
             if (!phone || phone.length < 9) {
-                alert('⚠️ Vui lòng nhập số điện thoại hợp lệ!');
-                return;
-            }
-
-            // Kiểm tra xem số điện thoại đã tồn tại trên Supabase chưa
-            const { data: existingUser } = await supabase.from('users').select('*').eq('phone', phone).single();
-            if (existingUser) {
-                alert('⚠️ Số điện thoại này đã được đăng ký trước đó! Vui lòng chuyển sang tab "Đăng nhập".');
+                alert('⚠️ Vui lòng nhập số điện thoại hợp lệ để lấy mã xác thực!');
                 return;
             }
 
             tempRegisterPhone = phone;
             tempGeneratedOtp = Math.floor(100000 + Math.random() * 900000);
 
-            const choice = prompt(`Chọn kênh nhận mã ĐĂNG KÝ cho số ${phone}:\n1. Zalo\n2. WhatsApp\n\nNhập "1" hoặc "2":`);
+            const choice = prompt(`Chọn kênh gửi mã xác thực ĐĂNG KÝ cho số ${phone}:\n1. Gửi qua Zalo\n2. Gửi qua WhatsApp\n\nNhập "1" hoặc "2":`);
+
             if (choice === '1') {
-                alert(`📱 [ZALO API] Đã gửi mã OTP "${tempGeneratedOtp}" tới Zalo số: ${phone}`);
+                alert(`📱 [HỆ THỐNG ZALO API]\nĐã gửi mã xác thực ĐĂNG KÝ "${tempGeneratedOtp}" đến Zalo của số điện thoại: ${phone}`);
             } else if (choice === '2') {
-                window.open(`https://wa.me/${phone.replace(/^0/, '84')}?text=Ma%20xac%20thuc%20Viec%20Gap:%20${tempGeneratedOtp}`, '_blank');
-                alert(`💬 [WHATSAPP] Đã chuyển hướng gửi mã OTP "${tempGeneratedOtp}"!`);
+                const waUrl = `https://wa.me/${phone.replace(/^0/, '84')}?text=Ma%20xac%20thuc%20Dang%20Ky%20Viec%20Gap%20cua%20ban%20la:%20${tempGeneratedOtp}`;
+                window.open(waUrl, '_blank');
+                alert(`💬 [HỆ THỐNG WHATSAPP]\nĐã chuyển hướng gửi mã xác thực ĐĂNG KÝ "${tempGeneratedOtp}"!`);
             } else {
+                alert('❌ Lựa chọn không hợp lệ.');
                 return;
             }
 
@@ -457,8 +403,8 @@
             document.getElementById('btnConfirmReg')?.classList.remove('hidden');
         };
 
-        // LƯU THÔNG TIN ĐĂNG KÝ LÊN SUPABASE
-        window.confirmRegisterAccount = async () => {
+        // XÁC NHẬN TẠO TÀI KHOẢN SAU KHI NHẬP ĐÚNG OTP
+        window.confirmRegisterAccount = () => {
             const otpEntered = document.getElementById('regOtpInput')?.value?.trim();
             const customPass = document.getElementById('regPassInput')?.value?.trim() || '123456';
 
@@ -467,25 +413,15 @@
                 return;
             }
 
-            // Lưu tài khoản trực tiếp vào bảng 'users' trên Supabase
-            const { error } = await supabase.from('users').insert([{
-                phone: tempRegisterPhone,
-                password: customPass,
-                created_at: new Date()
-            }]);
-
-            if (error) {
-                // Nếu bảng users chưa có cấu trúc, lưu tạm vào localStorage đồng thời thông báo
-                console.warn("Lưu Supabase chi tiết:", error.message);
-            }
-
             localStorage.setItem(`pass_${tempRegisterPhone}`, customPass);
             localStorage.setItem('viecgap_logged_phone', tempRegisterPhone);
-            alert('🎉 Đăng ký tài khoản và lưu lên Supabase thành công!');
+
+            alert('🎉 Đăng ký tài khoản thành công! Bạn đã được đăng nhập tự động.');
             location.reload();
         };
 
-        window.processAuthLogin = async () => {
+        // ĐĂNG NHẬP DÀNH CHO TÀI KHOẢN ĐÃ CÓ MẬT KHẨU
+        window.processAuthLogin = () => {
             const phone = document.getElementById('loginPhoneInput')?.value?.trim();
             const pass = document.getElementById('loginPasswordInput')?.value?.trim();
 
@@ -494,19 +430,7 @@
                 return;
             }
 
-            // Kiểm tra mật khẩu từ Supabase hoặc fallback bộ nhớ local
-            let savedPass = '123456';
-            try {
-                const { data } = await supabase.from('users').select('password').eq('phone', phone).single();
-                if (data && data.password) {
-                    savedPass = data.password;
-                } else {
-                    savedPass = localStorage.getItem(`pass_${phone}`) || '123456';
-                }
-            } catch (e) {
-                savedPass = localStorage.getItem(`pass_${phone}`) || '123456';
-            }
-
+            const savedPass = localStorage.getItem(`pass_${phone}`) || '123456';
             if (pass === savedPass || pass === '123456') {
                 localStorage.setItem('viecgap_logged_phone', phone);
                 alert('🔓 Đăng nhập thành công!');
@@ -516,19 +440,22 @@
             }
         };
 
+        // KHÔI PHỤC MẬT KHẨU KHI QUÊN
         window.triggerForgotPassword = () => {
             const phone = document.getElementById('loginPhoneInput')?.value?.trim();
             if (!phone || phone.length < 9) {
-                alert('⚠️ Vui lòng nhập số điện thoại ở khung Đăng nhập trước!');
+                alert('⚠️ Vui lòng nhập số điện thoại liên hệ ở khung Đăng nhập trước!');
                 return;
             }
+
             const otpCode = Math.floor(100000 + Math.random() * 900000);
             const choice = prompt(`Chọn kênh nhận mã khôi phục cho số ${phone}:\n1. Zalo\n2. WhatsApp\n\nNhập "1" hoặc "2":`);
+
             if (choice === '1') {
-                alert(`📱 [ZALO API] Đã gửi mã "${otpCode}" qua Zalo.`);
+                alert(`📱 [ZALO API] Đã gửi mã xác thực "${otpCode}" đến Zalo số: ${phone}`);
             } else if (choice === '2') {
-                window.open(`https://wa.me/${phone.replace(/^0/, '84')}?text=Ma%20khoi%20phuc:%20${otpCode}`, '_blank');
-                alert(`💬 [WHATSAPP] Đã chuyển hướng gửi mã "${otpCode}".`);
+                window.open(`https://wa.me/${phone.replace(/^0/, '84')}?text=Ma%20xac%20thuc%20Viec%20Gap:%20${otpCode}`, '_blank');
+                alert(`💬 [WHATSAPP] Đã chuyển hướng gửi mã "${otpCode}"!`);
             } else {
                 return;
             }
@@ -538,7 +465,7 @@
                 const newPass = prompt('✅ Xác thực thành công! Nhập mật khẩu mới:');
                 if (newPass && newPass.length >= 4) {
                     localStorage.setItem(`pass_${phone}`, newPass);
-                    alert('🎉 Đặt lại mật khẩu thành công!');
+                    alert('🎉 Đặt lại mật khẩu thành công! Bạn có thể dùng mật khẩu này để đăng nhập.');
                     document.getElementById('loginPasswordInput').value = newPass;
                 }
             } else {
@@ -546,8 +473,12 @@
             }
         };
 
-        window.openChangePasswordModal = () => { document.getElementById('changePassModal').style.display = 'flex'; };
-        window.closeChangePasswordModal = () => { document.getElementById('changePassModal').style.display = 'none'; };
+        window.openChangePasswordModal = () => {
+            document.getElementById('changePassModal').style.display = 'flex';
+        };
+        window.closeChangePasswordModal = () => {
+            document.getElementById('changePassModal').style.display = 'none';
+        };
 
         window.submitChangePasswordUser = () => {
             const loggedPhone = localStorage.getItem('viecgap_logged_phone');
@@ -563,17 +494,15 @@
                 alert('⚠️ Mật khẩu mới quá ngắn!');
                 return;
             }
+
             localStorage.setItem(`pass_${loggedPhone}`, newPass);
             alert('🎉 Đổi mật khẩu thành công!');
             window.closeChangePasswordModal();
         };
 
         window.handleLogout = () => {
-            if (confirm('Đăng xuất tài khoản?')) {
+            if (confirm('Bạn có chắc chắn muốn đăng xuất tài khoản?')) {
                 localStorage.removeItem('viecgap_logged_phone');
-                localStorage.removeItem('currentUserPhone');
-                localStorage.removeItem('userPhone');
-                localStorage.removeItem('loggedInUser');
                 location.reload();
             }
         };
