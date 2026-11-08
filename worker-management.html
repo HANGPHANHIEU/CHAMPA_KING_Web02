@@ -3,101 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý & Đánh giá nhân sự - Việc Gấp An Giang</title>
-    <!-- Tailwind CSS -->
+    <title>Quản lý Nhân sự & Phê duyệt Admin - Việc Gấp</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-50 min-h-screen font-sans text-slate-800">
+<body class="bg-slate-50 text-slate-800 font-sans antialiased pb-24">
 
-    <!-- Header -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+    <!-- HEADER -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-2">
-                <span class="bg-teal-600 text-white font-bold px-3 py-1.5 rounded-xl text-sm">Việc Gấp</span>
-                <span class="text-xs bg-teal-50 text-teal-700 font-semibold px-2.5 py-1 rounded-lg">Trung tâm Quản lý Nhân sự & Nhận việc</span>
+                <a href="index.html" class="bg-teal-600 text-white w-9 h-9 rounded-xl flex items-center justify-center font-bold text-lg shadow-md">
+                    V
+                </a>
+                <div>
+                    <h1 class="font-extrabold text-slate-900 text-base leading-tight">Trung tâm Quản lý Admin</h1>
+                    <p class="text-[10px] text-slate-500">Phê duyệt hồ sơ & Quản lý việc đang thực hiện</p>
+                </div>
             </div>
-            <a href="admin.html" class="text-xs text-slate-600 hover:text-teal-600 font-semibold flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl transition">
-                <i class="fa-solid fa-arrow-left"></i> Về trang Admin
-            </a>
+
+            <div class="flex items-center gap-2">
+                <a href="commission.html" class="bg-amber-50 hover:bg-amber-100 text-amber-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-coins text-amber-600"></i> <span class="hidden sm:inline">Hoa hồng 1%</span>
+                </a>
+                <a href="index.html" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> Về trang chủ
+                </a>
+            </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 py-6 space-y-8">
-        
-        <!-- Phần 1: Danh sách nhân sự đang nhận công việc -->
-        <section>
-            <div class="mb-4 flex justify-between items-center">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-900"><i class="fa-solid fa-clipboard-check text-teal-600 mr-2"></i> Nhân sự đang nhận việc</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Theo dõi các công việc đã có người nhận thực hiện trên hệ thống.</p>
-                </div>
-                <span class="text-xs bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-semibold text-slate-700 shadow-sm">
-                    Đang thực hiện: <span id="totalAcceptedJobsCount" class="text-teal-600 font-bold ml-1">0</span>
-                </span>
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-4xl mx-auto px-4 py-5 space-y-6">
+
+        <!-- NHÂN SỰ ĐANG NHẬN VIỆC & HOÀN TẤT -->
+        <section class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-users-gear text-teal-600"></i> Nhân sự đang nhận việc
+                </h3>
+                <span id="activeJobCountBadge" class="bg-teal-100 text-teal-800 px-2.5 py-0.5 rounded-full text-xs font-bold">Đang thực hiện: 0</span>
             </div>
-            
-            <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden p-4">
-                <div id="acceptedJobsListContainer" class="divide-y divide-slate-100">
-                    <div class="text-center py-6 text-slate-400 text-xs">Đang tải danh sách nhận việc...</div>
+
+            <div id="acceptedJobListManagement" class="space-y-3">
+                <div class="text-center py-6 text-slate-400 text-xs">Đang tải danh sách công việc...</div>
+            </div>
+        </section>
+
+        <!-- KHU VỰC PHÊ DUYỆT BẢO MẬT DÀNH CHO ADMIN -->
+        <section class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-user-shield text-teal-600"></i> Phê duyệt Hồ sơ Thợ & Tổ chức
+                </h3>
+                <span id="pendingTotalBadge" class="bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full text-xs font-bold">Chờ duyệt: 0</span>
+            </div>
+
+            <!-- Ô Nhập mật khẩu mở khóa Admin -->
+            <div id="adminLoginSection" class="p-4 bg-slate-50 border border-dashed border-slate-200 rounded-2xl text-center space-y-3">
+                <p class="text-xs text-slate-600"><i class="fa-solid fa-lock text-amber-500 mr-1"></i> Tính năng duyệt hồ sơ thợ & tổ chức dành riêng cho Quản trị viên (Admin).</p>
+                <div class="flex justify-center gap-2 max-w-xs mx-auto">
+                    <input type="password" id="adminPasswordInput" placeholder="Mật khẩu Admin..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-600">
+                    <button type="button" id="btnAdminLogin" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition cursor-pointer">Mở khóa</button>
+                </div>
+            </div>
+
+            <!-- DANH SÁCH CHỜ DUYỆT (Ẩn mặc định, hiện khi nhập đúng MK Admin) -->
+            <div id="adminPanel" class="hidden space-y-6 pt-2">
+                <div class="flex justify-between items-center bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs text-emerald-800 font-semibold">
+                    <span>🔓 Đã mở khóa quyền Quản trị viên (Admin)</span>
+                    <button type="button" id="btnAdminLogout" class="text-red-600 hover:underline cursor-pointer">Khóa lại</button>
+                </div>
+                
+                <!-- 1. Danh sách Thợ/Cá nhân chờ duyệt -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-xs text-slate-700 uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-hard-hat text-teal-600"></i> Hồ sơ Thợ / Cá nhân chờ duyệt:
+                    </h4>
+                    <div id="pendingWorkerList" class="space-y-2">
+                        <div class="text-center py-4 text-slate-400 text-xs">Không có hồ sơ thợ nào chờ duyệt.</div>
+                    </div>
+                </div>
+
+                <!-- 2. Danh sách Tổ chức/Đội nhóm chờ duyệt -->
+                <div class="space-y-2 pt-2 border-t border-slate-100">
+                    <h4 class="font-bold text-xs text-slate-700 uppercase flex items-center gap-1.5">
+                        <i class="fa-solid fa-building text-teal-600"></i> Hồ sơ Tổ chức / Đối tác chờ duyệt:
+                    </h4>
+                    <div id="pendingOrgList" class="space-y-2">
+                        <div class="text-center py-4 text-slate-400 text-xs">Không có tổ chức nào chờ duyệt.</div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Phần 2: Hồ sơ chi tiết, Sở trường, Công cụ & Đánh giá năng lực thợ -->
-        <section>
-            <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-900"><i class="fa-solid fa-id-card-clip text-teal-600 mr-2"></i> Hồ sơ, Sở trường & Đánh giá năng lực thợ</h2>
-                    <p class="text-xs text-slate-500 mt-0.5">Quản lý công cụ làm việc, phụ kiện, chuyên môn và đánh giá hiệu quả từng nhân sự.</p>
-                </div>
-                <span class="text-xs bg-white border border-slate-200 px-3 py-1.5 rounded-xl font-semibold text-slate-700 shadow-sm">
-                    Tổng thợ đã duyệt: <span id="totalApprovedWorkersCount" class="text-teal-600 font-bold ml-1">0</span>
-                </span>
-            </div>
-
-            <div id="workerEvaluationList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="text-center py-10 text-slate-400 text-xs bg-white rounded-2xl border border-dashed border-slate-200 col-span-2">
-                    <i class="fa-solid fa-spinner fa-spin text-lg text-teal-600 mb-2 block"></i> Đang tải hồ sơ nhân sự...
-                </div>
-            </div>
-        </section>
     </main>
 
-    <!-- Modal Cập nhật Đánh giá / Phụ kiện / Sở trường -->
-    <div id="evalModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-lg rounded-3xl p-6 shadow-xl border border-slate-100">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="modalWorkerName" class="font-bold text-slate-900 text-base">Đánh giá nhân sự</h3>
-                <button onclick="window.closeEvalModal()" class="text-slate-400 hover:text-slate-600 text-lg cursor-pointer">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <form id="evalForm" class="space-y-4 text-xs">
-                <input type="hidden" id="editWorkerId">
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Sở trường / Chuyên môn chính</label>
-                    <input type="text" id="editWorkerStrength" placeholder="Ví dụ: Sửa điện nước, Lắp ráp cơ khí..." class="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:border-teal-600">
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Công cụ & Phụ kiện làm việc sẵn có</label>
-                    <textarea id="editWorkerTools" rows="2" placeholder="Ví dụ: Máy khoan, máy hàn, cờ lê, xe máy vận chuyển..." class="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:border-teal-600"></textarea>
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Đánh giá năng lực / Nhận xét của Admin</label>
-                    <textarea id="editWorkerReview" rows="3" placeholder="Ghi chú về thái độ, hiệu suất làm việc hoặc độ uy tín..." class="w-full px-3 py-2 border border-slate-300 rounded-xl focus:outline-none focus:border-teal-600"></textarea>
-                </div>
-                <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
-                    <button type="button" onclick="window.closeEvalModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition cursor-pointer">Hủy</button>
-                    <button type="submit" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition cursor-pointer">Lưu đánh giá</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Script logic đặt trong thư mục js/ -->
+    <!-- FILE SCRIPT QUẢN LÝ -->
     <script type="module" src="js/worker-management.js"></script>
 </body>
 </html>
