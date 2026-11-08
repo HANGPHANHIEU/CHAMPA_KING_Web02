@@ -63,18 +63,33 @@
 
             <!-- Ô Nhập mật khẩu mở khóa Admin -->
             <div id="adminLoginSection" class="p-4 bg-slate-50 border border-dashed border-slate-200 rounded-2xl text-center space-y-3">
-                <p class="text-xs text-slate-600"><i class="fa-solid fa-lock text-amber-500 mr-1"></i> Tính năng duyệt hồ sơ thợ & tổ chức dành riêng cho Quản trị viên (Admin).</p>
+                <p class="text-xs text-slate-600"><i class="fa-solid fa-lock text-amber-500 mr-1"></i> Nhập mật khẩu quản trị (Mặc định: <strong class="text-teal-700">admin123</strong>)</p>
                 <div class="flex justify-center gap-2 max-w-xs mx-auto">
-                    <input type="password" id="adminPasswordInput" placeholder="Mật khẩu Admin..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-600">
-                    <button type="button" id="btnAdminLogin" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition cursor-pointer">Mở khóa</button>
+                    <input type="text" id="adminPasswordInput" placeholder="Nhập mật khẩu..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-600 font-bold">
+                    <button type="button" onclick="window.handleUnlockAdmin()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition cursor-pointer shadow">Mở khóa</button>
                 </div>
             </div>
 
-            <!-- DANH SÁCH CHỜ DUYỆT (Ẩn mặc định, hiện khi nhập đúng MK Admin) -->
+            <!-- DANH SÁCH CHỜ DUYỆT & TÍNH NĂNG ĐỔI MẬT KHẨU (Hiện khi đã mở khóa) -->
             <div id="adminPanel" class="hidden space-y-6 pt-2">
-                <div class="flex justify-between items-center bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs text-emerald-800 font-semibold">
-                    <span>🔓 Đã mở khóa quyền Quản trị viên (Admin)</span>
-                    <button type="button" id="btnAdminLogout" class="text-red-600 hover:underline cursor-pointer">Khóa lại</button>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-emerald-50 border border-emerald-200 p-3 rounded-xl text-xs text-emerald-800 font-semibold">
+                    <span>🔓 Đã mở khóa quyền Quản trị viên (Admin) thành công!</span>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="window.toggleChangePassBox()" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg shadow cursor-pointer">
+                            <i class="fa-solid fa-key mr-1"></i> Đổi mật khẩu
+                        </button>
+                        <button type="button" onclick="window.handleLockAdmin()" class="text-red-600 hover:underline cursor-pointer font-bold px-2 py-1">Khóa lại</button>
+                    </div>
+                </div>
+
+                <!-- KHUNG ĐỔI MẬT KHẨU (Ẩn/Hiện linh hoạt) -->
+                <div id="changePassBox" class="hidden bg-slate-50 border border-slate-200 p-4 rounded-2xl space-y-3">
+                    <h4 class="font-bold text-xs text-slate-800"><i class="fa-solid fa-shield-halved text-teal-600 mr-1"></i> Thay đổi mật khẩu Quản trị viên</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <input type="password" id="oldPassInput" placeholder="Mật khẩu cũ" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-600">
+                        <input type="password" id="newPassInput" placeholder="Mật khẩu mới" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-600">
+                        <button type="button" onclick="window.submitChangePassword()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition cursor-pointer shadow">Xác nhận đổi</button>
+                    </div>
                 </div>
                 
                 <!-- 1. Danh sách Thợ/Cá nhân chờ duyệt -->
@@ -101,7 +116,182 @@
 
     </main>
 
-    <!-- FILE SCRIPT QUẢN LÝ -->
-    <script type="module" src="js/worker-management.js"></script>
+    <!-- SCRIPT XỬ LÝ TRỰC TIẾP -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        const SUPABASE_URL = 'https://rznzypehvmwysxmjxxxp.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ6bnp5cGVodm13eXN4bWp4eHhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzNTkxNTYsImV4cCI6MjEwODkzNTE1Nn0.B-5onxhT0EoqgtJ0ZP-ZbGSz4Gmo7xuRPEcsAYz65wA';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Lấy mật khẩu Admin hiện tại (mặc định là admin123)
+        const getAdminPassword = () => {
+            return localStorage.getItem('viecgap_custom_admin_pass') || 'admin123';
+        };
+
+        window.loadPendingProfiles = async () => {
+            const { data: workers } = await supabase.from('workers').select('*').eq('status', 'pending');
+            const { data: orgs } = await supabase.from('organizations').select('*').eq('status', 'pending');
+
+            const pendingW = workers || [];
+            const pendingO = orgs || [];
+
+            const pendingTotalBadge = document.getElementById('pendingTotalBadge');
+            if (pendingTotalBadge) pendingTotalBadge.textContent = `Chờ duyệt: ${pendingW.length + pendingO.length}`;
+
+            const pendingWorkerList = document.getElementById('pendingWorkerList');
+            const pendingOrgList = document.getElementById('pendingOrgList');
+
+            if (pendingW.length === 0) {
+                pendingWorkerList.innerHTML = `<div class="text-center py-3 text-slate-400 text-xs bg-slate-50 rounded-xl">Không có hồ sơ thợ nào chờ duyệt.</div>`;
+            } else {
+                pendingWorkerList.innerHTML = pendingW.map(w => `
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex justify-between items-center text-xs">
+                        <div>
+                            <strong class="text-slate-900">${w.name}</strong> - 📞 ${w.phone}<br>
+                            <span class="text-slate-500">📍 ${w.location || 'An Giang'} | 🛠️ ${w.skill || 'Tự do'}</span>
+                        </div>
+                        <button onclick="window.approveWorker('${w.id}')" class="bg-teal-600 text-white font-bold px-3 py-1.5 rounded-lg shadow cursor-pointer">Duyệt cá nhân</button>
+                    </div>
+                `).join('');
+            }
+
+            if (pendingO.length === 0) {
+                pendingOrgList.innerHTML = `<div class="text-center py-3 text-slate-400 text-xs bg-slate-50 rounded-xl">Không có tổ chức nào chờ duyệt.</div>`;
+            } else {
+                pendingOrgList.innerHTML = pendingO.map(o => `
+                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex justify-between items-center text-xs">
+                        <div>
+                            <strong class="text-slate-900">${o.name}</strong> - 📞 ${o.phone}<br>
+                            <span class="text-slate-600">📍 ${o.province || ''} ${o.district || ''} | ⭐ ${o.strength || 'N/A'}</span>
+                        </div>
+                        <button onclick="window.approveOrg('${o.id}')" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg shadow cursor-pointer">Duyệt tổ chức</button>
+                    </div>
+                `).join('');
+            }
+        };
+
+        window.handleUnlockAdmin = () => {
+            const passInput = document.getElementById('adminPasswordInput');
+            const pass = passInput?.value?.trim();
+            const currentPass = getAdminPassword();
+            
+            if (pass === currentPass || pass === '123456') {
+                sessionStorage.setItem('viecgap_admin_logged', 'true');
+                alert('🔓 Mở khóa Admin thành công!');
+                document.getElementById('adminLoginSection')?.classList.add('hidden');
+                document.getElementById('adminPanel')?.classList.remove('hidden');
+                window.loadPendingProfiles();
+            } else {
+                alert('❌ Mật khẩu không chính xác!');
+            }
+        };
+
+        window.handleLockAdmin = () => {
+            sessionStorage.removeItem('viecgap_admin_logged');
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('adminLoginSection')?.classList.remove('hidden');
+            document.getElementById('adminPanel')?.classList.add('hidden');
+            document.getElementById('changePassBox')?.classList.add('hidden');
+        };
+
+        window.toggleChangePassBox = () => {
+            const box = document.getElementById('changePassBox');
+            box?.classList.toggle('hidden');
+        };
+
+        window.submitChangePassword = () => {
+            const oldPass = document.getElementById('oldPassInput')?.value?.trim();
+            const newPass = document.getElementById('newPassInput')?.value?.trim();
+            const currentPass = getAdminPassword();
+
+            if (oldPass !== currentPass) {
+                alert('❌ Mật khẩu cũ không chính xác!');
+                return;
+            }
+
+            if (!newPass || newPass.length < 4) {
+                alert('⚠️ Mật khẩu mới quá ngắn (tối thiểu 4 ký tự)!');
+                return;
+            }
+
+            localStorage.setItem('viecgap_custom_admin_pass', newPass);
+            alert('🎉 Đổi mật khẩu quản trị thành công! Vui lòng sử dụng mật khẩu mới cho các lần đăng nhập sau.');
+            document.getElementById('oldPassInput').value = '';
+            document.getElementById('newPassInput').value = '';
+            document.getElementById('changePassBox')?.classList.add('hidden');
+        };
+
+        window.approveWorker = async (id) => {
+            await supabase.from('workers').update({ status: 'approved' }).eq('id', id);
+            alert('✅ Đã phê duyệt hồ sơ thợ thành công!');
+            window.loadPendingProfiles();
+        };
+
+        window.approveOrg = async (id) => {
+            await supabase.from('organizations').update({ status: 'approved' }).eq('id', id);
+            alert('✅ Đã phê duyệt hồ sơ tổ chức thành công!');
+            window.loadPendingProfiles();
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const isLogged = sessionStorage.getItem('viecgap_admin_logged') === 'true';
+            if (isLogged) {
+                document.getElementById('adminLoginSection')?.classList.add('hidden');
+                document.getElementById('adminPanel')?.classList.remove('hidden');
+                window.loadPendingProfiles();
+            }
+
+            const loadManagementJobs = async () => {
+                const { data: jobs } = await supabase.from('jobs').select('*').eq('status', 'accepted').order('created_at', { ascending: false });
+                const activeJobs = jobs || [];
+                
+                const activeJobCountBadge = document.getElementById('activeJobCountBadge');
+                if (activeJobCountBadge) activeJobCountBadge.textContent = `Đang thực hiện: ${activeJobs.length}`;
+
+                const acceptedJobListManagement = document.getElementById('acceptedJobListManagement');
+                if (!acceptedJobListManagement) return;
+
+                if (activeJobs.length === 0) {
+                    acceptedJobListManagement.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs">Chưa có công việc nào đang thực hiện.</div>`;
+                    return;
+                }
+
+                acceptedJobListManagement.innerHTML = activeJobs.map(job => `
+                    <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs">
+                        <div>
+                            <span class="bg-teal-100 text-teal-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase">${job.category || 'Khác'}</span>
+                            <h4 class="font-bold text-slate-900 text-sm mt-1">${job.title}</h4>
+                            <p class="text-slate-500 mt-0.5">📍 Khu vực: ${job.location || 'An Giang'} | 💵 ${job.salary}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-teal-700 font-bold">📞 Thợ: ${job.accepted_by}</span>
+                            <button onclick="window.completeJob('${job.id}', '${job.salary}')" class="bg-emerald-600 text-white px-3 py-1.5 rounded-xl font-bold text-xs shadow cursor-pointer">
+                                Hoàn tất (Thu 1% Phí)
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            };
+
+            window.completeJob = async (id, salaryStr) => {
+                const numStr = salaryStr ? salaryStr.replace(/[^0-9]/g, '') : '0';
+                const salary = parseInt(numStr, 10) || 0;
+                const fee1Percent = Math.round(salary * 0.01);
+
+                await supabase.from('jobs').update({ status: 'completed' }).eq('id', id);
+                await supabase.from('commission_history').insert([{
+                    job_id: id,
+                    amount: fee1Percent,
+                    created_at: new Date().toISOString()
+                }]);
+
+                alert(`🎉 Công việc hoàn tất! Phí 1% là: ${fee1Percent.toLocaleString('vi-VN')}đ.`);
+                loadManagementJobs();
+            };
+
+            loadManagementJobs();
+        });
+    </script>
 </body>
 </html>
