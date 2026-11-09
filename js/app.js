@@ -8,8 +8,101 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const ADMIN_PHONE = '0966507481';
 
+// --- TỪ ĐIỂN ÁNH XẠ TRỰC TIẾP (VIỆT <-> ANH) ---
+const textMap = {
+    "Việc Gấp": "Quick Jobs",
+    "Kết nối lao động nhanh chóng": "Fast Labor Connection",
+    "Hoa hồng 1%": "1% Commission",
+    "Quản lý nhận việc": "Manage Workers",
+    "Đăng ký / Đăng nhập": "Register / Login",
+    "Cộng đồng uy tín Châu Thành & Toàn quốc": "Chau Thanh & Nationwide Community",
+    "Cần thợ gấp? Hoặc tìm việc làm ngay trong ngày?": "Need workers fast? Or looking for daily jobs?",
+    "Nền tảng kết nối trực tiếp người cần thuê và người nhận việc an toàn, bảo mật và minh bạch.": "Direct platform connecting hirers and job seekers safely, securely, and transparently.",
+    "Đăng việc ngay": "Post Job Now",
+    "Bảng tin việc làm": "Job Feed",
+    "Việc đã nhận": "Accepted Jobs",
+    "Tổ chức/Đối tác": "Organizations",
+    "Hồ sơ thợ": "Workers Profile",
+    "Lọc nhanh theo khu vực:": "Filter by location:",
+    "Tất cả khu vực": "All Locations",
+    "Nhận việc": "Accept Job",
+    "Xóa": "Delete",
+    "Hủy nhận": "Cancel",
+    "Khôi phục": "Restore",
+    "Xóa hẳn": "Delete Permanently",
+    "Đăng nhập tài khoản": "Login Account",
+    "Đăng xuất": "Logout"
+};
+
+// Trạng thái ngôn ngữ toàn cục
+window.currentLang = localStorage.getItem('app_language') || 'vi';
+
+// Hàm quét toàn bộ văn bản trên trang để dịch tự động
+window.applyLanguage = function(lang) {
+    if (lang) window.currentLang = lang;
+    localStorage.setItem('app_language', window.currentLang);
+
+    // 1. Đổi chữ trên nút bấm Header
+    const langBtnText = document.getElementById('langBtnText') || document.getElementById('activeLangText');
+    if (langBtnText) {
+        langBtnText.textContent = window.currentLang === 'vi' ? 'EN' : 'VN';
+    }
+
+    // 2. Duyệt qua tất cả các thẻ văn bản trên giao diện để đổi ngôn ngữ theo từ điển
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    while (node = walker.nextNode()) {
+        let text = node.nodeValue.trim();
+        if (!text) continue;
+
+        if (window.currentLang === 'en') {
+            if (textMap[text]) {
+                node.nodeValue = node.nodeValue.replace(text, textMap[text]);
+            }
+        } else {
+            // Đổi ngược lại tiếng Việt
+            for (let [vi, en] of Object.entries(textMap)) {
+                if (text === en || text.includes(en)) {
+                    node.nodeValue = node.nodeValue.replace(en, vi);
+                }
+            }
+        }
+    }
+
+    // 3. Render lại danh sách việc làm để cập nhật trạng thái động
+    if (typeof window.renderJobs === 'function') {
+        window.renderJobs('ALL');
+    }
+};
+
+// Hàm bấm chuyển đổi ngôn ngữ
+window.toggleLanguage = function() {
+    window.currentLang = window.currentLang === 'vi' ? 'en' : 'vi';
+    window.applyLanguage(window.currentLang);
+    // Tải lại nhẹ trang để cập nhật toàn diện văn bản DOM tĩnh
+    location.reload();
+};
+
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("--- HỆ THỐNG 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG HOÀN CHỈNH ---");
+    console.log("--- HỆ THỐNG 'VIỆC GẤP' ĐÃ KHỞI ĐỘNG (ĐÃ TÍCH HỢP QUÉT DỊCH TEXT) ---");
+
+    // Tự động chèn nút bấm đổi ngôn ngữ lên Header nếu chưa có
+    let langContainer = document.getElementById('languageWidgetContainer');
+    if (!langContainer) {
+        const headerRight = document.querySelector('header .max-w-4xl > div:last-child') || document.querySelector('header');
+        if (headerRight) {
+            langContainer = document.createElement('div');
+            langContainer.id = 'languageWidgetContainer';
+            headerRight.insertBefore(langContainer, headerRight.firstChild);
+        }
+    }
+    if (langContainer && !document.getElementById('langBtnText')) {
+        langContainer.innerHTML = `
+            <button type="button" onclick="window.toggleLanguage()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer border border-slate-300 shadow-sm">
+                <i class="fa-solid fa-globe text-teal-600"></i> <span id="langBtnText">${window.currentLang === 'vi' ? 'EN' : 'VN'}</span>
+            </button>
+        `;
+    }
 
     // 1. Dọn dẹp modal bị kẹt khi mới tải trang
     document.querySelectorAll('[id*="Modal"], [id*="modal"]').forEach(modal => {
@@ -25,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetFooter = document.getElementById('resetFooter');
     const loginBtnText = document.getElementById('loginBtnText');
 
-    // Kiểm tra trạng thái đăng nhập từ LocalStorage (Đồng bộ cả 2 khóa)
     const checkLoginStatus = () => {
         const loggedPhone = localStorage.getItem('viecgap_user_phone') || localStorage.getItem('viecgap_logged_phone');
         const isLoggedIn = !!loggedPhone;
@@ -197,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!trashContainer) return;
 
         if (deletedJobs.length === 0) {
-            trashContainer.innerHTML = `<div class="text-center py-4 text-slate-400 text-xs" data-i18n="emptyTrash">Thùng rác trống.</div>`;
+            trashContainer.innerHTML = `<div class="text-center py-4 text-slate-400 text-xs">Thùng rác trống.</div>`;
             return;
         }
 
@@ -271,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 actionButtonHTML = `
                     <button onclick="window.handleTakeJob('${job.id}')" class="bg-teal-600 hover:bg-teal-700 text-white px-3.5 py-1.5 rounded-xl font-semibold transition cursor-pointer text-xs flex items-center gap-1 shadow-sm">
-                        <span data-i18n="btnAcceptJob">Nhận việc</span> &rarr;
+                        <span>Nhận việc</span> &rarr;
                     </button>
                 `;
             }
@@ -300,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${actionButtonHTML}
                             ${isOwner ? `
                                 <button onclick="window.handleDeleteJob('${job.id}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-xl font-semibold transition cursor-pointer text-xs flex items-center gap-1">
-                                    <i class="fa-solid fa-trash-can"></i> <span data-i18n="deleteBtn">Xóa</span>
+                                    <i class="fa-solid fa-trash-can"></i> <span>Xóa</span>
                                 </button>
                             ` : ''}
                         </div>
@@ -314,9 +406,9 @@ document.addEventListener('DOMContentLoaded', () => {
         renderApprovedWorkers();
         renderTrashList();
 
-        // Tự động gọi hàm dịch nếu file language-switcher.js tồn tại
-        if (typeof window.applyLanguage === 'function') {
-            window.applyLanguage(window.currentLang);
+        // Sau khi render xong bảng tin, chạy quét dịch ngay lập tức
+        if (window.currentLang === 'en') {
+            window.applyLanguage('en');
         }
     };
 
@@ -581,6 +673,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Khởi chạy
     window.renderJobs();
+
+    // Nếu trước đó đang lưu ngôn ngữ tiếng Anh, tự động áp dụng ngay khi load xong
+    if (window.currentLang === 'en') {
+        setTimeout(() => window.applyLanguage('en'), 300);
+    }
 
     // Realtime sync đa thiết bị
     supabase.channel('public:app_live_sync')
